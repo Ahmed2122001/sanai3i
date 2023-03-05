@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\API\admin\AdminController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\categoryController;
+use App\Http\Controllers\API\customer\CustomerController;
+use App\Http\Controllers\API\worker\WorkerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\categoryController;
-use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,29 +19,29 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-Route::get('/categories', [categoryController::class, 'index']);
-Route::get('/categories/{id}', [categoryController::class, 'show']);
-Route::post('/categories', [categoryController::class, 'create']);
-Route::put('/categories/{id}', [categoryController::class, 'update']);
-Route::delete('/categories/{id}', [categoryController::class, 'delete']);
-
-
-Route::group(
-    [
-        'middleware' => 'api',
-        'prefix' => 'auth'
-    ],
-    function ($router) {
-        Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/register', [AuthController::class, 'register']);
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::post('/refresh', [AuthController::class, 'refresh']);
-        Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    }
-);
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+//Route::get('/categories', [categoryController::class, 'index']);
+//Route::get('/categories/{id}', [categoryController::class, 'show']);
+//Route::post('/categories', [categoryController::class, 'create']);
+//Route::put('/categories/{id}', [categoryController::class, 'update']);
+//Route::delete('/categories/{id}', [categoryController::class, 'delete']);
+//
+//
+//Route::group(
+//    [
+//        'middleware' => 'api',
+//        'prefix' => 'auth'
+//    ],
+//    function ($router) {
+//        Route::post('/login', [AuthController::class, 'login']);
+//        Route::post('/register', [AuthController::class, 'register']);
+//        Route::post('/logout', [AuthController::class, 'logout']);
+//        Route::post('/refresh', [AuthController::class, 'refresh']);
+//        Route::get('/user-profile', [AuthController::class, 'userProfile']);
+//    }
+//);
 Route::prefix('/admin')->group(function (){
 
     //admin
@@ -57,7 +60,7 @@ Route::prefix('/admin')->group(function (){
 //    //Route::get('/categories',[CategoryController::class,'index']);
 //
 //    //workers
-//    Route::get('/workers',[WorkerController::class,'index']);
+    Route::get('/workers',[WorkerController::class,'index']);
 //    Route::post('/',[WorkerController::class,'store']);
 //    Route::get('/{worker}',[WorkerController::class,'show']);
 //    Route::put('/{worker}',[WorkerController::class,'update']);
@@ -69,6 +72,9 @@ Route::prefix('/admin')->group(function (){
 //    Route::get('/{customer}',[CustomerController::class,'show']);
 //    Route::PUT('/{customer}',[CustomerController::class,'update']);
 //    Route::DELETE('/{customer}',[CustomerController::class,'delete']);
+
+    //reports
+    Route::get('/reports',[AdminController::class,'showReports']);
 
 });
 Route::prefix('sani3i')->group(function (){
