@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\customer;
+namespace App\Http\Controllers\API\customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\customer\Throwable;
 use App\Http\Requests\customer\StoreCustomerRequest;
 use App\Http\Resources\customer\CustomerResource;
-use Illuminate\Http\Request;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
@@ -19,8 +19,8 @@ class CustomerController extends Controller
     public function index(): JsonResponse
     {
         try {
-            //$customer=Customer::orderBy('id','asc')->get();
-            $customer=CustomerResource::collection(Customer::all());
+            $customer=Customer::orderBy('id','asc')->get();
+            //$customer=CustomerResource::collection(Customer::all());
             if ($customer) {
                 return response()->json([
                     //'success'=>true,
@@ -43,23 +43,23 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreCustomerRequest $request): JsonResponse
     {
         try {
-            $validation=Validator::make($request->all(),[
-                'name'=>['required','string','max:255'],
-                'email'=>['required','string','max:255','email','unique:customer'],
-                'password'=>['required','string','min:5'],
-                'phone'=>['required','int'],
-                'address'=>['required','string'],
-                'image'=>['required','string'],
-            ]);
-            if ($validation->fails()){
-                return response()->json([
-                    'success'=>false,
-                    'message'=>$validation->errors()->all(),
-                ],200);
-            }else{
+//            $validation=Validator::make($request->all(),[
+//                'name'=>['required','string','max:255'],
+//                'email'=>['required','string','max:255','email','unique:customer'],
+//                'password'=>['required','string','min:5'],
+//                'phone'=>['required','int'],
+//                'address'=>['required','string'],
+//                'image'=>['required','string'],
+//            ]);
+//            if ($validation->fails()){
+//                return response()->json([
+//                    'success'=>false,
+//                    'message'=>$validation->errors()->all(),
+//                ],200);
+//            }else{
                 $customer=Customer::create([
                     'name'=>$request->name,
                     'email'=>$request->email,
@@ -80,7 +80,7 @@ class CustomerController extends Controller
                         'message'=>'some problem',
                     ],401);
                 }
-            }
+//            }
         } catch (\Throwable $th) {
             return response()->json([
                 //'success'=>true,
@@ -221,4 +221,31 @@ class CustomerController extends Controller
         }
 
     }
+
+    public function suspendCustomer($id) :JsonResponse
+    {
+        try {
+            $customer=Customer::findOrFail($id)->delete();
+            if ($customer) {
+                $customer->update(['status'=>'available']);
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'customer suspended successfully',
+                ],200);
+            } else {
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'some problems',
+                ],400);
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'=>false,
+                'message'=>$th->getMessage(),
+            ],404);
+        }
+
+    }
+
 }
