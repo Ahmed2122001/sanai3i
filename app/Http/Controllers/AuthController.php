@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
-
+use App\Models\Worker;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'customerRegister', 'workerRegister']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -42,7 +42,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request)
+    public function customerRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
@@ -71,7 +71,35 @@ class AuthController extends Controller
 
         ], 201);
     }
+    public function workerRegister(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|between:2,100',
+            'email' => 'required|string|email|max:100|unique:worker',
+            'password' => 'required|string|min:6',
+            'phone' => 'required|string|max:11',
+            'address' => 'required|string|between:4,100',
+            'image' => 'string|between:100,250',
+            'status' => 'string|between:5,10'
 
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $user = Worker::create(array_merge(
+            $validator->validated(),
+            ['password' => bcrypt($request->password)]
+
+        ));
+        $token = auth()->login($user);
+        return response()->json([
+
+            'message' => 'worker successfully registered',
+            'token' => $token,
+            'user' => $user,
+
+        ], 201);
+    }
     /**
      * Log the user out (Invalidate the token).
      *
