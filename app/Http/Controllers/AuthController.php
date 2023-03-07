@@ -32,8 +32,10 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $credentials = $request->only('email', 'password');
+        $token = auth::guard('api-admin')->attempt($credentials);
         if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجلى ادخال البريد الاكتروني وكلمة سر صحيحه'], 401);
         }
         return $this->createNewToken($token);
     }
@@ -94,7 +96,7 @@ class AuthController extends Controller
         $token = auth()->login($user);
         return response()->json([
 
-            'message' => 'worker successfully registered',
+            'message' => 'User successfully registered',
             'token' => $token,
             'user' => $user,
 
