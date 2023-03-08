@@ -113,23 +113,19 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
-        // $token = $request->header('remember_token');
-        // if ($token) {
-        //     try {
-        //         JWTAuth::setToken($token)->invalidate();
-        //         // return response()->json(['message' => 'تم تسجيل الخروج بنجاح']);
-        //         return $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
-        //     } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
-        //         // return response()->json(['message' => 'something went wrong']);
-        //         return $this->returnError('E001', 'something went wrong');
-        //     }
-        Auth::guard('api')->logout();
-        return $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
+        $token = $request->header('remember_token');
+        if ($token) {
+            try {
+                JWTAuth::setToken($token)->invalidate();
+                return $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
+            } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
+                return $this->returnError('E001', 'something went wrong');
+            }
+        }
     }
-    // auth()->logout();
-    // return response()->json(['message' => 'User successfully signed out']);
+
 
 
     /**

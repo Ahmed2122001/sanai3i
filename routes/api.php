@@ -59,7 +59,7 @@ Route::group(
     ],
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsAdmin']);
-        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.gaurd:api-admin');
+        Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
     }
