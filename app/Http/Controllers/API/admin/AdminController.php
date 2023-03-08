@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\API\admin;
 
+use App\Http\Controllers\API\categoryController;
 use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\worker\WorkerController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\admin\StoreCategoryRequest;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\Customer;
@@ -42,38 +44,20 @@ class AdminController extends Controller
             //throw $th;
         }
     }
-
     /**
-     * Store a newly created resource in storage.
+     * admin fix account
      */
-    public function store(Request $request): JsonResponse
-    {
-        //
+    public function fixAccount($id){
+        try {
+            //fixing
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success'=>false,
+                'message'=>$th->getMessage(),
+            ],404);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Admin $admin): JsonResponse
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Admin $admin): JsonResponse
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Admin $admin): JsonResponse
-    {
-        //
-    }
     /**
      * Remove the specified Customer from storage.
      */
@@ -107,12 +91,40 @@ class AdminController extends Controller
     public function suspendCustomer($id) :JsonResponse
     {
         try {
-            $customer=Customer::findOrFail($id)->delete();
+            $customer=Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status'=>'available']);
+                $customer->update(['status'=>'suspended']);
                 return response()->json([
                     'success'=>true,
                     'message'=>'customer suspended successfully',
+                ],200);
+            } else {
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'some problems',
+                ],400);
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'=>false,
+                'message'=>$th->getMessage(),
+            ],404);
+        }
+
+    }
+    /**
+     * activate the specified Customer.
+     */
+    public function activateCustomer($id) :JsonResponse
+    {
+        try {
+            $customer=Customer::findOrFail($id);
+            if ($customer) {
+                $customer->update(['status'=>'active']);
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'customer activated successfully',
                 ],200);
             } else {
                 return response()->json([
@@ -161,9 +173,9 @@ class AdminController extends Controller
     public function suspendWorker($id) :JsonResponse
     {
         try {
-            $worker=Worker::findOrFail($id)->delete();
+            $worker=Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status'=>'available']);
+                $worker->update(['status'=>'suspended']);
                 return response()->json([
                     'success'=>true,
                     'message'=>'worker suspended successfully',
@@ -182,7 +194,32 @@ class AdminController extends Controller
             ],404);
         }
     }
+    /**
+     * verify or activate worker
+     */
+    public function verifyWorker($id){
+        try {
+            $worker=Worker::findOrFail($id);
+            if ($worker) {
+                $worker->update(['status'=>'active']);
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'worker activated successfully',
+                ],200);
+            } else {
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'some problems',
+                ],400);
+            }
 
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'=>false,
+                'message'=>$th->getMessage(),
+            ],404);
+        }
+    }
     /**
      * show the reports.
      */
@@ -210,18 +247,17 @@ class AdminController extends Controller
     /**
      * create category
      */
-    public function create(Request $request)
+    public function createCategory(Request $request)
     {
         try{
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'min:3', 'max:255', 'unique:category'],
-                'description' => ['min:3', 'max:255', 'nullable'],
-                'image' => ['min:3', 'max:255', 'nullable'],
+                'description' => ['required','min:3', 'max:255', 'nullable'],
+                'image' => ['required','min:3', 'max:255', 'nullable'],
             ]);
             if ($validator->fails()) {
                 return response()->json([
-                    'message' => 'Validation error',
-                    'errors' => $validator->errors()->all()
+                    'message' => $validator->errors()->all()
                 ], 422);
             }
             $category = Category::create($request->all());
@@ -229,8 +265,9 @@ class AdminController extends Controller
                 return response()->json([
                     'message' => 'Category not created'
                 ], 500);
-            } else
+            } else{
                 return response()->json($category);
+            }
         }catch (\Throwable $throwable){
             return response()->json([
                 'success'=>false,
