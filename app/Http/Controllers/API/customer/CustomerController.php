@@ -193,10 +193,6 @@ class CustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Customer $customer): JsonResponse
-    {
-        //
-    }
     public function delete($id) :JsonResponse
     {
         try {
