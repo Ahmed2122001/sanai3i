@@ -30,10 +30,7 @@ return new class extends Migration
             $table->boolean('active_status')->default(0);
             $table->boolean('dark_mode')->default(0);
             $table->string('messenger_color')->default('#2180f3');
-
-
             $table->string('remember_token')->nullable();
-
             $table->bigInteger('accepted_by')->references('Id')->on('admin')->nullable()->onDelete('cascade')->onUpdate('cascade')->unsigned()->index();
             $table->timestamps();
         });
