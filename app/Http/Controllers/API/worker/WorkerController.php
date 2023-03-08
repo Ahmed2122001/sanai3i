@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\worker;
+namespace App\Http\Controllers\API\worker;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\worker\WorkerResource;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Models\Worker;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -18,8 +17,8 @@ class WorkerController extends Controller
     public function index(): JsonResponse
     {
         try {
-            //$worker=Worker::orderBy('id','asc')->get();
-            $worker=WorkerResource::collection(Worker::all());
+            $worker=Worker::orderBy('id','asc')->get();
+            //$worker=WorkerResource::collection(Worker::all());
             if ($worker) {
                 return response()->json([
 //                    'success'=>true,
@@ -134,6 +133,32 @@ class WorkerController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
 //                'success'=>false,
+                'message'=>$th->getMessage(),
+            ],404);
+        }
+
+    }
+
+    public function suspendWorker($id) :JsonResponse
+    {
+        try {
+            $worker=Worker::findOrFail($id)->delete();
+            if ($worker) {
+                $worker->update(['status'=>'available']);
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'worker suspended successfully',
+                ],200);
+            } else {
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'some problems',
+                ],400);
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'=>false,
                 'message'=>$th->getMessage(),
             ],404);
         }
