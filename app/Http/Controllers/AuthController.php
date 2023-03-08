@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
 use App\Models\Worker;
 use Illuminate\Support\Facades\Validator;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use App\Traits\GeneralTrait;
 
 class AuthController extends Controller
 {
@@ -14,30 +16,34 @@ class AuthController extends Controller
      * Create a new AuthController instance.
      * @return void
      */
+    use GeneralTrait;
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'customerRegister', 'workerRegister']]);
+        $this->middleware('auth:api', ['except' => ['loginAsAdmin', 'customerRegister', 'workerRegister', 'logout']]);
     }
     /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function loginAsAdmin(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         $credentials = $request->only('email', 'password');
         $token = auth::guard('api-admin')->attempt($credentials);
-        if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجلى ادخال البريد الاكتروني وكلمة سر صحيحه'], 401);
+        if (!$token) {
+            return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجلى ادخال البريد الاكتروني او كلمة سر صحيحه'], 401);
+        } else {
+            $admin = auth::guard('api-admin')->user();
+            $admin->remembertoken = $token;
+            return $this->returnData('admin', $admin, 'تم تسجيل الدخول بنجاح');
         }
-        return $this->createNewToken($token);
     }
     /**
      * Register a User.
@@ -109,9 +115,23 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
-        return response()->json(['message' => 'User successfully signed out']);
+        // $token = $request->header('remember_token');
+        // if ($token) {
+        //     try {
+        //         JWTAuth::setToken($token)->invalidate();
+        //         // return response()->json(['message' => 'تم تسجيل الخروج بنجاح']);
+        //         return $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
+        //     } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
+        //         // return response()->json(['message' => 'something went wrong']);
+        //         return $this->returnError('E001', 'something went wrong');
+        //     }
+        Auth::guard('api')->logout();
+        return $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
     }
+    // auth()->logout();
+    // return response()->json(['message' => 'User successfully signed out']);
+
+
     /**
      * Refresh a token.
      *

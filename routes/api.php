@@ -45,9 +45,21 @@ Route::group(
         'prefix' => 'auth-worker'
     ],
     function ($router) {
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login', [AuthController::class, 'loginAsWorker']);
         Route::post('/worker/register', [AuthController::class, 'workerRegister']);
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/refresh', [AuthController::class, 'refresh']);
+        Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    }
+);
+Route::group(
+    [
+        'middleware' => 'api',
+        'prefix' => 'auth-admin'
+    ],
+    function ($router) {
+        Route::post('/login', [AuthController::class, 'loginAsAdmin']);
+        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.gaurd:api-admin');
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
     }
