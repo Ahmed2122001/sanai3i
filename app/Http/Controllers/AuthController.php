@@ -19,7 +19,7 @@ class AuthController extends Controller
     use GeneralTrait;
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['loginAsAdmin', 'customerRegister', 'workerRegister', 'logout']]);
+        $this->middleware('auth:api', ['except' => ['loginAsAdmin', 'loginAsWorker', 'loginAsCustomer', 'customerRegister', 'workerRegister', 'logout']]);
     }
     /**
      * Get a JWT via given credentials.
@@ -107,6 +107,44 @@ class AuthController extends Controller
             'user' => $user,
 
         ], 201);
+    }
+    public function loginAsWorker(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $credentials = $request->only('email', 'password');
+        $token = auth::guard('api-worker')->attempt($credentials);
+        if (!$token) {
+            return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجى ادخال البريد الاكتروني او كلمة سر صحيحه'], 401);
+        } else {
+            $worker = auth::guard('api-worker')->user();
+            $worker->remembertoken = $token;
+            return $this->returnData('worker', $worker, 'تم تسجيل الدخول بنجاح');
+        }
+    }
+    public function loginAsCustomer(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $credentials = $request->only('email', 'password');
+        $token = auth::guard('api-customer')->attempt($credentials);
+        if (!$token) {
+            return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجى ادخال البريد الاكتروني او كلمة سر صحيحه'], 401);
+        } else {
+            $customer = auth::guard('api-customer')->user();
+            $customer->remembertoken = $token;
+            return $this->returnData('customer', $customer, 'تم تسجيل الدخول بنجاح');
+        }
     }
     /**
      * Log the user out (Invalidate the token).

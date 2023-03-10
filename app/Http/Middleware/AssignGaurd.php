@@ -25,8 +25,8 @@ class AssignGaurd extends BaseMiddleware
     {
         if ($guard != null) {
             auth()->shouldUse($guard); //shoud you user guard / table
-            $token = $request->header('auth-token');
-            $request->headers->set('auth-token', (string) $token, true);
+            $token = $request->header('remember_token');
+            $request->headers->set('remember_token', (string) $token, true);
             $request->headers->set('Authorization', 'Bearer ' . $token, true);
             try {
                 //  $user = $this->auth->authenticate($request);  //check authenticted user
@@ -40,5 +40,10 @@ class AssignGaurd extends BaseMiddleware
 
             return $next($request);
         }
+
+        // if ($guard != null) {
+        //     auth()->shouldUse($guard);
+        //     return $next($request);
+        // }
     }
 }
