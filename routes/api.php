@@ -24,9 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/categories', [categoryController::class, 'index']);
 Route::get('/categories/{id}', [categoryController::class, 'show']);
-Route::post('/categories', [categoryController::class, 'create']);
-Route::put('/categories/{id}', [categoryController::class, 'update']);
-Route::delete('/categories/{id}', [categoryController::class, 'delete']);
+
 
 
 Route::group(
@@ -35,9 +33,9 @@ Route::group(
         'prefix' => 'auth-customer'
     ],
     function ($router) {
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login', [AuthController::class, 'loginAsCustomer']);
         Route::post('/customer/register', [AuthController::class, 'customerRegister']);
-        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.gaurd:api-customer');
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
     }
@@ -50,7 +48,7 @@ Route::group(
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsWorker']);
         Route::post('/worker/register', [AuthController::class, 'workerRegister']);
-        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.gaurd:api-worker');
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
     }
@@ -62,44 +60,53 @@ Route::group(
     ],
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsAdmin']);
+    }
+);
+Route::group(
+    [
+        'middleware' => 'api',
+        'middleware' => 'auth.gaurd:api-admin',
+        'prefix' => 'auth-admin'
+    ],
+    function ($router) {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    }
-);
-Route::prefix('/admin')->group(function () {
+        Route::post('/categories', [categoryController::class, 'create']);
+        Route::put('/categories/{id}', [categoryController::class, 'update']);
+        Route::delete('/categories/{id}', [categoryController::class, 'delete']);
+        //admin
+        Route::get('/admins', [AdminController::class, 'index']);
+        Route::post('/', [AdminController::class, 'store']);
+        //Route::get('/{admin}',[AdminController::class,'show']);
+        Route::put('/{admin}', [AdminController::class, 'update']);
+        Route::delete('/{admin}', [AdminController::class, 'delete']);
+        //CATEGORIES
+        Route::get('/categories', [CategoryController::class, 'index']);
+        Route::post('/', [CategoryController::class, 'store']);
+        //Route::get('/{category}',[CategoryController::class,'show']);
+        Route::put('/{category}', [CategoryController::class, 'update']);
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+        //
+        //    //Route::get('/categories',[CategoryController::class,'index']);
+        //
+        //    //workers
+        //    Route::get('/workers',[WorkerController::class,'index']);
+        //    Route::post('/',[WorkerController::class,'store']);
+        //    Route::get('/{worker}',[WorkerController::class,'show']);
+        //    Route::put('/{worker}',[WorkerController::class,'update']);
+        //    Route::delete('/{worker}',[WorkerController::class,'delete']);
+        //
+        //    //customers
+        Route::get('/customers', [CustomerController::class, 'index']);
 
-    //admin
-    Route::get('/admins', [AdminController::class, 'index']);
-    Route::post('/', [AdminController::class, 'store']);
-    //Route::get('/{admin}',[AdminController::class,'show']);
-    Route::put('/{admin}', [AdminController::class, 'update']);
-    Route::delete('/{admin}', [AdminController::class, 'delete']);
-    //CATEGORIES
-    Route::get('/categories', [CategoryController::class, 'index']);
-    Route::post('/', [CategoryController::class, 'store']);
-    //Route::get('/{category}',[CategoryController::class,'show']);
-    Route::put('/{category}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-    //
-    //    //Route::get('/categories',[CategoryController::class,'index']);
-    //
-    //    //workers
-    //    Route::get('/workers',[WorkerController::class,'index']);
-    //    Route::post('/',[WorkerController::class,'store']);
-    //    Route::get('/{worker}',[WorkerController::class,'show']);
-    //    Route::put('/{worker}',[WorkerController::class,'update']);
-    //    Route::delete('/{worker}',[WorkerController::class,'delete']);
-    //
-    //    //customers
-    Route::get('/customers', [CustomerController::class, 'index']);
-    //    Route::POST('/',[CustomerController::class,'store']);
-    //    Route::get('/{customer}',[CustomerController::class,'show']);
-    //    Route::PUT('/{customer}',[CustomerController::class,'update']);
-    //    Route::DELETE('/{customer}',[CustomerController::class,'delete']);
-
-});
-Route::prefix('sani3i')->group(function () {
+        //san3i
+        //customer
+        Route::get('/customers', [CustomerController::class, 'index']);
+        Route::POST('/customers', [CustomerController::class, 'store']);
+        //Route::get('/{customer}',[CustomerController::class,'show']);
+        Route::PUT('/customers/{id}', [CustomerController::class, 'update']);
+        Route::DELETE('/customers/{id}', [CustomerController::class, 'delete']);
 
     //customer
     Route::get('/customers', [CustomerController::class, 'index']);
@@ -114,4 +121,6 @@ Route::prefix('sani3i')->group(function () {
     Route::get('/worker/show/{id}',[WorkerController::class,'show']);
     Route::post('/worker/update/{id}', [WorkerController::class, 'update']);
     Route::delete('/worker/delete/{id}', [WorkerController::class, 'delete']);
-});
+    
+    }
+);
