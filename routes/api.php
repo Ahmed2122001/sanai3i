@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\API\admin\AdminController;
+use App\Http\Controllers\API\customer\CustomerController;
+use App\Http\Controllers\API\worker\WorkerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\categoryController;
@@ -105,11 +108,19 @@ Route::group(
         Route::PUT('/customers/{id}', [CustomerController::class, 'update']);
         Route::DELETE('/customers/{id}', [CustomerController::class, 'delete']);
 
-        //workers
-        Route::get('/workers', [WorkerController::class, 'index']);
-        //Route::post('/workers',[WorkerController::class,'store']);
-        //Route::get('/workers/{id}',[WorkerController::class,'show']);
-        Route::put('/worker/{id}', [WorkerController::class, 'update']);
-        Route::delete('/workers/{id}', [WorkerController::class, 'delete']);
+    //customer
+    Route::get('/customers', [CustomerController::class, 'index']);
+    Route::POST('/customers', [CustomerController::class, 'store']);
+    //Route::get('/{customer}',[CustomerController::class,'show']);
+    Route::PUT('/customers/{id}', [CustomerController::class, 'update']);
+    Route::DELETE('/customers/{id}', [CustomerController::class, 'delete']);
+
+    //workers
+    Route::get('/workers', [WorkerController::class, 'index']);
+    Route::post('/worker/store',[WorkerController::class,'store']);
+    Route::get('/worker/show/{id}',[WorkerController::class,'show']);
+    Route::post('/worker/update/{id}', [WorkerController::class, 'update']);
+    Route::delete('/worker/delete/{id}', [WorkerController::class, 'delete']);
+    
     }
 );
