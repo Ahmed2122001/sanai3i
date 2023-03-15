@@ -22,12 +22,12 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>['required','string','max:255'],
-            'email'=>['required','string','max:255','email','unique:customer'],
-            'password'=>['required','string','min:5'],
-            'phone'=>['required','int'],
-            'address'=>['required','string'],
-            'image'=>['required','string'],
+            'name'=>'required','string','max:255',
+            'email'=>'required|string|max:255|email|unique:customer,email,'.$this->id,
+            'password'=>'required','string','min:5',
+            'phone'=>'required','int',
+            'address'=>'required','string',
+            'image'=>'required','string',
         ];
     }
 }

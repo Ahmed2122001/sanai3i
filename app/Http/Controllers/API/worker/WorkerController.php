@@ -248,30 +248,4 @@ class WorkerController extends Controller
         }
 
     }
-
-    public function suspendWorker($id) :JsonResponse
-    {
-        try {
-            $worker=Worker::findOrFail($id)->delete();
-            if ($worker) {
-                $worker->update(['status'=>'available']);
-                return response()->json([
-                    'success'=>true,
-                    'message'=>'worker suspended successfully',
-                ],200);
-            } else {
-                return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
-            }
-
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
-        }
-
-    }
 }
