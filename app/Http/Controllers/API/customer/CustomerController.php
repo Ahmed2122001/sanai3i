@@ -60,15 +60,17 @@ class CustomerController extends Controller
 //                    'message'=>$validation->errors()->all(),
 //                ],200);
 //            }else{
-                $customer=Customer::create([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    //'password'=>Hash::make($request->password),
-                    'password'=>$request->password,
-                    'phone'=>$request->phone,
-                    'address'=>$request->address,
-                    'image'=>$request->image,
-                ]);
+                $customer=Customer::create($request->all()
+//                    [
+//                    'name'=>$request->name,
+//                    'email'=>$request->email,
+//                    //'password'=>Hash::make($request->password),
+//                    'password'=>$request->password,
+//                    'phone'=>$request->phone,
+//                    'address'=>$request->address,
+//                    'image'=>$request->image,
+//                ]
+                );
                 if ($customer){
                     return response()->json([
                         //'success'=>true,
@@ -96,7 +98,7 @@ class CustomerController extends Controller
     {
         try {
             //$customer=Customer::orderBy('id','asc')->get();
-            $customer=CustomerResource::collection(Customer::all());
+            $customer=Customer::find($id);
             if ($customer) {
                 return response()->json([
                     //'success'=>true,
@@ -119,68 +121,65 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): JsonResponse
+    public function update(StoreCustomerRequest $request, $id): JsonResponse
     {
         try {
-            $customers=Customer::findOrFail($id);
-            $validation=Validator::make($request->all(),[
-                'name'=>['string','max:255'],
-                'email'=>['string','max:255','email','unique:customer'],
-                'password'=>['string','min:5'],
-                'phone'=>['int'],
-                'address'=>['string'],
-                'image'=>['string'],
-            ]);
-            if ($validation->fails()){
-                return response()->json([
-                    //'success'=>false,
-                    'message'=>$validation->errors()->all(),
-                ],400);
+            $request->validated();
+            //$customers=Customer::findOrFail($id);
+            $customers=Customer::where('id',$id)->first();
+//            $validation=Validator::make($request->all(),[
+//                'name'=>['string','max:255'],
+//                'email'=>'required|string|max:255|email|unique:customer,email,'.$request->id,
+//                'password'=>['string','min:5'],
+//                'phone'=>['int'],
+//                'address'=>['string'],
+//                'image'=>['string'],
+//            ]);
+//            if ($validation->fails()){
+//                return response()->json([
+//                    //'success'=>false,
+//                    'message'=>$validation->errors()->all(),
+//                ],400);
+//            }else{
+//
+//            }
+            //$customers->update($request->all());
+            if (!empty($request->name)){
+                $customers->name=$request->name;
             }else{
-                if (!empty($request->name)){
-                    $customers->name=$request->name;
-                }else{
-                    $customers->name=$customers->name;
-                }
-                if (!empty($request->email)){
-                    $customers->email=$request->email;
-                }else{
-                    $customers->email=$customers->email;
-                }
-                if (!empty($request->password)){
-                    $customers->password=$request->password;
-                }else{
-                    $customers->password=$customers->password;
-                }
-                if (!empty($request->address)){
-                    $customers->address=$request->address;
-                }else{
-                    $customers->address=$customers->address;
-                }
-                if (!empty($request->image)){
-                    $customers->image=$request->image;
-                }else{
-                    $customers->image=$customers->image;
-                }
-
-                //dd($customers);
-//                $customers->email=$request->email;
-//                $customers->password=$request->password;
-//                $customers->phone=$request->phone;
-//                $customers->address=$request->address;
-//                $customers->image=$request->image;
-                $result=$customers->save();
-                if ($result){
-                    return response()->json([
-                        //'success'=>true,
-                        'message'=>$customers,
-                    ],200);
-                }else{
-                    return response()->json([
-                        //'success'=>true,
-                        'message'=>'some problem',
-                    ],404);
-                }
+                $customers->name=$customers->name;
+            }
+            if (!empty($request->email)){
+                $customers->email=$request->email;
+            }else{
+                $customers->email=$customers->email;
+            }
+            if (!empty($request->password)){
+                $customers->password=$request->password;
+            }else{
+                $customers->password=$customers->password;
+            }
+            if (!empty($request->address)){
+                $customers->address=$request->address;
+            }else{
+                $customers->address=$customers->address;
+            }
+            if (!empty($request->image)){
+                $customers->image=$request->image;
+            }else{
+                $customers->image=$customers->image;
+            }
+            $result=$customers->save();
+            if ($result){
+                return response()->json([
+                    //'success'=>true,
+                    'message'=>$customers,
+                ],200);
+            }else{
+                return response()->json([
+                    //'success'=>true,
+                    'message'=>'some problem',
+                ],404);
             }
         }catch (Throwable $th){
             return response()->json([
@@ -217,31 +216,4 @@ class CustomerController extends Controller
         }
 
     }
-
-    public function suspendCustomer($id) :JsonResponse
-    {
-        try {
-            $customer=Customer::findOrFail($id)->delete();
-            if ($customer) {
-                $customer->update(['status'=>'available']);
-                return response()->json([
-                    'success'=>true,
-                    'message'=>'customer suspended successfully',
-                ],200);
-            } else {
-                return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
-            }
-
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
-        }
-
-    }
-
 }

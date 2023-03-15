@@ -66,7 +66,7 @@ Route::group(
     [
         'middleware' => 'api',
         'middleware' => 'auth.gaurd:api-admin',
-        'prefix' => 'auth-admin'
+        'prefix' => 'sanai3i'
     ],
     function ($router) {
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -76,51 +76,49 @@ Route::group(
         Route::put('/categories/{id}', [categoryController::class, 'update']);
         Route::delete('/categories/{id}', [categoryController::class, 'delete']);
         //admin
-        Route::get('/admins', [AdminController::class, 'index']);
-        Route::post('/', [AdminController::class, 'store']);
-        //Route::get('/{admin}',[AdminController::class,'show']);
-        Route::put('/{admin}', [AdminController::class, 'update']);
-        Route::delete('/{admin}', [AdminController::class, 'delete']);
+        Route::prefix('/admin')->group(function (){
+            //admin
+            Route::get('/admins',[AdminController::class,'index']);
+            Route::post('/',[AdminController::class,'store']);
+            Route::put('/{admin}',[AdminController::class,'update']);
+            Route::delete('/{admin}',[AdminController::class,'delete']);
+            //fuctionality
+            Route::get('/fix/{id}',[AdminController::class,'fixAccount']);
+            Route::delete('/allusers/deletecustomer/{id}',[AdminController::class,'deleteCustomer']);
+            Route::put('/allusers/suspendcustomer/{id}',[AdminController::class,'suspendCustomer']);
+            Route::put('/allusers/activate/{id}',[AdminController::class,'activateCustomer']);
+            Route::delete('/allusers/deleteworker/{id}',[AdminController::class,'deleteWorker']);
+            Route::put('/allusers/suspendworker/{id}',[AdminController::class,'suspendWorker']);
+            Route::put('/allusers/verifyworker/{id}',[AdminController::class,'verifyWorker']);
+            Route::get('/allusers',[AdminController::class,'showAllAccounts']);
+            Route::post('/category',[AdminController::class,'createCategory']);
+        });
+
         //CATEGORIES
         Route::get('/categories', [CategoryController::class, 'index']);
         Route::post('/', [CategoryController::class, 'store']);
         //Route::get('/{category}',[CategoryController::class,'show']);
         Route::put('/{category}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-        //
-        //    //Route::get('/categories',[CategoryController::class,'index']);
-        //
-        //    //workers
-        //    Route::get('/workers',[WorkerController::class,'index']);
-        //    Route::post('/',[WorkerController::class,'store']);
-        //    Route::get('/{worker}',[WorkerController::class,'show']);
-        //    Route::put('/{worker}',[WorkerController::class,'update']);
-        //    Route::delete('/{worker}',[WorkerController::class,'delete']);
-        //
-        //    //customers
-        Route::get('/customers', [CustomerController::class, 'index']);
+        Route::prefix('customers')->group(function (){
+            //customers
+            Route::get('/customers', [CustomerController::class, 'index']);
+            //customer
+            Route::get('/customers', [CustomerController::class, 'index']);
+            Route::POST('/customers', [CustomerController::class, 'store']);
+            //Route::get('/{customer}',[CustomerController::class,'show']);
+            Route::PUT('/customers/{id}', [CustomerController::class, 'update']);
+            Route::DELETE('/customers/{id}', [CustomerController::class, 'delete']);
+        });
 
-        //san3i
-        //customer
-        Route::get('/customers', [CustomerController::class, 'index']);
-        Route::POST('/customers', [CustomerController::class, 'store']);
-        //Route::get('/{customer}',[CustomerController::class,'show']);
-        Route::PUT('/customers/{id}', [CustomerController::class, 'update']);
-        Route::DELETE('/customers/{id}', [CustomerController::class, 'delete']);
 
-    //customer
-    Route::get('/customers', [CustomerController::class, 'index']);
-    Route::POST('/customers', [CustomerController::class, 'store']);
-    //Route::get('/{customer}',[CustomerController::class,'show']);
-    Route::PUT('/customers/{id}', [CustomerController::class, 'update']);
-    Route::DELETE('/customers/{id}', [CustomerController::class, 'delete']);
-
-    //workers
-    Route::get('/workers', [WorkerController::class, 'index']);
-    Route::post('/worker/store',[WorkerController::class,'store']);
-    Route::get('/worker/show/{id}',[WorkerController::class,'show']);
-    Route::post('/worker/update/{id}', [WorkerController::class, 'update']);
-    Route::delete('/worker/delete/{id}', [WorkerController::class, 'delete']);
-    
+        Route::prefix('workers')->group(function (){
+            //workers
+            Route::get('/workers', [WorkerController::class, 'index']);
+            Route::post('/worker/store',[WorkerController::class,'store']);
+            Route::get('/worker/show/{id}',[WorkerController::class,'show']);
+            Route::post('/worker/update/{id}', [WorkerController::class, 'update']);
+            Route::delete('/worker/delete/{id}', [WorkerController::class, 'delete']);
+        });
     }
 );
