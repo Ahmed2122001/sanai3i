@@ -100,7 +100,8 @@ Route::group(
         //Route::get('/{category}',[CategoryController::class,'show']);
         Route::put('/{category}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-        Route::prefix('customers')->group(function (){
+
+        Route::prefix('customer')->group(function (){
             //customers
             Route::get('/customers', [CustomerController::class, 'index']);
             //customer
@@ -112,7 +113,7 @@ Route::group(
         });
 
 
-        Route::prefix('workers')->group(function (){
+        Route::prefix('worker')->group(function (){
             //workers
             Route::get('/workers', [WorkerController::class, 'index']);
             Route::post('/worker/store',[WorkerController::class,'store']);
