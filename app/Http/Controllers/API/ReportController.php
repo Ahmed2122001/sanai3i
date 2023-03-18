@@ -21,7 +21,7 @@ class ReportController extends Controller
             if ($report) {
                 return response()->json([
                     'success'=>true,
-                    'admins'=>$report,
+                    'reports'=>$report,
                 ],200);
             }else{
                 return response()->json([
