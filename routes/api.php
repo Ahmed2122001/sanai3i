@@ -120,6 +120,8 @@ Route::group(
             Route::get('/show/{id}',[WorkerController::class,'show']);
             Route::post('/update/{id}', [WorkerController::class, 'update']);
             Route::delete('/delete/{id}', [WorkerController::class, 'delete']);
+            Route::post('/password/{id}', [WorkerController::class,'updatePassword']);
+
         });
     }
 );
