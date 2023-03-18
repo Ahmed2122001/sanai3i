@@ -7,6 +7,7 @@ use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\worker\WorkerController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\admin\StoreAdminRequest;
 use App\Http\Requests\admin\StoreCategoryRequest;
 use App\Models\Admin;
 use App\Models\Category;
@@ -42,6 +43,59 @@ class AdminController extends Controller
                 'message'=>$th->getMessage(),
             ],400);
             //throw $th;
+        }
+    }
+    /**
+     * add new admin
+     */
+    public function addAdmin(StoreAdminRequest $request): JsonResponse
+    {
+        try {
+//            $request->validated();
+            $validation=Validator::make($request->all(),[
+                'name'=>['required','string','max:255'],
+                'email'=>['required','string','max:255','email','unique:admin'],
+                'password'=>['required','string','min:5'],
+                'phone'=>['required','int'],
+                'address'=>['required','string'],
+                'image'=>['required','string'],
+            ]);
+            if ($validation->fails()){
+                return response()->json([
+                    'success'=>false,
+                    'message'=>$validation->errors()->all(),
+                ],400);
+            }else{
+                $admin=Admin::create($request->all());
+                if ($admin) {
+                    return response()->json([
+                        'success'=>true,
+                        'message'=>'admin added successfully',
+                    ],200);
+                } else {
+                    return response()->json([
+                        'success'=>false,
+                        'message'=>'some problems',
+                    ],400);
+                }
+            }
+//            $admin=Admin::create($request->all());
+//            if ($admin) {
+//                return response()->json([
+//                    'success'=>true,
+//                    'message'=>'admin added successfully',
+//                ],200);
+//            } else {
+//                return response()->json([
+//                    'success'=>false,
+//                    'message'=>'some problems',
+//                ],400);
+//            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'=>false,
+                'message'=>$th->getMessage(),
+            ],400);
         }
     }
     /**
