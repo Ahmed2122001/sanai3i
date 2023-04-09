@@ -9,6 +9,7 @@ use App\Models\Worker;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Traits\GeneralTrait;
+use Illuminate\Auth\Notifications\VerifyEmail;
 
 class AuthController extends Controller
 {
@@ -62,6 +63,7 @@ class AuthController extends Controller
             'status' => 'string|between:5,10'
 
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
@@ -70,6 +72,7 @@ class AuthController extends Controller
             ['password' => bcrypt($request->password)]
 
         ));
+        // $user->notify(new VerifyEmail);
         $token = auth()->login($user);
         return response()->json([
 
@@ -91,6 +94,7 @@ class AuthController extends Controller
             'status' => 'string|between:5,10'
 
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
