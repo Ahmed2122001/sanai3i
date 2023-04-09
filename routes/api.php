@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\categoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\region\RegionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ Route::group(
         Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.gaurd:api-customer');
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
+        Route::get('/all-region', [RegionController::class, 'showAllRegions'])->middleware('auth.gaurd:api-customer');
     }
 );
 Route::group(
@@ -51,6 +53,7 @@ Route::group(
         Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.gaurd:api-worker');
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/user-profile', [AuthController::class, 'userProfile']);
+        Route::get('/all-region', [RegionController::class, 'showAllRegions'])->middleware('auth.gaurd:api-worker');
     }
 );
 Route::group(
@@ -64,8 +67,8 @@ Route::group(
 );
 Route::group(
     [
-//        'middleware' => 'api',
-//        'middleware' => 'auth.gaurd:api-admin',
+        //        'middleware' => 'api',
+        //        'middleware' => 'auth.gaurd:api-admin',
         'prefix' => 'sanai3i'
     ],
     function ($router) {
@@ -76,23 +79,31 @@ Route::group(
         Route::put('/categories/{id}', [categoryController::class, 'update']);
         Route::delete('/categories/{id}', [categoryController::class, 'delete']);
         //admin
-        Route::prefix('/admin')->group(function (){
+        Route::prefix('/admin')->group(function () {
             //admin
-            Route::get('/admins',[AdminController::class,'index']);
-            Route::post('/addadmins',[AdminController::class,'addAdmin']);
-            Route::put('/{admin}',[AdminController::class,'update']);
-            Route::delete('/{admin}',[AdminController::class,'delete']);
+            Route::get('/admins', [AdminController::class, 'index']);
+            Route::post('/addadmins', [AdminController::class, 'addAdmin']);
+            Route::put('/{admin}', [AdminController::class, 'update']);
+            Route::delete('/{admin}', [AdminController::class, 'delete']);
             //functionality
-            Route::get('/fix/{id}',[AdminController::class,'fixAccount']);
-            Route::delete('/allusers/deletecustomer/{id}',[AdminController::class,'deleteCustomer']);
-            Route::put('/allusers/suspendcustomer/{id}',[AdminController::class,'suspendCustomer']);
-            Route::put('/allusers/activate/{id}',[AdminController::class,'activateCustomer']);
-            Route::delete('/allusers/deleteworker/{id}',[AdminController::class,'deleteWorker']);
-            Route::put('/allusers/suspendworker/{id}',[AdminController::class,'suspendWorker']);
-            Route::put('/allusers/verifyworker/{id}',[AdminController::class,'verifyWorker']);
-            Route::get('/allusers',[AdminController::class,'showAllAccounts']);
-            Route::post('/category',[AdminController::class,'createCategory']);
-            Route::get('/reports',[AdminController::class,'showReports']);  //show all reports
+            Route::get('/fix/{id}', [AdminController::class, 'fixAccount']);
+            Route::delete('/allusers/deletecustomer/{id}', [AdminController::class, 'deleteCustomer']);
+            Route::put('/allusers/suspendcustomer/{id}', [AdminController::class, 'suspendCustomer']);
+            Route::put('/allusers/activate/{id}', [AdminController::class, 'activateCustomer']);
+            Route::delete('/allusers/deleteworker/{id}', [AdminController::class, 'deleteWorker']);
+            Route::put('/allusers/suspendworker/{id}', [AdminController::class, 'suspendWorker']);
+            Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
+            Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
+            Route::post('/category', [AdminController::class, 'createCategory']);
+            Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
+            Route::prefix('region')->group(function () {
+                //regions
+                Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+                Route::post('/store', [RegionController::class, 'create']);
+                Route::get('/show/{id}', [RegionController::class, 'showOneRegion']);
+                Route::put('/update/{id}', [RegionController::class, 'update']);
+                Route::delete('/delete/{id}', [RegionController::class, 'delete']);
+            });
         });
 
         //CATEGORIES
@@ -102,7 +113,7 @@ Route::group(
         Route::put('/{category}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 
-        Route::prefix('customer')->group(function (){
+        Route::prefix('customer')->group(function () {
 
             //customer
             Route::get('/customers', [CustomerController::class, 'index']);
@@ -113,15 +124,14 @@ Route::group(
         });
 
 
-        Route::prefix('worker')->group(function (){
+        Route::prefix('worker')->group(function () {
             //workers
             Route::get('/workers', [WorkerController::class, 'index']);
-            Route::post('/store',[WorkerController::class,'store']);
-            Route::get('/show/{id}',[WorkerController::class,'show']);
+            Route::post('/store', [WorkerController::class, 'store']);
+            Route::get('/show/{id}', [WorkerController::class, 'show']);
             Route::post('/update/{id}', [WorkerController::class, 'update']);
             Route::delete('/delete/{id}', [WorkerController::class, 'delete']);
-            Route::post('/password/{id}', [WorkerController::class,'updatePassword']);
-
+            Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         });
     }
 );
