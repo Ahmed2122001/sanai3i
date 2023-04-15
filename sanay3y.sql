@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 07, 2023 at 03:46 PM
+-- Generation Time: Apr 15, 2023 at 09:34 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -151,6 +151,33 @@ CREATE TABLE `personal_access_tokens` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `portfolio`
+--
+
+CREATE TABLE `portfolio` (
+  `id` bigint(20) NOT NULL,
+  `description` varchar(500) NOT NULL,
+  `some_work_images` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `profession`
+--
+
+CREATE TABLE `profession` (
+  `id` bigint(20) NOT NULL,
+  `name` varchar(200) NOT NULL,
+  `Created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rate`
 --
 
@@ -175,9 +202,13 @@ CREATE TABLE `region` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `city_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `region`
+--
 
 -- --------------------------------------------------------
 
@@ -223,10 +254,11 @@ CREATE TABLE `worker` (
   `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `city_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `profession_id` bigint(20) NOT NULL,
+  `portfolio_id` bigint(20) NOT NULL,
   `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `category_id` bigint(20) UNSIGNED DEFAULT NULL,
   `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `portifolio` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'active',
   `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'worker',
   `active_status` tinyint(1) NOT NULL DEFAULT 0,
@@ -287,6 +319,18 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
+-- Indexes for table `portfolio`
+--
+ALTER TABLE `portfolio`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `profession`
+--
+ALTER TABLE `profession`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `rate`
 --
 ALTER TABLE `rate`
@@ -324,7 +368,10 @@ ALTER TABLE `worker`
   ADD UNIQUE KEY `worker_email_unique` (`email`),
   ADD KEY `worker_city_id_index` (`city_id`),
   ADD KEY `worker_category_id_index` (`category_id`),
-  ADD KEY `worker_accepted_by_index` (`accepted_by`);
+  ADD KEY `worker_accepted_by_index` (`accepted_by`),
+  ADD KEY `profesion_id` (`profession_id`),
+  ADD KEY `profession_id` (`profession_id`),
+  ADD KEY `portfolio` (`portfolio_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -334,7 +381,7 @@ ALTER TABLE `worker`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -346,7 +393,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -367,6 +414,18 @@ ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `portfolio`
+--
+ALTER TABLE `portfolio`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `profession`
+--
+ALTER TABLE `profession`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `rate`
 --
 ALTER TABLE `rate`
@@ -376,7 +435,7 @@ ALTER TABLE `rate`
 -- AUTO_INCREMENT for table `region`
 --
 ALTER TABLE `region`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `report`
@@ -394,7 +453,7 @@ ALTER TABLE `request`
 -- AUTO_INCREMENT for table `worker`
 --
 ALTER TABLE `worker`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -427,12 +486,6 @@ ALTER TABLE `rate`
   ADD CONSTRAINT `rate_ibfk_2` FOREIGN KEY (`worker_id`) REFERENCES `worker` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `region`
---
-ALTER TABLE `region`
-  ADD CONSTRAINT `region_ibfk_1` FOREIGN KEY (`id`) REFERENCES `customer` (`city_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `report`
 --
 ALTER TABLE `report`
@@ -450,9 +503,11 @@ ALTER TABLE `request`
 -- Constraints for table `worker`
 --
 ALTER TABLE `worker`
-  ADD CONSTRAINT `worker_ibfk_1` FOREIGN KEY (`city_id`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `worker_ibfk_2` FOREIGN KEY (`accepted_by`) REFERENCES `admin` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `worker_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `worker_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `worker_ibfk_4` FOREIGN KEY (`city_id`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `worker_ibfk_5` FOREIGN KEY (`profession_id`) REFERENCES `profession` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `worker_ibfk_6` FOREIGN KEY (`portfolio_id`) REFERENCES `portfolio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
