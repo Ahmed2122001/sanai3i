@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 15, 2023 at 09:34 AM
+-- Generation Time: Apr 17, 2023 at 11:04 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -117,17 +117,6 @@ CREATE TABLE `migrations` (
 -- Dumping data for table `migrations`
 --
 
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2019_12_14_000001_create_personal_access_tokens_table', 1),
-(2, '2023_01_29_134920_create_admin_table', 1),
-(3, '2023_01_29_135524_create_region_table', 1),
-(4, '2023_01_29_141154_create_worker_table', 1),
-(5, '2023_01_29_142025_create_customer_table', 1),
-(6, '2023_01_29_144455_create_category_table', 1),
-(7, '2023_01_30_110057_create_rate_table', 1),
-(8, '2023_01_30_112450_create_report_table', 1),
-(9, '2023_01_30_112755_create_request_table', 1),
-(10, '2023_01_30_115550_create_messages_table', 1);
 
 -- --------------------------------------------------------
 
@@ -165,19 +154,6 @@ CREATE TABLE `portfolio` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `profession`
---
-
-CREATE TABLE `profession` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `Created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `rate`
 --
 
@@ -209,6 +185,10 @@ CREATE TABLE `region` (
 --
 -- Dumping data for table `region`
 --
+
+INSERT INTO `region` (`id`, `city_name`, `code`, `created_at`, `updated_at`) VALUES
+(14, 'cairo', '200', '2023-04-09 10:45:45', '2023-04-09 10:45:45'),
+(15, 'Giza', '101', '2023-04-09 10:58:54', '2023-04-09 10:58:54');
 
 -- --------------------------------------------------------
 
@@ -254,7 +234,6 @@ CREATE TABLE `worker` (
   `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `city_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `profession_id` bigint(20) NOT NULL,
   `portfolio_id` bigint(20) NOT NULL,
   `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `category_id` bigint(20) UNSIGNED DEFAULT NULL,
@@ -325,12 +304,6 @@ ALTER TABLE `portfolio`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `profession`
---
-ALTER TABLE `profession`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `rate`
 --
 ALTER TABLE `rate`
@@ -369,8 +342,6 @@ ALTER TABLE `worker`
   ADD KEY `worker_city_id_index` (`city_id`),
   ADD KEY `worker_category_id_index` (`category_id`),
   ADD KEY `worker_accepted_by_index` (`accepted_by`),
-  ADD KEY `profesion_id` (`profession_id`),
-  ADD KEY `profession_id` (`profession_id`),
   ADD KEY `portfolio` (`portfolio_id`);
 
 --
@@ -417,12 +388,6 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `portfolio`
 --
 ALTER TABLE `portfolio`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `profession`
---
-ALTER TABLE `profession`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -506,7 +471,6 @@ ALTER TABLE `worker`
   ADD CONSTRAINT `worker_ibfk_2` FOREIGN KEY (`accepted_by`) REFERENCES `admin` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `worker_ibfk_3` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `worker_ibfk_4` FOREIGN KEY (`city_id`) REFERENCES `region` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `worker_ibfk_5` FOREIGN KEY (`profession_id`) REFERENCES `profession` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `worker_ibfk_6` FOREIGN KEY (`portfolio_id`) REFERENCES `portfolio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
