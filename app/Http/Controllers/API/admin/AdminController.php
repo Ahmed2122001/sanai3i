@@ -26,288 +26,287 @@ class AdminController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $admin=Admin::orderBy('id','asc')->get();
+            $admin = Admin::orderBy('id', 'asc')->get();
             if ($admin) {
                 return response()->json([
-                    'success'=>true,
-                    'admins'=>$admin,
-                ],200);
-            }else{
+                    'success' => true,
+                    'admins' => $admin,
+                ], 200);
+            } else {
                 return response()->json([
-                    'success'=>false,
-                ],400);
+                    'success' => false,
+                ], 400);
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],400);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 400);
             //throw $th;
         }
     }
+
     /**
      * add new admin
      */
-    public function addAdmin(StoreAdminRequest $request): JsonResponse
+    public function addAdmin(Request $request): JsonResponse
     {
         try {
-//            $request->validated();
-            $validation=Validator::make($request->all(),[
-                'name'=>['required','string','max:255'],
-                'email'=>['required','string','max:255','email','unique:admin'],
-                'password'=>['required','string','min:5'],
-                'phone'=>['required','int'],
-                'address'=>['required','string'],
-                'image'=>['required','string'],
+
+            $validation = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'max:255', 'email', 'unique:admin'],
+                'password' => ['required', 'string', 'min:5'],
+                'phone' => ['required', 'int'],
+                'address' => ['required', 'string'],
+                'image' => ['required', 'string'],
             ]);
-            if ($validation->fails()){
+            if ($validation->fails()) {
                 return response()->json([
-                    'success'=>false,
-                    'message'=>$validation->errors()->all(),
-                ],400);
-            }else{
-                $admin=Admin::create($request->all());
+                    'success' => false,
+                    'message' => $validation->errors()->all(),
+                ], 400);
+            } else {
+                $admin = Admin::create($request->all());
                 if ($admin) {
                     return response()->json([
-                        'success'=>true,
-                        'message'=>'admin added successfully',
-                    ],200);
+                        'success' => true,
+                        'message' => 'admin added successfully',
+                    ], 200);
                 } else {
                     return response()->json([
-                        'success'=>false,
-                        'message'=>'some problems',
-                    ],400);
+                        'success' => false,
+                        'message' => 'some problems',
+                    ], 400);
                 }
             }
-//            $admin=Admin::create($request->all());
-//            if ($admin) {
-//                return response()->json([
-//                    'success'=>true,
-//                    'message'=>'admin added successfully',
-//                ],200);
-//            } else {
-//                return response()->json([
-//                    'success'=>false,
-//                    'message'=>'some problems',
-//                ],400);
-//            }
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],400);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 400);
         }
     }
+
     /**
      * admin fix account
      */
-    public function fixAccount($id){
+    public function fixAccount($id)
+    {
         try {
             //fixing
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
     }
 
     /**
      * Remove the specified Customer from storage.
      */
-    public function deleteCustomer($id) :JsonResponse
+    public function deleteCustomer($id): JsonResponse
     {
         try {
-            $customer=Customer::findOrFail($id)->delete();
+            $customer = Customer::findOrFail($id)->delete();
             if ($customer) {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'customer deleted successfully',
-                ],200);
+                    'success' => true,
+                    'message' => 'customer deleted successfully',
+                ], 200);
             } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
 
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
 
     }
+
     /**
      * suspend the specified Customer.
      */
-    public function suspendCustomer($id) :JsonResponse
+    public function suspendCustomer($id): JsonResponse
     {
         try {
-            $customer=Customer::findOrFail($id);
+            $customer = Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status'=>'suspended']);
+                $customer->update(['status' => 'suspended']);
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'customer suspended successfully',
-                ],200);
+                    'success' => true,
+                    'message' => 'customer suspended successfully',
+                ], 200);
             } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
 
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
 
     }
+
     /**
      * activate the specified Customer.
      */
-    public function activateCustomer($id) :JsonResponse
+    public function activateCustomer($id): JsonResponse
     {
         try {
-            $customer=Customer::findOrFail($id);
+            $customer = Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status'=>'active']);
+                $customer->update(['status' => 'active']);
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'customer activated successfully',
-                ],200);
+                    'success' => true,
+                    'message' => 'customer activated successfully',
+                ], 200);
             } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
 
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
 
     }
+
     /**
      * Remove the specified worker from storage.
      */
-    public function deleteWorker($id) :JsonResponse
+    public function deleteWorker($id): JsonResponse
     {
         try {
-            $worker=Worker::findOrFail($id)->delete();
+            $worker = Worker::findOrFail($id)->delete();
             if ($worker) {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'worker deleted successfully',
-                ],200);
+                    'success' => true,
+                    'message' => 'worker deleted successfully',
+                ], 200);
             } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
 
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
     }
+
     /**
      * suspend the specified worker.
      */
-    public function suspendWorker($id) :JsonResponse
+    public function suspendWorker($id): JsonResponse
     {
         try {
-            $worker=Worker::findOrFail($id);
+            $worker = Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status'=>'suspended']);
+                $worker->update(['status' => 'suspended']);
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'worker suspended successfully',
-                ],200);
+                    'success' => true,
+                    'message' => 'worker suspended successfully',
+                ], 200);
             } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
 
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
     }
+
     /**
      * verify or activate worker
      */
-    public function verifyWorker($id){
+    public function verifyWorker($id)
+    {
         try {
-            $worker=Worker::findOrFail($id);
+            $worker = Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status'=>'active']);
+                $worker->update(['status' => 'active']);
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'worker activated successfully',
-                ],200);
+                    'success' => true,
+                    'message' => 'worker activated successfully',
+                ], 200);
             } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
 
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
-                'message'=>$th->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 404);
         }
     }
+
     /**
      * show the reports.
      */
     public function showReports(): JsonResponse
     {
         try {
-            $reports=Report::all();
-            if ($reports){
+            $reports = Report::all();
+            if ($reports) {
                 return response()->json([
-                    'Reports'=>$reports
+                    'Reports' => $reports
                 ]);
-            }else{
+            } else {
                 return response()->json([
-                    'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'success' => true,
+                    'message' => 'some problems',
+                ], 400);
             }
-        }catch (\Throwable $throwable){
+        } catch (\Throwable $throwable) {
             return response()->json([
-                'success'=>false,
-                'message'=>$throwable->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
         }
     }
+
     /**
      * create category
      */
     public function createCategory(Request $request)
     {
-        try{
+        try {
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'min:3', 'max:255', 'unique:category'],
-                'description' => ['required','min:3', 'max:255', 'nullable'],
-                'image' => ['required','min:3', 'max:255', 'nullable'],
+                'description' => ['required', 'min:3', 'max:255', 'nullable'],
+                'image' => ['required', 'min:3', 'max:255', 'nullable'],
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -319,39 +318,41 @@ class AdminController extends Controller
                 return response()->json([
                     'message' => 'Category not created'
                 ], 500);
-            } else{
+            } else {
                 return response()->json($category);
             }
-        }catch (\Throwable $throwable){
+        } catch (\Throwable $throwable) {
             return response()->json([
-                'success'=>false,
-                'message'=>$throwable->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
         }
     }
+
     /**
      * get all accounts
      */
-    public function showAllAccounts(){
-        try{
+    public function showAllAccounts()
+    {
+        try {
             $customers = Customer::all();
             $workers = Worker::all();
-            if ($customers && $workers){
+            if ($customers && $workers) {
                 return response()->json([
-                    'Customers'=>$customers,
-                    'Workers'=>$workers,
-                ],200);
-            }else{
+                    'Customers' => $customers,
+                    'Workers' => $workers,
+                ], 200);
+            } else {
                 return response()->json([
                     //'success'=>true,
-                    'message'=>'some problems',
-                ],400);
+                    'message' => 'some problems',
+                ], 400);
             }
-        }catch (\Throwable $throwable){
+        } catch (\Throwable $throwable) {
             return response()->json([
-                'success'=>false,
-                'message'=>$throwable->getMessage(),
-            ],404);
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
         }
     }
 }

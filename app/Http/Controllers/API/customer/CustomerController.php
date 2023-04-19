@@ -46,42 +46,18 @@ class CustomerController extends Controller
     public function store(StoreCustomerRequest $request): JsonResponse
     {
         try {
-//            $validation=Validator::make($request->all(),[
-//                'name'=>['required','string','max:255'],
-//                'email'=>['required','string','max:255','email','unique:customer'],
-//                'password'=>['required','string','min:5'],
-//                'phone'=>['required','int'],
-//                'address'=>['required','string'],
-//                'image'=>['required','string'],
-//            ]);
-//            if ($validation->fails()){
-//                return response()->json([
-//                    'success'=>false,
-//                    'message'=>$validation->errors()->all(),
-//                ],200);
-//            }else{
-                $customer=Customer::create($request->all()
-//                    [
-//                    'name'=>$request->name,
-//                    'email'=>$request->email,
-//                    //'password'=>Hash::make($request->password),
-//                    'password'=>$request->password,
-//                    'phone'=>$request->phone,
-//                    'address'=>$request->address,
-//                    'image'=>$request->image,
-//                ]
-                );
-                if ($customer){
-                    return response()->json([
-                        //'success'=>true,
-                        'message'=>"Customer added",
-                    ],200);
-                }else{
-                    return response()->json([
-                        //'success'=>true,
-                        'message'=>'some problem',
-                    ],401);
-                }
+            $customer=Customer::create($request->all());
+            if ($customer){
+                return response()->json([
+                    //'success'=>true,
+                    'message'=>"Customer added",
+                ],200);
+            }else{
+                return response()->json([
+                    //'success'=>true,
+                    'message'=>'some problem',
+                ],401);
+            }
 //            }
         } catch (\Throwable $th) {
             return response()->json([

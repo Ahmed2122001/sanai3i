@@ -12,7 +12,7 @@ use App\Traits\GeneralTrait;
 
 class AuthController extends Controller
 {
-    /** 
+    /**
      * Create a new AuthController instance.
      * @return void
      */
