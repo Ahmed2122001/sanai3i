@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\categoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\region\RegionController;
+use App\Http\Controllers\filterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +79,9 @@ Route::group(
         Route::post('/categories', [categoryController::class, 'create']);
         Route::put('/categories/{id}', [categoryController::class, 'update']);
         Route::delete('/categories/{id}', [categoryController::class, 'delete']);
+        Route::prefix('Filter')->group(function () {
+            Route::get('/category/{id}', [filterController::class, 'filterByCategory']);
+        });
         //admin
         Route::prefix('/admin')->group(function () {
             //admin
