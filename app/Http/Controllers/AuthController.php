@@ -13,7 +13,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 
 class AuthController extends Controller
 {
-    /** 
+    /**
      * Create a new AuthController instance.
      * @return void
      */

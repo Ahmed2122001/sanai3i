@@ -139,3 +139,32 @@ Route::group(
         });
     }
 );
+Route::group(
+    [
+        'middleware' => 'auth:sanctum',
+        'prefix'=>'sanai3i'
+    ],
+    function ($router) {
+        //admin
+        Route::prefix('/admin')->group(function (){
+            //admin
+            Route::get('/admins',[AdminController::class,'index']);
+            Route::post('/addadmins',[AdminController::class,'addAdmin']);
+            Route::put('/{admin}',[AdminController::class,'update']);
+            Route::delete('/{admin}',[AdminController::class,'delete']);
+            //functionality
+            Route::get('/fix/{id}',[AdminController::class,'fixAccount']);
+            Route::delete('/allusers/deletecustomer/{id}',[AdminController::class,'deleteCustomer']);
+            Route::put('/allusers/suspendcustomer/{id}',[AdminController::class,'suspendCustomer']);
+            Route::put('/allusers/activate/{id}',[AdminController::class,'activateCustomer']);
+            Route::delete('/allusers/deleteworker/{id}',[AdminController::class,'deleteWorker']);
+            Route::put('/allusers/suspendworker/{id}',[AdminController::class,'suspendWorker']);
+            Route::put('/allusers/verifyworker/{id}',[AdminController::class,'verifyWorker']);
+            Route::get('/allusers',[AdminController::class,'showAllAccounts']);
+            Route::post('/category',[AdminController::class,'createCategory']);
+            Route::get('/reports',[AdminController::class,'showReports']);  //show all reports
+        });
+});
+Route::post('/sanai3i/login',[AuthController::class,'loginAsAdmin']);
+//Route::post('/loginWorker', [AuthController::class, 'loginAsWorker']);
+//Route::post('/loginCustomer', [AuthController::class, 'loginAsCustomer']);
