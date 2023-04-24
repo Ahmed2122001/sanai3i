@@ -30,7 +30,7 @@ class RegionController extends Controller
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json($validator->errors(), 400);
         }
         $region = Region::create($request->all());
         return response()->json(['region' => $region, 'تم اضافة المنطقة بنجاح']);
