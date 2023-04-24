@@ -35,7 +35,6 @@ Route::group(
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsCustomer']);
         Route::post('/customer/register', [AuthController::class, 'customerRegister']);
-
     }
 );
 Route::group(
@@ -46,7 +45,6 @@ Route::group(
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsWorker']);
         Route::post('/worker/register', [AuthController::class, 'workerRegister']);
-
     }
 );
 Route::group(
@@ -108,7 +106,7 @@ Route::group(
         'prefix' => 'sanai3i'
     ],
     function ($router) {
-        Route::prefix("customer")->group(function (){
+        Route::prefix("customer")->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::post('/refresh', [AuthController::class, 'refresh']);
             Route::get('/user-profile', [AuthController::class, 'userProfile']);
@@ -116,7 +114,7 @@ Route::group(
             //filters
             Route::get('/category/{id}', [FilterController::class, 'filterByCategory']);
             Route::get('/region/{id}', [FilterController::class, 'filterByRegion']);
-            Route::get('/category/{id}/region/{id}', [FilterController::class, 'filterByCategoryAndRegion']);
+            //  Route::get('/category/{id}/region/{id}', [FilterController::class, 'filterByCategoryAndRegion']);
             // filter by category
             Route::get('/category/{id}', [filterController::class, 'filterByCategory']);
             // filter by region
@@ -126,7 +124,7 @@ Route::group(
             //  filterByPriceRateAndQualityRateAndTimeRate
             Route::post('/filterByPriceRateAndQualityRateAndTimeRate', [filterController::class, 'filterByPriceRateAndQualityRateAndTimeRate']);
             // filter by category and region and price rate and quality rate and time rate
-            Route::post('filtration',[filterController::class,'filter']);
+            Route::post('filtration', [filterController::class, 'filter']);
         });
     }
 );
@@ -143,6 +141,5 @@ Route::group(
         Route::get('/all-region', [RegionController::class, 'showAllRegions']);
         Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         Route::post('/update/{id}', [WorkerController::class, 'update']);
-
     }
 );
