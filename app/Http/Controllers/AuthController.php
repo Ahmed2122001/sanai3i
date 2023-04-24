@@ -56,8 +56,8 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:customer',
-            'password' => 'required|string|min:6',
-            'phone' => 'required|string|max:11',
+            'password' => 'required|string|max:8|min:8',
+            'phone' => 'required|string|max:11|min:11',
             'address' => 'required|string|between:4,100',
             'image' => 'string|between:100,250',
             'status' => 'string|between:5,10'
@@ -65,7 +65,7 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json($validator->errors(), 400);
         }
         $user = Customer::create(array_merge(
             $validator->validated(),
