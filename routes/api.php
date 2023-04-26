@@ -82,17 +82,16 @@ Route::group(
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
             Route::post('/category', [AdminController::class, 'createCategory']);
-            Route::get('/categories', [CategoryController::class, 'index']);
             Route::put('/{category}', [CategoryController::class, 'update']);
             Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
         });
         Route::prefix('region')->group(function () {
             //regions
-            Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+            // Route::get('/all-region', [RegionController::class, 'showAllRegions']);
             Route::post('/store', [RegionController::class, 'create']);
             Route::get('/show/{id}', [RegionController::class, 'showOneRegion']);
-            Route::put('/update/{id}', [RegionController::class, 'update']);
+            // Route::put('/update/{id}', [RegionController::class, 'update']);
             Route::delete('/delete/{id}', [RegionController::class, 'delete']);
         });
     }
@@ -143,3 +142,7 @@ Route::group(
         Route::post('/update/{id}', [WorkerController::class, 'update']);
     }
 );
+Route::prefix('sanai3i')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+});
