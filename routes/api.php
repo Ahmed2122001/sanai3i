@@ -5,7 +5,7 @@ use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\worker\WorkerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\categoryController;
+use App\Http\Controllers\category\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\region\RegionController;
 use App\Http\Controllers\filterController;
@@ -35,7 +35,6 @@ Route::group(
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsCustomer']);
         Route::post('/customer/register', [AuthController::class, 'customerRegister']);
-
     }
 );
 Route::group(
@@ -46,7 +45,6 @@ Route::group(
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsWorker']);
         Route::post('/worker/register', [AuthController::class, 'workerRegister']);
-
     }
 );
 Route::group(
@@ -84,17 +82,16 @@ Route::group(
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
             Route::post('/category', [AdminController::class, 'createCategory']);
-            Route::get('/categories', [CategoryController::class, 'index']);
             Route::put('/{category}', [CategoryController::class, 'update']);
             Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
         });
         Route::prefix('region')->group(function () {
             //regions
-            Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+            // Route::get('/all-region', [RegionController::class, 'showAllRegions']);
             Route::post('/store', [RegionController::class, 'create']);
             Route::get('/show/{id}', [RegionController::class, 'showOneRegion']);
-            Route::put('/update/{id}', [RegionController::class, 'update']);
+            // Route::put('/update/{id}', [RegionController::class, 'update']);
             Route::delete('/delete/{id}', [RegionController::class, 'delete']);
         });
     }
@@ -108,7 +105,7 @@ Route::group(
         'prefix' => 'sanai3i'
     ],
     function ($router) {
-        Route::prefix("customer")->group(function (){
+        Route::prefix("customer")->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::post('/refresh', [AuthController::class, 'refresh']);
             Route::get('/user-profile', [AuthController::class, 'userProfile']);
@@ -116,7 +113,7 @@ Route::group(
             //filters
             Route::get('/category/{id}', [FilterController::class, 'filterByCategory']);
             Route::get('/region/{id}', [FilterController::class, 'filterByRegion']);
-            Route::get('/category/{id}/region/{id}', [FilterController::class, 'filterByCategoryAndRegion']);
+            //  Route::get('/category/{id}/region/{id}', [FilterController::class, 'filterByCategoryAndRegion']);
             // filter by category
             Route::get('/category/{id}', [filterController::class, 'filterByCategory']);
             // filter by region
@@ -126,7 +123,7 @@ Route::group(
             //  filterByPriceRateAndQualityRateAndTimeRate
             Route::post('/filterByPriceRateAndQualityRateAndTimeRate', [filterController::class, 'filterByPriceRateAndQualityRateAndTimeRate']);
             // filter by category and region and price rate and quality rate and time rate
-            Route::post('filtration',[filterController::class,'filter']);
+            Route::post('filtration', [filterController::class, 'filter']);
         });
     }
 );
@@ -143,6 +140,9 @@ Route::group(
         Route::get('/all-region', [RegionController::class, 'showAllRegions']);
         Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         Route::post('/update/{id}', [WorkerController::class, 'update']);
-
     }
 );
+Route::prefix('sanai3i')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+});

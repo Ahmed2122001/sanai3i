@@ -22,17 +22,17 @@ class Worker extends Authenticatable implements JWTSubject
         "phone",
         "address",
         "city_id",
+        "category_id",
         "image",
-        "filed_work ",
-        "description",
-        "portifolio",
-        "status",
-        "role",
     ];
     protected $hidden = [
         'password',
         'remember_token',
     ];
+    public function messages()
+    {
+        return $this->morphMany(Message::class, 'recipient');
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
