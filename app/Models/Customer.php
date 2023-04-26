@@ -21,8 +21,9 @@ class Customer extends Authenticatable implements JWTSubject
         'password',
         'phone',
         'address',
+        'city_id',
         'image',
-        'status',
+
     ];
     protected $hidden = [
         'password',
@@ -45,5 +46,9 @@ class Customer extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+    public function messages()
+    {
+        return $this->morphMany(Message::class, 'recipient');
     }
 }
