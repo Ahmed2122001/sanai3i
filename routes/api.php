@@ -5,7 +5,7 @@ use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\worker\WorkerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\categoryController;
+use App\Http\Controllers\category\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\region\RegionController;
 use App\Http\Controllers\filterController;
