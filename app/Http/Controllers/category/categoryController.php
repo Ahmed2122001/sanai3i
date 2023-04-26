@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\category;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+
 use App\Models\Category;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
