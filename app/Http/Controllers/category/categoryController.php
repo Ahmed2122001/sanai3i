@@ -13,7 +13,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::get();
-        return response()->json(['region' => $categories, 'تم استرجاع البيانات بنجاح']);;
+        return response()->json(['categories' => $categories, 'تم استرجاع البيانات بنجاح']);;
     }
     public function show($id)
     {
