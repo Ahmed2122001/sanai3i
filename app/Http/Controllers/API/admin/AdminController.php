@@ -139,7 +139,8 @@ class AdminController extends Controller
         try {
             $customer = Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status' => 'suspended']);
+                $customer->status = 'deactive';
+                $customer->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'customer suspended successfully',
@@ -168,7 +169,8 @@ class AdminController extends Controller
         try {
             $customer = Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status' => 'active']);
+                $customer->status = 'active';
+                $customer->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'customer activated successfully',
@@ -224,7 +226,8 @@ class AdminController extends Controller
         try {
             $worker = Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status' => 'suspended']);
+                $worker->status = 'deactive';
+                $worker->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'worker suspended successfully',
@@ -252,7 +255,8 @@ class AdminController extends Controller
         try {
             $worker = Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status' => 'active']);
+                $worker->status = 'active';
+                $worker->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'worker activated successfully',
