@@ -82,8 +82,8 @@ Route::group(
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
             Route::post('/category', [AdminController::class, 'createCategory']);
-            Route::put('/{category}', [CategoryController::class, 'update']);
-            Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+            Route::put('/category/{id}', [CategoryController::class, 'update']);
+            Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
         });
         Route::prefix('region')->group(function () {
@@ -140,6 +140,7 @@ Route::group(
         Route::get('/all-region', [RegionController::class, 'showAllRegions']);
         Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         Route::post('/update/{id}', [WorkerController::class, 'update']);
+        Route::put('/update_profile', [WorkerController::class, 'update_porofile']);
     }
 );
 Route::prefix('sanai3i')->group(function () {
