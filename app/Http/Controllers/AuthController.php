@@ -152,6 +152,7 @@ class AuthController extends Controller
 
         ], 201);
     }
+
     public function loginAsWorker(Request $request)
     {
         $validator = Validator::make($request->all(), [
