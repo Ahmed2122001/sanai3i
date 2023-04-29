@@ -350,4 +350,28 @@ class AdminController extends Controller
             ], 404);
         }
     }
+    /*
+     * show workers requests
+     */
+    public function showWorkersRequests()
+    {
+        try {
+            $workers = Worker::where('status', 'deactive')->get();
+            if ($workers) {
+                return response()->json([
+                    'Workers' => $workers,
+                ], 200);
+            } else {
+                return response()->json([
+                    //'success'=>true,
+                    'message' => 'some problems',
+                ], 400);
+            }
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
+        }
+    }
 }

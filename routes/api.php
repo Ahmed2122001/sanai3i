@@ -85,6 +85,7 @@ Route::group(
             Route::put('/category/{id}', [CategoryController::class, 'update']);
             Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
+            Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
         });
         Route::prefix('region')->group(function () {
             //regions
