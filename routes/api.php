@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\admin\AdminController;
 use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\worker\WorkerController;
+use App\Http\Controllers\verifications\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\category\CategoryController;
@@ -148,3 +149,7 @@ Route::prefix('sanai3i')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/all-region', [RegionController::class, 'showAllRegions']);
 });
+
+//for verification email
+Route::get( 'email/verifyCustomer/{id}', [VerificationController::class, 'verifyCustomer'])->name('verification.verifyCustomer');
+Route::get( 'email/verifyًWorker/{id}', [VerificationController::class, 'verifyًWorker'])->name('verification.verifyًWorker');

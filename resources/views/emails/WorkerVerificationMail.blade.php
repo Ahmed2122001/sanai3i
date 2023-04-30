@@ -9,10 +9,10 @@
 </head>
 <body>
 <div>
-    <h1> Customer email Verification</h1>
-    <p>Hi {{ $customer->name }}</p>
+    <h1> Worker email Verification</h1>
+    <p>Hi {{ $worker->name }}</p>
     <p>please click the button to verify the link will expire after 10 Minutes </p>
-    <a href="{{ URL::temporarySignedRoute('verification.verifyCustomer',now()->addMinutes(10),['id'=>$customer->id]) }}" class="btn btn-primary">Verify Account</a>
+    <a href="{{ URL::temporarySignedRoute('verification.verifyًWorker',now()->addMinutes(10),['id'=>$worker->id]) }}" class="btn btn-primary">Verify Account</a>
 </div>
 </body>
 </html>
