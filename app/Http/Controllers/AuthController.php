@@ -85,13 +85,11 @@ class AuthController extends Controller
         $user->image = $request->input('image');
         $user->save();
 
-
         // $user->notify(new VerifyEmail);
-        $token = auth()->login($user);
         return response()->json([
 
-            'message' => 'تم تسجيل الدخول بنجاح',
-            'remember_token' => $token,
+            'message' => ' تم تسجيل الحساب بنجاح افحص بريدك الالكتروني لتفعيل الحساب',
+            //'remember_token' => "",
             // 'user' => $user,
 
         ], 201);
@@ -142,16 +140,17 @@ class AuthController extends Controller
         $user->category_id = $Category->id;
         $user->description = $request->input('description');
         $user->image = $request->input('image');
+        $user->status = 'deactive';
         $user->save();
-        $token = auth()->login($user);
         return response()->json([
 
-            'message' => 'تم تسجيل الدخول بنجاح',
-            'remember_token' => $token,
+            'message' => ' تم تسجيل الحساب بنجاح افحص الايميل لتفعيل الحساب',
+            //'remember_token' => '',
             // 'user' => $user,
 
         ], 201);
     }
+
     public function loginAsWorker(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -163,6 +162,7 @@ class AuthController extends Controller
         }
         $credentials = $request->only('email', 'password');
         $token = auth::guard('api-worker')->attempt($credentials);
+        //$n_token = $this->createNewToken($token);
         if (!$token) {
             return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجى ادخال البريد الاكتروني او كلمة سر صحيحه'], 401);
         } else {

@@ -121,14 +121,12 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
             ], 404);
         }
-
     }
 
     /**
@@ -139,7 +137,8 @@ class AdminController extends Controller
         try {
             $customer = Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status' => 'suspended']);
+                $customer->status = 'deactive';
+                $customer->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'customer suspended successfully',
@@ -150,14 +149,12 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
             ], 404);
         }
-
     }
 
     /**
@@ -168,7 +165,8 @@ class AdminController extends Controller
         try {
             $customer = Customer::findOrFail($id);
             if ($customer) {
-                $customer->update(['status' => 'active']);
+                $customer->status = 'active';
+                $customer->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'customer activated successfully',
@@ -179,14 +177,12 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
             ], 404);
         }
-
     }
 
     /**
@@ -207,7 +203,6 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
@@ -224,7 +219,8 @@ class AdminController extends Controller
         try {
             $worker = Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status' => 'suspended']);
+                $worker->status = 'deactive';
+                $worker->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'worker suspended successfully',
@@ -235,7 +231,6 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
@@ -252,7 +247,8 @@ class AdminController extends Controller
         try {
             $worker = Worker::findOrFail($id);
             if ($worker) {
-                $worker->update(['status' => 'active']);
+                $worker->status = 'active';
+                $worker->save();
                 return response()->json([
                     'success' => true,
                     'message' => 'worker activated successfully',
@@ -263,7 +259,6 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
@@ -340,6 +335,30 @@ class AdminController extends Controller
             if ($customers && $workers) {
                 return response()->json([
                     'Customers' => $customers,
+                    'Workers' => $workers,
+                ], 200);
+            } else {
+                return response()->json([
+                    //'success'=>true,
+                    'message' => 'some problems',
+                ], 400);
+            }
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
+        }
+    }
+    /*
+     * show workers requests
+     */
+    public function showWorkersRequests()
+    {
+        try {
+            $workers = Worker::where('status', 'deactive')->get();
+            if ($workers) {
+                return response()->json([
                     'Workers' => $workers,
                 ], 200);
             } else {

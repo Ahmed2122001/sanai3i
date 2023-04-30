@@ -55,9 +55,9 @@ class CategoryController extends Controller
             ], 404);
         }
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'min:3', 'max:255', 'unique:category'],
-            'description' => ['min:3', 'max:255', 'nullable'],
-            'image' => ['min:3', 'max:255', 'nullable'],
+            'name' => 'string|min:3|max:255| unique:category',
+            'description' => 'string| min:3|max:255',
+            'image' => 'String|min:3|max:255',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -66,7 +66,8 @@ class CategoryController extends Controller
             ], 422);
         }
         $category->update($request->all());
-        return response()->json($category);
+
+        return response()->json(["Category updated"], 200);
     }
     public function delete($id)
     {
