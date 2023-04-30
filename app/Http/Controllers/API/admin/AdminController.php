@@ -297,59 +297,42 @@ class AdminController extends Controller
      */
     public function createCategory(Request $request)
     {
-        // try {
-        //     $validator = Validator::make($request->all(), [
-        //         'name' => ['required', 'min:3', 'max:255', 'unique:category'],
-        //         'description' => ['required', 'min:3', 'max:255', 'nullable'],
-        //         'image' => ['required', 'min:3', 'max:255', 'nullable'],
-        //     ]);
-        //     if ($validator->fails()) {
-        //         return response()->json([
-        //             'message' => $validator->errors()->all()
-        //         ], 422);
-        //     }
-        //     $category = Category::create($request->all());
-        //     if (!$category) {
-        //         return response()->json([
-        //             'message' => 'Category not created'
-        //         ], 500);
-        //     } else {
-        //         return response()->json($category);
-        //     }
-        // } catch (\Throwable $throwable) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => $throwable->getMessage(),
-        //     ], 404);
-        // }
+         try {
+             $request->validate([
+                 'name' => 'required|string',
+                 'description' => 'required|string',
+                 'image' => 'required|file|mimes:jpeg,png|max:1024',
+             ]);
+
+             // Get the uploaded image file
+             $uploadedFile = $request->file('image');
+
+             // Generate a unique filename for the uploaded image
+             $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+             // Store the uploaded image in the public/images directory
+             $path = $uploadedFile->storeAs('public/images', $filename);
+
+             // Create a new category instance
+             $category = new Category();
+             $category->name = $request->input('name');
+             $category->description = $request->input('description');
+             $category->image = $path;
+             $category->save();
+
+             // Return a response indicating that the category has been created
+             return response()->json([
+                 'message' => 'Category created successfully',
+                 // 'category' => $category,
+             ], 201);
+         } catch (\Throwable $throwable) {
+             return response()->json([
+                 'success' => false,
+                 'message' => $throwable->getMessage(),
+             ], 404);
+         }
         // Validate the request data
-        $request->validate([
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'image' => 'required|file|mimes:jpeg,png|max:1024',
-        ]);
 
-        // Get the uploaded image file
-        $uploadedFile = $request->file('image');
-
-        // Generate a unique filename for the uploaded image
-        $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-        // Store the uploaded image in the public/images directory
-        $path = $uploadedFile->storeAs('public/images', $filename);
-
-        // Create a new category instance
-        $category = new Category();
-        $category->name = $request->input('name');
-        $category->description = $request->input('description');
-        $category->image = $path;
-        $category->save();
-
-        // Return a response indicating that the category has been created
-        return response()->json([
-            'message' => 'Category created successfully',
-            // 'category' => $category,
-        ], 201);
     }
 
     /**

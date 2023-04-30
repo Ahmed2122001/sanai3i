@@ -6,7 +6,7 @@ use App\Http\Controllers\API\worker\WorkerController;
 use App\Http\Controllers\verifications\VerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\category\CategoryController;
+use App\Http\Controllers\category\categoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\region\RegionController;
 use App\Http\Controllers\filterController;
@@ -83,8 +83,8 @@ Route::group(
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
             Route::post('/category', [AdminController::class, 'createCategory']);
-            Route::put('/category/{id}', [CategoryController::class, 'update']);
-            Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
+            Route::post('/category/{id}', [categoryController::class, 'update']);
+            Route::delete('/categories/{id}', [categoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
         });
@@ -146,7 +146,7 @@ Route::group(
     }
 );
 Route::prefix('sanai3i')->group(function () {
-    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories', [categoryController::class, 'index']);
     Route::get('/all-region', [RegionController::class, 'showAllRegions']);
 });
 
