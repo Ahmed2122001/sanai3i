@@ -82,7 +82,7 @@ Route::group(
             Route::put('/allusers/suspendworker/{id}', [AdminController::class, 'suspendWorker']);
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
-            Route::post('/category', [AdminController::class, 'createCategory']);
+            Route::post('/category', [categoryController::class, 'createCategory']);
             Route::post('/category/{id}', [categoryController::class, 'update']);
             Route::delete('/categories/{id}', [categoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
@@ -151,5 +151,5 @@ Route::prefix('sanai3i')->group(function () {
 });
 
 //for verification email
-Route::get( 'email/verifyCustomer/{id}', [VerificationController::class, 'verifyCustomer'])->name('verification.verifyCustomer');
-Route::get( 'email/verifyًWorker/{id}', [VerificationController::class, 'verifyًWorker'])->name('verification.verifyًWorker');
+Route::get('email/verifyCustomer/{id}', [VerificationController::class, 'verifyCustomer'])->name('verification.verifyCustomer');
+Route::get('email/verifyًWorker/{id}', [VerificationController::class, 'verifyًWorker'])->name('verification.verifyًWorker');
