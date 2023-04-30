@@ -13,10 +13,10 @@ class categoryController extends Controller
 {
     public function index()
     {
-        try{
+        try {
             $categories = Category::get();
             return response()->json(['categories' => $categories, 'تم استرجاع البيانات بنجاح']);;
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'لا يوجد بيانات',
                 'error' => $e->getMessage(),
@@ -25,7 +25,7 @@ class categoryController extends Controller
     }
     public function show($id)
     {
-        try{
+        try {
             $category = Category::find($id);
             if (!$category) {
                 return response()->json([
@@ -33,41 +33,53 @@ class categoryController extends Controller
                 ], 404);
             } else
                 return response()->json($category);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'لا يوجد بيانات',
                 'error' => $e->getMessage(),
             ], 404);
         }
     }
-    public function create(Request $request)
+    public function createCategory(Request $request)
     {
-        try{
-            $validator = Validator::make($request->all(), [
-                'name' => ['required', 'min:3', 'max:255', 'unique:category'],
-                'description' => ['min:3', 'max:255', 'nullable'],
-                'image' => ['min:3', 'max:255', 'nullable'],
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'description' => 'required|string',
+                'image' => 'required|file|mimes:jpeg,png|max:1024',
             ]);
-            if ($validator->fails()) {
-                return response()->json([
-                    'message' => 'Validation error',
-                    'errors' => $validator->errors()->all()
-                ], 422);
-            }
-            $category = Category::create($request->all());
-            if (!$category) {
-                return response()->json([
-                    'message' => 'Category not created'
-                ], 500);
-            } else
-                return response()->json($category);
-        }catch (\Exception $e) {
+
+            // Get the uploaded image file
+            $uploadedFile = $request->file('image');
+
+            // Generate a unique filename for the uploaded image
+            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+            // Store the uploaded image in the public/images directory
+            $path = $uploadedFile->storeAs('public/images', $filename);
+
+            // Create a new category instance
+            $category = new Category();
+            $category->name = $request->input('name');
+            $category->description = $request->input('description');
+            $category->image = $path;
+            $category->save();
+
+            // Return a response indicating that the category has been created
             return response()->json([
-                'message' => 'Category not created',
-                'error' => $e->getMessage(),
-            ], 500);
+                'message' => 'Category created successfully',
+                // 'category' => $category,
+            ], 201);
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
         }
+        // Validate the request data
+
     }
+
     public function update(Request $request, $id)
     {
         try {
@@ -81,7 +93,7 @@ class categoryController extends Controller
             // Find the category to update
             $category = Category::findOrFail($id);
 
-            if ($category){
+            if ($category) {
                 if ($request->has('name')) {
                     $category->name = $request->name;
                 }
@@ -117,13 +129,12 @@ class categoryController extends Controller
                         'message' => 'Category not updated',
                     ], 500);
                 }
-            }else{
+            } else {
                 return response()->json([
                     'message' => 'Category not found',
                 ], 404);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Category not updated',
                 'error' => $e->getMessage(),
@@ -132,7 +143,7 @@ class categoryController extends Controller
     }
     public function delete($id)
     {
-        try{
+        try {
             $category = Category::find($id);
             if (!$category) {
                 return response()->json([
@@ -143,7 +154,7 @@ class categoryController extends Controller
             return response()->json([
                 'message' => 'Category deleted',
             ]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Category not deleted',
                 'error' => $e->getMessage(),

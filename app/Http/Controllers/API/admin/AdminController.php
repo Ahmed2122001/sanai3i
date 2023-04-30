@@ -295,45 +295,6 @@ class AdminController extends Controller
     /**
      * create category
      */
-    public function createCategory(Request $request)
-    {
-         try {
-             $request->validate([
-                 'name' => 'required|string',
-                 'description' => 'required|string',
-                 'image' => 'required|file|mimes:jpeg,png|max:1024',
-             ]);
-
-             // Get the uploaded image file
-             $uploadedFile = $request->file('image');
-
-             // Generate a unique filename for the uploaded image
-             $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-             // Store the uploaded image in the public/images directory
-             $path = $uploadedFile->storeAs('public/images', $filename);
-
-             // Create a new category instance
-             $category = new Category();
-             $category->name = $request->input('name');
-             $category->description = $request->input('description');
-             $category->image = $path;
-             $category->save();
-
-             // Return a response indicating that the category has been created
-             return response()->json([
-                 'message' => 'Category created successfully',
-                 // 'category' => $category,
-             ], 201);
-         } catch (\Throwable $throwable) {
-             return response()->json([
-                 'success' => false,
-                 'message' => $throwable->getMessage(),
-             ], 404);
-         }
-        // Validate the request data
-
-    }
 
     /**
      * get all accounts
