@@ -105,11 +105,11 @@ class AuthController extends Controller
     public function workerRegister(Request $request)
     {
         // $city_id = Region::select('id')->where('city_name', $request->city)->first();
-        // dd($city_id);
+//         dd($request);
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:worker',
-            'password' => 'required|string|min:8|max:8',
+            'password' => 'required|string|min:8',
             'phone' => 'required|string|max:11|min:11',
             'address' => 'required|string|between:4,100',
             'city_id ' => 'exists:region,id',

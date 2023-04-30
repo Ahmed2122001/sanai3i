@@ -222,14 +222,15 @@ class WorkerController extends Controller
     {
         //        dd($request->all());
         // Validate the input using Laravel's built-in validation rules
+//        dd($request->all());
         $request->validate([
             'old_password' => 'required',
-            'new_password' => 'required|min:5|confirmed'
+            'new_password' => 'required|min:8|confirmed'
         ]);
 
         // Find the worker with the specified ID in the database
         $worker = Worker::findOrFail($id);
-
+//        dd($worker);
         // Verify that the old password matches the one in the database
         if (!Hash::check($request->input('old_password'), $worker->password)) {
             return response()->json(['error' => 'Invalid old password'], 401);
