@@ -140,6 +140,7 @@ Route::group(
         Route::get('/all-region', [RegionController::class, 'showAllRegions']);
         Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         Route::post('/update/{id}', [WorkerController::class, 'update']);
+
     }
 );
 Route::prefix('sanai3i')->group(function () {
