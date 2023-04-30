@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CustomerVerification;
+use App\Mail\WorkerVerification;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +17,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Contracts\Container\CircularDependencyException;
 use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use PhpParser\Node\Stmt\If_;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -61,7 +64,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:customer',
-            'password' => 'required|string|max:8|min:8',
+            'password' => 'required|string|min:8',
             'phone' => 'required|string|max:11|min:11',
             'address' => 'required|string|between:4,100',
             'city_id ' => 'exists:region,id',
@@ -84,15 +87,19 @@ class AuthController extends Controller
         $user->city_id = $region->id;
         $user->image = $request->input('image');
         $user->save();
-
-        // $user->notify(new VerifyEmail);
-        return response()->json([
-
-            'message' => ' تم تسجيل الحساب بنجاح افحص بريدك الالكتروني لتفعيل الحساب',
-            //'remember_token' => "",
-            // 'user' => $user,
-
-        ], 201);
+        if ($user) {
+            try {
+                Mail::to($user->email)->send(new CustomerVerification($user));
+                return response()->json([
+                    'message' => 'Registered successfully please check your email to verify your account',
+                ], 201);
+            }catch (Exception $e) {
+                $user->delete();
+                return response()->json([
+                    'message' => 'could not send verification email please try again later'
+                ], 500);
+            }
+        }
     }
     public function getcitybyid($id)
     {
@@ -142,13 +149,20 @@ class AuthController extends Controller
         $user->image = $request->input('image');
         $user->status = 'deactive';
         $user->save();
-        return response()->json([
 
-            'message' => ' تم تسجيل الحساب بنجاح افحص الايميل لتفعيل الحساب',
-            //'remember_token' => '',
-            // 'user' => $user,
-
-        ], 201);
+        if ($user) {
+            try {
+                Mail::to($user->email)->send(new WorkerVerification($user));
+                return response()->json([
+                    'message' => 'Registered successfully please check your email to verify your account',
+                ], 201);
+            }catch (Exception $e) {
+                $user->delete();
+                return response()->json([
+                    'message' => 'could not send verification email please try again later'
+                ], 500);
+            }
+        }
     }
 
     public function loginAsWorker(Request $request)
