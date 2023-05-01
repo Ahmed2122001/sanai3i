@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\verifications;
+namespace App\Http\Controllers\API\verifications;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;

@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\Auth;
 
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Exception;
 use App\Mail\CustomerVerification;
 use App\Mail\WorkerVerification;
 use App\Models\Category;
+use App\Models\Customer;
+use App\Models\Region;
+use App\Models\Worker;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Customer;
-use App\Models\Worker;
-use App\Models\Region;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use App\Traits\GeneralTrait;
-use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Contracts\Container\CircularDependencyException;
-use Lcobucci\JWT\Validation\Constraint\ValidAt;
-use PhpParser\Node\Stmt\If_;
-use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -259,3 +257,4 @@ class AuthController extends Controller
         ]);
     }
 }
+

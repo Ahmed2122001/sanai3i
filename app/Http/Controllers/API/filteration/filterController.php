@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\filteration;
 
-use App\Models\Rate;
-use Illuminate\Http\Request;
-use App\Models\category;
-use App\Models\region;
+use App\Http\Controllers\Controller;
 use App\Models\worker;
+use Illuminate\Http\Request;
 
 class filterController extends Controller
 {
