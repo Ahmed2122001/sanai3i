@@ -42,11 +42,20 @@ class categoryController extends Controller
     }
     public function create(Request $request)
     {
+<<<<<<< Updated upstream
         try{
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'min:3', 'max:255', 'unique:category'],
                 'description' => ['min:3', 'max:255', 'nullable'],
                 'image' => ['min:3', 'max:255', 'nullable'],
+=======
+        try {
+            //dd($request->all());
+            $request->validate([
+                'name' => 'required|string',
+                'description' => 'required|string',
+                'image' => 'required|file|mimes:jpeg,png|max:1024',
+>>>>>>> Stashed changes
             ]);
             if ($validator->fails()) {
                 return response()->json([
