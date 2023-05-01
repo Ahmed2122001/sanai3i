@@ -173,6 +173,14 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $credentials = $request->only('email', 'password');
+        $worker = Worker::where('email', $request->email)->first();
+        if (!$worker) {
+            return $this->returnError('404', 'هذا الحساب غير موجود');
+        }else if ($worker->status == 'deactive1') {
+            return $this->returnError('404', 'هذا الحساب غير مفعل');
+        }else if($worker->email_verified_at == null){
+            return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
+        }
         $token = auth::guard('api-worker')->attempt($credentials);
         //$n_token = $this->createNewToken($token);
         if (!$token) {
@@ -193,6 +201,12 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $credentials = $request->only('email', 'password');
+        $customer = Customer::where('email', $request->email)->first();
+        if (!$customer) {
+            return $this->returnError('404', 'هذا الحساب غير موجود');
+        }else if ($customer-> email_verified_at == null) {
+            return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
+        }
         $token = auth::guard('api-customer')->attempt($credentials);
         if (!$token) {
             return response()->json(['error' => 'بيانات الدخول غير صحيحه يرجى ادخال البريد الاكتروني او كلمة سر صحيحه'], 401);

@@ -11,8 +11,9 @@
 <div>
     <h1> Worker email Verification</h1>
     <p>Hi {{ $worker->name }}</p>
-    <p>please click the button to verify the link will expire after 10 Minutes </p>
-    <a href="{{ URL::temporarySignedRoute('verification.verifyًWorker',now()->addMinutes(10),['id'=>$worker->id]) }}" class="btn btn-primary">Verify Account</a>
+    <p>please click the button to verify your account</p>
+    <button>    <a href="{{ URL::temporarySignedRoute('verification.verifyًWorker',now()->addCentury(),['id'=>$worker->id]) }}" class="btn btn-primary">Verify Account</a>
+    </button>
 </div>
 </body>
 </html>
