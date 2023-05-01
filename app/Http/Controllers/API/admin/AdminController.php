@@ -293,10 +293,13 @@ class AdminController extends Controller
     }
 
     /**
+<<<<<<< Updated upstream
      * create category
      */
 
     /**
+=======
+>>>>>>> Stashed changes
      * get all accounts
      */
     public function showAllAccounts()
@@ -328,7 +331,7 @@ class AdminController extends Controller
     public function showWorkersRequests()
     {
         try {
-            $workers = Worker::where('status', 'deactive')->get();
+            $workers = Worker::where('status', 'deactive1')->get();
             if ($workers) {
                 return response()->json([
                     'Workers' => $workers,

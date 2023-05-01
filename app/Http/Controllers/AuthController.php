@@ -147,7 +147,7 @@ class AuthController extends Controller
         $user->category_id = $Category->id;
         $user->description = $request->input('description');
         $user->image = $request->input('image');
-        $user->status = 'deactive';
+        $user->status = 'deactive1';
         $user->save();
 
         if ($user) {

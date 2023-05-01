@@ -43,10 +43,12 @@ class categoryController extends Controller
     public function createCategory(Request $request)
     {
         try {
+            //dd($request->all());
+
             $request->validate([
                 'name' => 'required|string',
-                'description' => 'required|string',
-                'image' => 'required|file|mimes:jpeg,png|max:1024',
+                'description' => ,
+                'image' => ',
             ]);
 
             // Get the uploaded image file
