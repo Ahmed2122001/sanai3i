@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\API\admin\AdminController;
 use App\Http\Controllers\API\Auth\AuthController;
-use App\Http\Controllers\API\category\CategoryController;
+use App\Http\Controllers\API\category\categoryController;
 use App\Http\Controllers\API\filteration\filterController;
 use App\Http\Controllers\API\payment\StripePaymentController;
 use App\Http\Controllers\API\region\RegionController;
@@ -81,9 +81,9 @@ Route::group(
             Route::put('/allusers/suspendworker/{id}', [AdminController::class, 'suspendWorker']);
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
-            Route::post('/category', [CategoryController::class, 'createCategory']);
-            Route::post('/category/{id}', [CategoryController::class, 'update']);
-            Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
+            Route::post('/category', [categoryController::class, 'createCategory']);
+            Route::post('/category/{id}', [categoryController::class, 'update']);
+            Route::delete('/categories/{id}', [categoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
         });
@@ -147,7 +147,7 @@ Route::group(
     }
 );
 Route::prefix('sanai3i')->group(function () {
-    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories', [categoryController::class, 'index']);
     Route::get('/all-region', [RegionController::class, 'showAllRegions']);
 });
 

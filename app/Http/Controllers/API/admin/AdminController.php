@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\admin;
 
-use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\categoryController;
 use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\worker\WorkerController;

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryController extends Controller
+class categoryController extends Controller
 {
     public function index()
     {
