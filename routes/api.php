@@ -1,15 +1,14 @@
 <?php
 
 use App\Http\Controllers\API\admin\AdminController;
-use App\Http\Controllers\API\customer\CustomerController;
+use App\Http\Controllers\API\Auth\AuthController;
+use App\Http\Controllers\API\category\categoryController;
+use App\Http\Controllers\API\filteration\filterController;
+use App\Http\Controllers\API\payment\StripePaymentController;
+use App\Http\Controllers\API\region\RegionController;
+use App\Http\Controllers\API\verifications\VerificationController;
 use App\Http\Controllers\API\worker\WorkerController;
-use App\Http\Controllers\verifications\VerificationController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\category\categoryController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\region\RegionController;
-use App\Http\Controllers\filterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,6 +125,8 @@ Route::group(
             Route::post('/filterByPriceRateAndQualityRateAndTimeRate', [filterController::class, 'filterByPriceRateAndQualityRateAndTimeRate']);
             // filter by category and region and price rate and quality rate and time rate
             Route::post('filtration', [filterController::class, 'filter']);
+            // payment route
+            Route::post('/payment', [StripePaymentController::class, 'pay']);
         });
     }
 );

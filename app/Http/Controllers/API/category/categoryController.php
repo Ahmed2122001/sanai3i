@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\category;
+namespace App\Http\Controllers\API\category;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
-use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 
 class categoryController extends Controller
@@ -43,13 +42,17 @@ class categoryController extends Controller
     public function createCategory(Request $request)
     {
         try {
-            //dd($request->all());
+//            dd($request->all());
 
-            $request->validate([
-                'name' => 'required|string',
-                'description' => ,
-                'image' => ',
+
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255|unique:category',
+                'description' => 'required|string|max:255',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
 
             // Get the uploaded image file
             $uploadedFile = $request->file('image');
@@ -70,7 +73,7 @@ class categoryController extends Controller
             // Return a response indicating that the category has been created
             return response()->json([
                 'message' => 'Category created successfully',
-                // 'category' => $category,
+                 'category' => $category,
             ], 201);
         } catch (\Throwable $throwable) {
             return response()->json([

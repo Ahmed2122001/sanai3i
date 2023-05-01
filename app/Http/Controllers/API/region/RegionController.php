@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\region;
+namespace App\Http\Controllers\API\region;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Region;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RegionController extends Controller

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\messages;
+namespace App\Http\Controllers\API\messages;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Messages;
+use Illuminate\Http\Request;
 
 class messagesController extends Controller
 {
