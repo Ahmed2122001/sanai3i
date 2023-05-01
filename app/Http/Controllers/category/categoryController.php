@@ -47,8 +47,8 @@ class categoryController extends Controller
 
             $request->validate([
                 'name' => 'required|string',
-                'description' => ,
-                'image' => ',
+                'description' => '',
+                'image' => '',
             ]);
 
             // Get the uploaded image file
