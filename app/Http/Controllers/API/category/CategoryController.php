@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class categoryController extends Controller
+class CategoryController extends Controller
 {
     public function index()
     {
@@ -90,9 +90,9 @@ class categoryController extends Controller
         try {
             // Validate the request data
             $request->validate([
-                'name' => 'string',
-                'description' => 'string',
-                'image' => 'file|mimes:jpeg,png|max:1024',
+                'name' => 'string|max:255|unique:category,name,' . $id,
+                'description' => 'required|string|max:255',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
             // Find the category to update
