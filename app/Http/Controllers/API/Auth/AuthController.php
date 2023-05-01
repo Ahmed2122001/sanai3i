@@ -176,6 +176,8 @@ class AuthController extends Controller
         $worker = Worker::where('email', $request->email)->first();
         if (!$worker) {
             return $this->returnError('404', 'هذا الحساب غير موجود');
+        }else if ($worker->status == 'deactive') {
+            return $this->returnError('404', 'تم ايقاف الحساب من قبل الادمن');
         }else if ($worker->status == 'deactive1') {
             return $this->returnError('404', 'هذا الحساب غير مفعل');
         }else if($worker->email_verified_at == null){
@@ -206,6 +208,8 @@ class AuthController extends Controller
             return $this->returnError('404', 'هذا الحساب غير موجود');
         }else if ($customer-> email_verified_at == null) {
             return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
+        }else if($customer->status="deactive"){
+            return $this->returnError('404', 'تم ايقاف الحساب من قبل الادمن');
         }
         $token = auth::guard('api-customer')->attempt($credentials);
         if (!$token) {
