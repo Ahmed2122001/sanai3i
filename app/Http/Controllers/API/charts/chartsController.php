@@ -15,10 +15,10 @@ class chartsController extends Controller
 
         for ($month = 1; $month <= 12; $month++) {
             $workers = Worker::whereMonth('created_at', $month)->count();
-            $counts[$month] = $workers;
+            $counts[] = $workers;
         }
 
-        return response()->json($counts);
+        return response()->json($counts, 200);
     }
     public function getCustomerByMonth()
     {
@@ -26,9 +26,10 @@ class chartsController extends Controller
 
         for ($month = 1; $month <= 12; $month++) {
             $customers = Customer::whereMonth('created_at', $month)->count();
-            $counts[$month] = $customers;
+            $counts[] = $customers;
         }
 
-        return response()->json($counts);
+
+        return response()->json($counts, 200);
     }
 }
