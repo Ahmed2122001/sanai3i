@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Requests;
 use PhpParser\Node\Expr\FuncCall;
 
-class chartsController extends Controller
+class ChartsController extends Controller
 {
     public function getUsersByMonth()
     {
