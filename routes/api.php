@@ -3,7 +3,7 @@
 use App\Http\Controllers\API\admin\AdminController;
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\category\CategoryController;
-use App\Http\Controllers\Api\charts\chartsController;
+use App\Http\Controllers\Api\charts\ChartsController;
 use App\Http\Controllers\API\filteration\filterController;
 use App\Http\Controllers\API\payment\StripePaymentController;
 use App\Http\Controllers\API\region\RegionController;
@@ -87,8 +87,8 @@ Route::group(
             Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
-            Route::get('getWorkerbyMonth', [chartsController::class, 'getWorkersByMonth']);
-            Route::get('getCustomerByMonth', [chartsController::class, 'getCustomerByMonth']);
+            Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
+            Route::get('getRequestsByMonth', [ChartsController::class, 'getRequestsByMonth']);
         });
         Route::prefix('region')->group(function () {
             //regions
