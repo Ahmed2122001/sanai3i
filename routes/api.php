@@ -9,6 +9,7 @@ use App\Http\Controllers\API\payment\StripePaymentController;
 use App\Http\Controllers\API\region\RegionController;
 use App\Http\Controllers\API\verifications\VerificationController;
 use App\Http\Controllers\API\worker\WorkerController;
+use App\Http\Controllers\API\requests\RequestsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,8 +88,8 @@ Route::group(
             Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
-            Route::get('getWorkerbyMonth', [chartsController::class, 'getWorkersByMonth']);
-            Route::get('getCustomerByMonth', [chartsController::class, 'getCustomerByMonth']);
+            Route::get('getUsersByMonth', [chartsController::class, 'getUsersByMonth']);
+            Route::get('getRequestsByMonth', [chartsController::class, 'getRequestsByMonth']);
         });
         Route::prefix('region')->group(function () {
             //regions
@@ -130,6 +131,8 @@ Route::group(
             Route::post('filtration', [filterController::class, 'filter']);
             // payment route
             Route::post('/payment', [StripePaymentController::class, 'pay']);
+            //create request
+            Route::post('/makeRequest', [RequestsController::class, 'store']);
         });
     }
 );

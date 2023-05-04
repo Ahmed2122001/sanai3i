@@ -91,7 +91,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'Registered successfully please check your email to verify your account',
                 ], 201);
-            }catch (Exception $e) {
+            } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
                     'message' => 'could not send verification email please try again later'
@@ -110,7 +110,7 @@ class AuthController extends Controller
     public function workerRegister(Request $request)
     {
         // $city_id = Region::select('id')->where('city_name', $request->city)->first();
-//         dd($request);
+        //         dd($request);
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:worker',
@@ -154,7 +154,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'Registered successfully please check your email to verify your account',
                 ], 201);
-            }catch (Exception $e) {
+            } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
                     'message' => 'could not send verification email please try again later'
@@ -176,11 +176,11 @@ class AuthController extends Controller
         $worker = Worker::where('email', $request->email)->first();
         if (!$worker) {
             return $this->returnError('404', 'هذا الحساب غير موجود');
-        }else if ($worker->status == 'deactive') {
+        } else if ($worker->status == 'deactive') {
             return $this->returnError('404', 'تم ايقاف الحساب من قبل الادمن');
-        }else if ($worker->status == 'deactive1') {
+        } else if ($worker->status == 'deactive1') {
             return $this->returnError('404', 'هذا الحساب غير مفعل');
-        }else if($worker->email_verified_at == null){
+        } else if ($worker->email_verified_at == null) {
             return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
         }
         $token = auth::guard('api-worker')->attempt($credentials);
@@ -206,9 +206,9 @@ class AuthController extends Controller
         $customer = Customer::where('email', $request->email)->first();
         if (!$customer) {
             return $this->returnError('404', 'هذا الحساب غير موجود');
-        }else if ($customer-> email_verified_at == null) {
+        } else if ($customer->email_verified_at == null) {
             return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
-        }else if($customer->status="deactive"){
+        } else if ($customer->status == "deactive") {
             return $this->returnError('404', 'تم ايقاف الحساب من قبل الادمن');
         }
         $token = auth::guard('api-customer')->attempt($credentials);
@@ -275,4 +275,3 @@ class AuthController extends Controller
         ]);
     }
 }
-
