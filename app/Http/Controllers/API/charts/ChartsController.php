@@ -22,10 +22,7 @@ class ChartsController extends Controller
             $customers = Customer::whereMonth('created_at', $month)->count();
             $counts_customer[] = $customers;
         }
-        return response()->json([
-            "workers" => $counts_worker,
-            "customer"=> $counts_customer],
-            200);
+        return response()->json(["workers"=> $counts_worker, "customer" => $counts_customer], 200);
     }
     public function getRequestsByMonth()
     {
