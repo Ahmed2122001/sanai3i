@@ -85,6 +85,8 @@ Route::group(
             Route::post('/category', [CategoryController::class, 'createCategory']);
             Route::post('/category/{id}', [CategoryController::class, 'update']);
             Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
+            // get one category by id
+            Route::get('/category/{id}', [CategoryController::class, 'show']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
@@ -130,6 +132,7 @@ Route::group(
             Route::post('filtration', [filterController::class, 'filter']);
             // payment route
             Route::post('/payment', [StripePaymentController::class, 'pay']);
+
         });
     }
 );
