@@ -26,12 +26,15 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::find($id);
-            if (!$category) {
+            if ($category) {
                 return response()->json([
-                    'message' => 'لا يوجد بيانات'
+                    'category' => $category,
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'لا يوجد بيانات',
                 ], 404);
-            } else
-                return response()->json($category);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'لا يوجد بيانات',
