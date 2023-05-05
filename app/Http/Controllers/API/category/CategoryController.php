@@ -153,15 +153,22 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::find($id);
-            if (!$category) {
+            if ($category) {
+                $del=$category->delete();
+                if ($del) {
+                    return response()->json([
+                        'message' => 'Category deleted',
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'message' => 'Category not deleted',
+                    ], 500);
+                }
+            }else{
                 return response()->json([
-                    'message' => 'Category not found'
+                    'message' => 'Category not found',
                 ], 404);
             }
-            $category->delete();
-            return response()->json([
-                'message' => 'Category deleted',
-            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Category not deleted',
