@@ -120,9 +120,9 @@ Route::group(
             Route::get('/category/{id}', [FilterController::class, 'filterByCategory']);
             Route::get('/region/{id}', [FilterController::class, 'filterByRegion']);
             //  Route::get('/category/{id}/region/{id}', [FilterController::class, 'filterByCategoryAndRegion']);
-            // filter by category
+            // filter workers by category
             Route::get('/category/{id}', [filterController::class, 'filterByCategory']);
-            // filter by region
+            // filter workers by region
             Route::get('/region/{id}', [filterController::class, 'filterByRegion']);
             // filter by category and region
             Route::post('/filterByCategoryAndRegion', [filterController::class, 'filterByCategoryAndRegion']);
