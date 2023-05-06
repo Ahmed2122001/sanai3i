@@ -6,6 +6,7 @@ use App\Http\Controllers\API\category\CategoryController;
 use App\Http\Controllers\Api\charts\ChartsController;
 use App\Http\Controllers\API\filteration\filterController;
 use App\Http\Controllers\API\payment\StripePaymentController;
+use App\Http\Controllers\API\rate\RateController;
 use App\Http\Controllers\API\region\RegionController;
 use App\Http\Controllers\API\verifications\VerificationController;
 use App\Http\Controllers\API\worker\WorkerController;
@@ -132,6 +133,8 @@ Route::group(
             Route::post('filtration', [filterController::class, 'filter']);
             // payment route
             Route::post('/payment', [StripePaymentController::class, 'pay']);
+            //rate worker
+            Route::post('/rate',[RateController::class,'rateWorker']);
 
         });
     }
