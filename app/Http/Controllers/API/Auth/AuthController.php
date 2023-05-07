@@ -190,7 +190,12 @@ class AuthController extends Controller
         } else {
             $worker = auth::guard('api-worker')->user();
             $worker->remembertoken = $token;
-            return $this->returnData('remember_token', $token, 'تم تسجيل الدخول بنجاح');
+//            dd($worker->id);
+            return response()->json([
+                'message' => 'تم تسجيل الدخول بنجاح',
+                'id' => $worker->id,
+                'token' => $token,
+            ], 201);
         }
     }
     public function loginAsCustomer(Request $request)
