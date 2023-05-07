@@ -64,20 +64,27 @@ class CategoryController extends Controller
             $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
 
             // Store the uploaded image in the public/images directory
-            $path = $uploadedFile->storeAs('public/images', $filename);
+            $path=$uploadedFile->move('images', $filename);
+            //dd($path);
+
+//            $path = $uploadedFile->storeAs('public/images', $filename);
 
             // Create a new category instance
-            $category = new Category();
-            $category->name = $request->input('name');
-            $category->description = $request->input('description');
-            $category->image = $path;
-            $category->save();
-
-            // Return a response indicating that the category has been created
-            return response()->json([
-                'message' => 'Category created successfully',
-                 'category' => $category,
-            ], 201);
+            $category =Category::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'image' => $path,
+            ]);
+            if ($category) {
+                return response()->json([
+                    'message' => 'تم اضافة القسم بنجاح',
+                    'category' => $category,
+                ], 201);
+            } else {
+                return response()->json([
+                    'message' => 'لا يوجد بيانات',
+                ], 404);
+            }
         } catch (\Throwable $throwable) {
             return response()->json([
                 'success' => false,

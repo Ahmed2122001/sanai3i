@@ -305,4 +305,26 @@ class WorkerController extends Controller
             'worker' => $worker
         ], 200);
     }
+
+    public function showMyProfile($id){
+        // get worker by id and his category and city and region and his rates and his portfolio
+        $worker = Worker::where('id', $id)->with('category', 'region', 'rate','portfolio')->first();
+//        dd($worker);
+        if ($worker) {
+            return response()->json([
+                'message' => 'worker found',
+                'id' => $worker->id,
+                'worker' => $worker->name,
+                'Rate' => $worker->rate,
+                'Portfolio' => $worker->portfolio,
+                'Category' => $worker->category,
+                'Region' => $worker->region,
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'worker not found',
+                'status' => '401'
+            ], 400);
+        }
+    }
 }
