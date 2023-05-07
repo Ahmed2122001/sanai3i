@@ -194,7 +194,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'تم تسجيل الدخول بنجاح',
                 'id' => $worker->id,
-                'token' => $token,
+                'remember_token' => $token,
             ], 201);
         }
     }
