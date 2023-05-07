@@ -90,6 +90,7 @@ Route::group(
             Route::get('/category/{id}', [CategoryController::class, 'show']);
             Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
+            Route::get('workersrates', [AdminController::class, 'showWorkersRates']);
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
             Route::get('getRequestsByMonth', [ChartsController::class, 'getRequestsByMonth']);
         });
@@ -153,6 +154,7 @@ Route::group(
         Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         Route::post('/update/{id}', [WorkerController::class, 'update']);
         Route::put('/update_profile', [WorkerController::class, 'update_porofile']);
+        Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
     }
 );
 Route::prefix('sanai3i')->group(function () {

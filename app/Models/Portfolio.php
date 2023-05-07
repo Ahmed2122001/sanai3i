@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Requests extends Model
+class Portfolio extends Model
 {
     use HasFactory;
-    protected $table = 'request';
-    protected $fillable = [
-        'description',
-        'customer_id',
-        'worker_id',
-    ];
+    protected $table = 'portfolio';
+    protected $fillable =
+        [
+            'work_image',
+            'worker_id',
+        ];
     //relation with worker
     public function worker()
     {

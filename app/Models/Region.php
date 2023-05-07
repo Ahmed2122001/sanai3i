@@ -15,4 +15,9 @@ class Region extends Model
 
     ];
     use HasFactory;
+    //relation with worker
+    public function worker()
+    {
+        return $this->hasMany(Worker::class, 'city_id');
+    }
 }

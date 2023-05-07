@@ -16,4 +16,10 @@ class Category extends Model
         'image',
     ];
     use HasFactory;
+
+    //relation with worker
+    public function worker()
+    {
+        return $this->hasMany(Worker::class, 'category_id');
+    }
 }

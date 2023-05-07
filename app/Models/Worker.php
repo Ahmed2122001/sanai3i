@@ -33,6 +33,31 @@ class Worker extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(Message::class, 'recipient');
     }
+    //relation with region
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'city_id');
+    }
+    //relation with category
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+    //relation with rate
+    public function rate()
+    {
+        return $this->hasMany(Rate::class, 'worker_id');
+    }
+    //relation with requests
+    public function requests()
+    {
+        return $this->hasMany(Request::class, 'worker_id');
+    }
+    //relation with portfolio
+    public function portfolio()
+    {
+        return $this->hasMany(Portfolio::class, 'worker_id');
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

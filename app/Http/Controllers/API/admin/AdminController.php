@@ -3,14 +3,8 @@
 namespace App\Http\Controllers\API\admin;
 
 use App\Http\Controllers\API\CategoryController;
-use App\Http\Controllers\API\customer\CustomerController;
-use App\Http\Controllers\API\ReportController;
-use App\Http\Controllers\API\worker\WorkerController;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\admin\StoreAdminRequest;
-use App\Http\Requests\admin\StoreCategoryRequest;
 use App\Models\Admin;
-use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Report;
 use App\Models\Worker;
@@ -293,13 +287,6 @@ class AdminController extends Controller
     }
 
     /**
-<<<<<<< Updated upstream
-     * create category
-     */
-
-    /**
-=======
->>>>>>> Stashed changes
      * get all accounts
      */
     public function showAllAccounts()
@@ -332,6 +319,32 @@ class AdminController extends Controller
     {
         try {
             $workers = Worker::where('status', 'deactive1')->get();
+            if ($workers) {
+                return response()->json([
+                    'Workers' => $workers,
+                ], 200);
+            } else {
+                return response()->json([
+                    //'success'=>true,
+                    'message' => 'some problems',
+                ], 400);
+            }
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
+        }
+    }
+
+    /*
+     * show workers rates
+     */
+    //todo: show workers rates
+    public function showWorkersRates(){
+        try {
+            // get all workers with their rates
+            $workers = Worker::orderBy('id', 'asc')->with('rate')->get();
             if ($workers) {
                 return response()->json([
                     'Workers' => $workers,

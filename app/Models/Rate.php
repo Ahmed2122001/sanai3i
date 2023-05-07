@@ -17,4 +17,9 @@ class Rate extends Model
             'customer_id ',
             'worker_id ',
         ];
+    //relation with worker
+    public function worker()
+    {
+        return $this->belongsTo(Worker::class, 'worker_id');
+    }
 }

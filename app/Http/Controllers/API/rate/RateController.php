@@ -25,7 +25,6 @@ class RateController extends Controller
                 return response()->json($validate->errors(), 400);
             }
             $rate=new Rate;
-            $rate->customer_id=$request->customer_id;
             $rate->worker_id=$request->worker_id;
             $rate->time_rate=$request->time_rate;
             $rate->price_rate=$request->price_rate;
