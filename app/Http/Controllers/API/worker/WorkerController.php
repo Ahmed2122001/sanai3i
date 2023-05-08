@@ -286,7 +286,7 @@ class WorkerController extends Controller
                     $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
 
                     // Store the uploaded image in the public/images directory
-                    $path = $uploadedFile->move('public/images', $filename);
+                    $path = $uploadedFile->move('images', $filename);
 
                     // Delete the old image file
                     Storage::delete($worker->image);
@@ -306,6 +306,10 @@ class WorkerController extends Controller
                 if ($request->city_id) {
                     $worker->city_id = $request->city_id;
                 }
+            }else{
+                return response()->json([
+                    'message' => 'Worker not found',
+                ], 404);
             }
             $worker->save();
             if ($worker) {
@@ -320,7 +324,7 @@ class WorkerController extends Controller
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Category not updated',
+                'message' => 'Worker not updated',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -333,16 +337,27 @@ class WorkerController extends Controller
         // get worker by id and his category and city and region and his rates and his portfolio
         $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
         //        dd($worker);
+        $path = public_path($worker->image);
+
         if ($worker) {
-            return response()->json([
-                'message' => 'worker found',
+            $data = [
                 'id' => $worker->id,
-                'worker' => $worker->name,
-                'Rate' => $worker->rate,
+                'name' => $worker->name,
+                'email' => $worker->email,
+                'phone' => $worker->phone,
+                'address' => $worker->address,
                 'Portfolio' => $worker->portfolio,
                 'Category' => $worker->category,
                 'Region' => $worker->region,
-            ], 200);
+            ];
+            if (!file_exists($path)) {
+                return response()->json($data, 200);
+            }else{
+                $file = file_get_contents($path);
+                $base64 = base64_encode($file);
+                $data['image'] = $base64;
+                return response()->json($data, 200);
+            }
         } else {
             return response()->json([
                 'message' => 'worker not found',
