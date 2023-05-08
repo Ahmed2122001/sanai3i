@@ -342,6 +342,7 @@ class WorkerController extends Controller
                     'email' => $worker->email,
                     'phone' => $worker->phone,
                     'address' => $worker->address,
+                    'description' => $worker->description,
                     'Portfolio' => $worker->portfolio,
                     'Category' => $worker->category,
                     'Region' => $worker->region,
@@ -370,6 +371,42 @@ class WorkerController extends Controller
         }catch (\Throwable $th) {
             return response()->json([
                 'message' => 'worker not found',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    // update function description
+    public function updateDescription(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'description' => 'string|max:255',
+            ]);
+            $worker = Worker::find($id);
+            if ($worker) {
+                if ($request->description) {
+                    $worker->description = $request->description;
+                }
+            }else{
+                return response()->json([
+                    'message' => 'Worker not found',
+                ], 404);
+            }
+            $worker->save();
+            if ($worker) {
+                return response()->json([
+                    'message' => 'تم تعديل البيانات بنجاح',
+
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'حدث خطأ ما',
+                ], 401);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Worker not updated',
                 'error' => $th->getMessage(),
             ], 500);
         }

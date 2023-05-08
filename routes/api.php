@@ -155,6 +155,7 @@ Route::group(
             Route::post('/update/{id}', [WorkerController::class, 'update']);
             Route::post('/update_profile/{id}', [WorkerController::class, 'update_porofile']);
             Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
+            Route::post('description/{id}', [WorkerController::class, 'updateDescription']);
         });
     }
 );
