@@ -135,8 +135,7 @@ Route::group(
             // payment route
             Route::post('/payment', [StripePaymentController::class, 'pay']);
             //rate worker
-            Route::post('/rate',[RateController::class,'rateWorker']);
-
+            Route::post('/rate', [RateController::class, 'rateWorker']);
         });
     }
 );
@@ -153,7 +152,7 @@ Route::group(
         Route::get('/all-region', [RegionController::class, 'showAllRegions']);
         Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
         Route::post('/update/{id}', [WorkerController::class, 'update']);
-        Route::put('/update_profile', [WorkerController::class, 'update_porofile']);
+        Route::post('/update_profile/{id}', [WorkerController::class, 'update_porofile']);
         Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
     }
 );
