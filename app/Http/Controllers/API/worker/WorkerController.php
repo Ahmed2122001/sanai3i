@@ -329,40 +329,49 @@ class WorkerController extends Controller
             ], 500);
         }
     }
-
-
-
     public function showMyProfile($id)
     {
-        // get worker by id and his category and city and region and his rates and his portfolio
-        $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
-        //        dd($worker);
-        $path = public_path($worker->image);
+        try{
+            // get worker by id and his category and city and region and his rates and his portfolio
+            $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
+            //        dd($worker);
+            if ($worker) {
+                $data = [
+                    'id' => $worker->id,
+                    'name' => $worker->name,
+                    'email' => $worker->email,
+                    'phone' => $worker->phone,
+                    'address' => $worker->address,
+                    'Portfolio' => $worker->portfolio,
+                    'Category' => $worker->category,
+                    'Region' => $worker->region,
+                ];
+                if ($worker->image) {
 
-        if ($worker) {
-            $data = [
-                'id' => $worker->id,
-                'name' => $worker->name,
-                'email' => $worker->email,
-                'phone' => $worker->phone,
-                'address' => $worker->address,
-                'Portfolio' => $worker->portfolio,
-                'Category' => $worker->category,
-                'Region' => $worker->region,
-            ];
-            if (!file_exists($path)) {
-                return response()->json($data, 200);
-            }else{
-                $file = file_get_contents($path);
-                $base64 = base64_encode($file);
-                $data['image'] = $base64;
-                return response()->json($data, 200);
+                    $path = public_path($worker->image);
+                    if (!file_exists($path)) {
+                        return response()->json($data, 200);
+                    } else {
+                        $file = file_get_contents($path);
+                        $base64 = base64_encode($file);
+                        $data['image'] = $base64;
+                        return response()->json($data, 200);
+                    }
+                } else {
+                    return response()->json($data, 200);
+                }
+
+            } else {
+                return response()->json([
+                    'message' => 'worker not found',
+                    'status' => '401'
+                ], 400);
             }
-        } else {
+        }catch (\Throwable $th) {
             return response()->json([
                 'message' => 'worker not found',
-                'status' => '401'
-            ], 400);
+                'error' => $th->getMessage(),
+            ], 500);
         }
     }
 }

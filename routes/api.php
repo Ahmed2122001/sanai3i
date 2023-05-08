@@ -143,17 +143,19 @@ Route::group(
 Route::group(
     [
         'middleware' => 'auth.gaurd:api-worker',
-        'prefix' => 'worker'
+        'prefix' => 'sanai3i'
     ],
     function ($router) {
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::post('/refresh', [AuthController::class, 'refresh']);
-        Route::get('/user-profile', [AuthController::class, 'userProfile']);
-        Route::get('/all-region', [RegionController::class, 'showAllRegions']);
-        Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
-        Route::post('/update/{id}', [WorkerController::class, 'update']);
-        Route::post('/update_profile/{id}', [WorkerController::class, 'update_porofile']);
-        Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
+        Route::prefix('worker')->group(function () {
+            Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/refresh', [AuthController::class, 'refresh']);
+            Route::get('/user-profile', [AuthController::class, 'userProfile']);
+            Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+            Route::post('/password/{id}', [WorkerController::class, 'updatePassword']);
+            Route::post('/update/{id}', [WorkerController::class, 'update']);
+            Route::post('/update_profile/{id}', [WorkerController::class, 'update_porofile']);
+            Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
+        });
     }
 );
 Route::prefix('sanai3i')->group(function () {
