@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\Region;
 
@@ -222,7 +223,7 @@ class WorkerController extends Controller
     {
         //        dd($request->all());
         // Validate the input using Laravel's built-in validation rules
-//        dd($request->all());
+        //        dd($request->all());
         $request->validate([
             'old_password' => 'required',
             'new_password' => 'required|min:8|confirmed'
@@ -230,7 +231,7 @@ class WorkerController extends Controller
 
         // Find the worker with the specified ID in the database
         $worker = Worker::findOrFail($id);
-//        dd($worker);
+        //        dd($worker);
         // Verify that the old password matches the one in the database
         if (!Hash::check($request->input('old_password'), $worker->password)) {
             return response()->json(['error' => 'Invalid old password'], 401);
@@ -265,51 +266,73 @@ class WorkerController extends Controller
             ], 404);
         }
     }
-    public function update_porofile(Request $request)
+    public function update_porofile(Request $request, $id)
     {
-        $worker = Auth::guard('api-worker')->user();
-        $validator = Validator::make($request->all(), [
-            'name' => 'string|between:2,100',
-            'phone' => 'string|max:11|min:11',
-            'address' => 'string|between:4,100',
-            'city_id ' => 'exists:region,id',
-            'category_id ' => 'exists:category,id',
-            'description' => 'string|between:50,500',
-            'image' => 'string|between:100,250',
+        try {
+            $request->validate([
+                'name' => 'string|max:255|unique:category,name,' . $id,
+                'phone' => 'string|max:11|min:11',
+                'address' => 'string|between:4,100',
+                'city_id' => 'exists:region,id',
+                'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+            $worker = Worker::find($id);
+            if ($worker) {
+                if ($request->hasFile('image')) {
+                    // Get the uploaded image file
+                    $uploadedFile = $request->file('image');
 
-        ]);
+                    // Generate a unique filename for the uploaded image
+                    $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-        $Category = Category::find($request->input('category_id'));
-        $region = Region::find($request->input('city_id'));
-        if (!$region) {
-            return $this->returnError('404', 'هذه المدينه غير موجوده');
-        }
-        if (!$Category) {
-            return $this->returnError('404', 'هذه الفئه غير موجوده');
-        }
-        Worker::updated([
-            'name' => $request->input('name'),
-            'phone' => $request->input('phone'),
-            'address' => $request->input('address'),
-            'city_id' => $request->input('city_id'),
-            'category_id' => $request->input('category_id'),
-            'description' => $request->input('description'),
-            'image' => $request->input('image'),
-        ]);
+                    // Store the uploaded image in the public/images directory
+                    $path = $uploadedFile->move('public/images', $filename);
 
-        return response()->json([
-            'message' => 'تم تعديل البيانات بنجاح',
-            'worker' => $worker
-        ], 200);
+                    // Delete the old image file
+                    Storage::delete($worker->image);
+
+                    // Update the category image path
+                    $worker->image = $path;
+                }
+                if ($request->name) {
+                    $worker->name = $request->name;
+                }
+                if ($request->phone) {
+                    $worker->phone = $request->phone;
+                }
+                if ($request->address) {
+                    $worker->address = $request->address;
+                }
+                if ($request->city_id) {
+                    $worker->city_id = $request->city_id;
+                }
+            }
+            $worker->save();
+            if ($worker) {
+                return response()->json([
+                    'message' => 'تم تعديل البيانات بنجاح',
+
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'حدث خطأ ما',
+                ], 401);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Category not updated',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 
-    public function showMyProfile($id){
+
+
+    public function showMyProfile($id)
+    {
         // get worker by id and his category and city and region and his rates and his portfolio
-        $worker = Worker::where('id', $id)->with('category', 'region', 'rate','portfolio')->first();
-//        dd($worker);
+        $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
+        //        dd($worker);
         if ($worker) {
             return response()->json([
                 'message' => 'worker found',

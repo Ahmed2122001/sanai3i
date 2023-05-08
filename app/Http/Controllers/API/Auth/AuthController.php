@@ -66,7 +66,7 @@ class AuthController extends Controller
             'phone' => 'required|string|max:11|min:11',
             'address' => 'required|string|between:4,100',
             'city_id ' => 'exists:region,id',
-            'image' => 'string|between:100,250',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -76,6 +76,15 @@ class AuthController extends Controller
         if (!$region) {
             return $this->returnError('404', 'هذه المدينه غير موجوده');
         }
+        // Get the uploaded image file
+        $uploadedFile = $request->file('image');
+
+        // Generate a unique filename for the uploaded image
+        $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+        // Store the uploaded image in the public/images directory
+        $path = $uploadedFile->move('images', $filename);
+
         $user = new Customer();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
@@ -83,7 +92,7 @@ class AuthController extends Controller
         $user->phone = $request->input('phone');
         $user->address = $request->input('address');
         $user->city_id = $region->id;
-        $user->image = $request->input('image');
+        $user->image = $path;
         $user->save();
         if ($user) {
             try {
@@ -91,7 +100,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'Registered successfully please check your email to verify your account',
                 ], 201);
-            }catch (Exception $e) {
+            } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
                     'message' => 'could not send verification email please try again later'
@@ -110,7 +119,7 @@ class AuthController extends Controller
     public function workerRegister(Request $request)
     {
         // $city_id = Region::select('id')->where('city_name', $request->city)->first();
-//         dd($request);
+        //         dd($request);
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:worker',
@@ -120,7 +129,7 @@ class AuthController extends Controller
             'city_id ' => 'exists:region,id',
             'category_id ' => 'exists:category,id',
             'description' => 'string|between:50,500',
-            'image' => 'string|between:100,250',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
         ]);
 
@@ -135,6 +144,14 @@ class AuthController extends Controller
         if (!$Category) {
             return $this->returnError('404', 'هذه الفئه غير موجوده');
         }
+        // Get the uploaded image file
+        $uploadedFile = $request->file('image');
+
+        // Generate a unique filename for the uploaded image
+        $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+        // Store the uploaded image in the public/images directory
+        $path = $uploadedFile->move('images', $filename);
         $user = new Worker();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
@@ -144,7 +161,7 @@ class AuthController extends Controller
         $user->city_id = $region->id;
         $user->category_id = $Category->id;
         $user->description = $request->input('description');
-        $user->image = $request->input('image');
+        $user->image = $path;
         $user->status = 'deactive1';
         $user->save();
 
@@ -154,7 +171,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'Registered successfully please check your email to verify your account',
                 ], 201);
-            }catch (Exception $e) {
+            } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
                     'message' => 'could not send verification email please try again later'
@@ -176,11 +193,11 @@ class AuthController extends Controller
         $worker = Worker::where('email', $request->email)->first();
         if (!$worker) {
             return $this->returnError('404', 'هذا الحساب غير موجود');
-        }else if ($worker->status == 'deactive') {
+        } else if ($worker->status == 'deactive') {
             return $this->returnError('404', 'تم ايقاف الحساب من قبل الادمن');
-        }else if ($worker->status == 'deactive1') {
+        } else if ($worker->status == 'deactive1') {
             return $this->returnError('404', 'هذا الحساب غير مفعل');
-        }else if($worker->email_verified_at == null){
+        } else if ($worker->email_verified_at == null) {
             return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
         }
         $token = auth::guard('api-worker')->attempt($credentials);
@@ -190,7 +207,7 @@ class AuthController extends Controller
         } else {
             $worker = auth::guard('api-worker')->user();
             $worker->remembertoken = $token;
-//            dd($worker->id);
+            //            dd($worker->id);
             return response()->json([
                 'message' => 'تم تسجيل الدخول بنجاح',
                 'id' => $worker->id,
@@ -211,9 +228,9 @@ class AuthController extends Controller
         $customer = Customer::where('email', $request->email)->first();
         if (!$customer) {
             return $this->returnError('404', 'هذا الحساب غير موجود');
-        }else if ($customer-> email_verified_at == null) {
+        } else if ($customer->email_verified_at == null) {
             return $this->returnError('404', 'من فضلك قم بتفعيل حسابك أولا');
-        }else if($customer->status == "deactive"){
+        } else if ($customer->status == "deactive") {
             return $this->returnError('404', 'تم ايقاف الحساب من قبل الادمن');
         }
         $token = auth::guard('api-customer')->attempt($credentials);
@@ -280,4 +297,3 @@ class AuthController extends Controller
         ]);
     }
 }
-
