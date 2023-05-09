@@ -17,6 +17,7 @@ use App\Models\Region;
 
 
 use Illuminate\Support\Facades\Auth;
+use function PHPUnit\Framework\isEmpty;
 
 
 class WorkerController extends Controller
@@ -360,6 +361,7 @@ class WorkerController extends Controller
                     ->where('worker_id',$id)
                     ->groupBy('worker_id')
                     ->get();
+//                dd($rate);
                 $data = [
                     'id' => $worker->id,
                     'name' => $worker->name,
@@ -382,8 +384,8 @@ class WorkerController extends Controller
                         $data['image'] = $base64;
                         //return response()->json($data, 200);
                     }
-                    if ($rate) {
-                        // add avg rate for 3 rates
+                    //check if rate items was empty
+                    if (!$rate->isEmpty()) {
                         $data['quality_rate'] = $rate[0]->quality_rate;
                         $data['time_rate'] = $rate[0]->avg_time_rate;
                         $data['price_rate'] = $rate[0]->avg_price_rate;
