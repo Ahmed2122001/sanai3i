@@ -8,6 +8,7 @@ use App\Models\Worker;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
@@ -334,28 +335,61 @@ class WorkerController extends Controller
         try{
             // get worker by id and his category and city and region and his rates and his portfolio
             $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
-            //        dd($worker);
+
+            //dd($rate);
             if ($worker) {
+                $category = [
+                    'id' => $worker->category->id,
+                    'name' => $worker->category->name,
+                ];
+                $region = [
+                    'id' => $worker->region->id,
+                    'city_name' => $worker->region->city_name,
+                ];
+                $rate=DB::table('rate')
+                    ->select('worker_id',
+                        // round to get 1 number after point if it was 3.1 it will be 3 and if it was 3.4 it will be 3.5
+                        DB::raw('ROUND(AVG(quality_rate),1) as quality_rate'),
+                        DB::raw('ROUND(AVG(time_rate),1) as avg_time_rate'),
+                        DB::raw('ROUND(AVG(price_rate),1) as avg_price_rate'),
+                        DB::raw('ROUND((AVG(quality_rate) + AVG(time_rate) + AVG(price_rate)) / 3) as avg_rate'))
+//                        DB::raw('AVG(quality_rate) as quality_rate'),
+//                        DB::raw('AVG(time_rate) as avg_time_rate'),
+//                        DB::raw('AVG(price_rate) as avg_price_rate'),
+//                        DB::raw('(AVG(quality_rate) + AVG(time_rate) + AVG(price_rate)) / 3 as avg_rate'))
+                    ->where('worker_id',$id)
+                    ->groupBy('worker_id')
+                    ->get();
                 $data = [
                     'id' => $worker->id,
                     'name' => $worker->name,
                     'email' => $worker->email,
                     'phone' => $worker->phone,
                     'address' => $worker->address,
+                    'created_at' => $worker->created_at,
                     'description' => $worker->description,
                     'Portfolio' => $worker->portfolio,
-                    'Category' => $worker->category,
-                    'Region' => $worker->region,
+                    'Category' => $category,
+                    'Region' => $region,
                 ];
                 if ($worker->image) {
-
                     $path = public_path($worker->image);
                     if (!file_exists($path)) {
-                        return response()->json($data, 200);
+                        //return response()->json($data, 200);
                     } else {
                         $file = file_get_contents($path);
                         $base64 = base64_encode($file);
                         $data['image'] = $base64;
+                        //return response()->json($data, 200);
+                    }
+                    if ($rate) {
+                        // add avg rate for 3 rates
+                        $data['quality_rate'] = $rate[0]->quality_rate;
+                        $data['time_rate'] = $rate[0]->avg_time_rate;
+                        $data['price_rate'] = $rate[0]->avg_price_rate;
+                        $data['rate'] = $rate[0]->avg_rate;
+                        return response()->json($data, 200);
+                    }else{
                         return response()->json($data, 200);
                     }
                 } else {

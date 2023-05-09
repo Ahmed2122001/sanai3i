@@ -10,6 +10,7 @@ use App\Models\Report;
 use App\Models\Worker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -345,9 +346,25 @@ class AdminController extends Controller
         try {
             // get all workers with their rates
             $workers = Worker::orderBy('id', 'asc')->with('rate')->get();
-            if ($workers) {
+            $rate = DB::table('rate')
+                ->select('rate.worker_id',
+                    //DB::raw('AVG(rate.price_rate) as avg_money_rate'),
+                    // round to nearest half number ex: 3.5 , 4.5 , 5 if it was 3.1 it will be 3
+                    DB::raw('ROUND(AVG(rate.time_rate)*2)/2 as avg_time_rate'),
+                    DB::raw('ROUND(AVG(rate.quality_rate)*2)/2 as avg_quality_rate'),
+                    DB::raw('ROUND(AVG(rate.price_rate)*2)/2 as avg_money_rate'),
+                    DB::raw('ROUND((AVG(rate.time_rate)+AVG(rate.quality_rate)+AVG(rate.price_rate))/3) as avg_rate'),
+                    'worker.name',
+                    'worker.email',
+                    'worker.phone')
+                ->join('worker', 'rate.worker_id', '=', 'worker.id')
+                ->groupBy('rate.worker_id', 'worker.name', 'worker.email', 'worker.phone')
+                ->get();
+
+
+            if ($workers && $rate) {
                 return response()->json([
-                    'Workers' => $workers,
+                    'Workers' => $rate,
                 ], 200);
             } else {
                 return response()->json([
