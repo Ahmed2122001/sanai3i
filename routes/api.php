@@ -73,6 +73,7 @@ Route::group(
             Route::put('/{admin}', [AdminController::class, 'update']);
             Route::delete('/{admin}', [AdminController::class, 'delete']);
             Route::post('/logout', [AuthController::class, 'logout']);
+            Route::post('/notify', [AdminController::class, 'notifyWorkers']);
 
             //functionality
             Route::get('/fix/{id}', [AdminController::class, 'fixAccount']);

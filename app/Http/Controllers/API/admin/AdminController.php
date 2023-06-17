@@ -4,13 +4,16 @@ namespace App\Http\Controllers\API\admin;
 
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\Controller;
+use App\Mail\AdminNotification;
 use App\Models\Admin;
 use App\Models\Customer;
+use App\Models\MailBody;
 use App\Models\Report;
 use App\Models\Worker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -372,6 +375,29 @@ class AdminController extends Controller
                     'message' => 'some problems',
                 ], 400);
             }
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'message' => $throwable->getMessage(),
+            ], 404);
+        }
+    }
+    /*
+     * notify workers
+     */
+    public function notifyWorkers(Request $request){
+        try {
+            $workers = Worker::all()->where('status','active');
+            $mailBody = new MailBody();
+            $mailBody->message = $request->message;
+            foreach ($workers as $worker){
+                $mailBody->name = $worker->name;
+                Mail::to($worker->email)->send(new AdminNotification($mailBody));
+            }
+            return response()->json([
+                'success'=>true,
+                'message'=>'notified successfully',
+            ],200);
         } catch (\Throwable $throwable) {
             return response()->json([
                 'success' => false,
