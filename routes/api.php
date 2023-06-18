@@ -4,6 +4,7 @@ use App\Http\Controllers\API\admin\AdminController;
 use App\Http\Controllers\API\Auth\AuthController;
 use App\Http\Controllers\API\category\CategoryController;
 use App\Http\Controllers\Api\charts\ChartsController;
+use App\Http\Controllers\Api\Contract\ContractController;
 use App\Http\Controllers\API\filteration\filterController;
 use App\Http\Controllers\API\payment\StripePaymentController;
 use App\Http\Controllers\API\rate\RateController;
@@ -137,6 +138,13 @@ Route::group(
             Route::post('/payment', [StripePaymentController::class, 'pay']);
             //rate worker
             Route::post('/rate', [RateController::class, 'rateWorker']);
+            //show contracts
+            Route::get('/showContracts', [ContractController::class, 'index']);
+            //add contract
+            Route::post('/addContracts', [ContractController::class, 'store']);
+            //delete contract
+            Route::post('/deleteContracts/{id}', [ContractController::class, 'destroy']);
+
         });
     }
 );
