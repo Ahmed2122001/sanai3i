@@ -58,6 +58,11 @@ class Worker extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Portfolio::class, 'worker_id');
     }
+    //relation with contract
+    public function contract()
+    {
+        return $this->hasMany(Contract::class, 'worker_id');
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
