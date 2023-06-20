@@ -14,6 +14,7 @@ class Contract extends Model
         "start_date",
         "ex_end_date",
         "customer_id",
+        "status",
         "worker_id"
     ];
     public function customer()

@@ -11,6 +11,8 @@ use App\Http\Controllers\API\rate\RateController;
 use App\Http\Controllers\API\region\RegionController;
 use App\Http\Controllers\API\verifications\VerificationController;
 use App\Http\Controllers\API\worker\WorkerController;
+use App\Http\Controllers\API\reports\ReportController;
+use App\Http\Controllers\API\customer\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,19 +80,20 @@ Route::group(
 
             //functionality
             Route::get('/fix/{id}', [AdminController::class, 'fixAccount']);
-            Route::delete('/allusers/deletecustomer/{id}', [AdminController::class, 'deleteCustomer']);
+            Route::delete('/allusers/deletecustomer/{id}', [CustomerController::class, 'delete']);
             Route::put('/allusers/suspendcustomer/{id}', [AdminController::class, 'suspendCustomer']);
             Route::put('/allusers/activate/{id}', [AdminController::class, 'activateCustomer']);
-            Route::delete('/allusers/deleteworker/{id}', [AdminController::class, 'deleteWorker']);
+            Route::delete('/allusers/deleteworker/{id}', [WorkerController::class, 'delete']);
             Route::put('/allusers/suspendworker/{id}', [AdminController::class, 'suspendWorker']);
             Route::put('/allusers/verifyworker/{id}', [AdminController::class, 'verifyWorker']);
             Route::get('/allusers', [AdminController::class, 'showAllAccounts']);
             Route::post('/category', [CategoryController::class, 'createCategory']);
             Route::post('/category/{id}', [CategoryController::class, 'update']);
             Route::delete('/categories/{id}', [CategoryController::class, 'delete']);
+            Route::get('allcontracts',[ContractController::class,'index']);
             // get one category by id
             Route::get('/category/{id}', [CategoryController::class, 'show']);
-            Route::get('/reports', [AdminController::class, 'showReports']);  //show all reports
+            Route::get('/reports', [ReportController::class, 'index']);  //show all reports
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
             Route::get('workersrates', [AdminController::class, 'showWorkersRates']);
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
@@ -139,11 +142,13 @@ Route::group(
             //rate worker
             Route::post('/rate', [RateController::class, 'rateWorker']);
             //show contracts
-            Route::get('/showContracts', [ContractController::class, 'index']);
+            Route::get('/showContracts/{id}', [ContractController::class, 'getMyContracts']);
             //add contract
             Route::post('/addContracts', [ContractController::class, 'store']);
             //delete contract
             Route::post('/deleteContracts/{id}', [ContractController::class, 'destroy']);
+            //report worker
+            Route::post('/report', [ReportController::class, 'store']);
 
         });
     }
@@ -165,6 +170,8 @@ Route::group(
             Route::post('/update_profile/{id}', [WorkerController::class, 'update_porofile']);
             Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
             Route::post('/description/{id}', [WorkerController::class, 'updateDescription']);
+            Route::post('acceptContract/{id}', [ContractController::class, 'acceptContract']);
+            Route::post('rejectContract/{id}', [ContractController::class, 'rejectContract']);
         });
     }
 );

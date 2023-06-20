@@ -19,7 +19,7 @@ class ContractController extends Controller
                 return response()->json([
                     'success' => 'success',
                     'contracts'=>$contracts,
-                ], 201);
+                ], 200);
             }
 
 
@@ -73,7 +73,7 @@ public function store(Request $request)
                    'success'=>'success',
                     'message'=>'تم حذف العقد بنجتح'
 
-                ],201);
+                ],200);
             }else {
                 return response()->json([
                     'success' => 'failed',
@@ -88,8 +88,96 @@ public function store(Request $request)
             ], 404);
         }
     }
-
-
-
-
+    // get my contracts by customer id
+    public function getMyContracts($id){
+        try {
+            $contracts=Contract::where('customer_id',$id)->get();
+            if($contracts){
+                return response()->json([
+                    'success'=>true,
+                    'contracts'=>$contracts
+                ],200);
+            }else {
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقود'
+                ], 400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success' => 'error',
+                'message' => $th->getMessage(),
+            ], 404);
+        }
+    }
+    // get my contracts by worker id
+    public function getContracts($id){
+        try {
+            $contracts=Contract::where('worker_id',$id)->get();
+            if ($contracts){
+                return response()->json([
+                    'success'=>true,
+                    'contracts'=>$contracts
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقود'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success' => 'error',
+                'message' => $th->getMessage(),
+            ], 404);
+        }
+    }
+    //accept contract
+    public function acceptContract($id){
+        try {
+            $contract=Contract::findOrFail($id);
+            if($contract){
+                $contract->status=1;
+                $contract->save();
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'تم قبول العقد بنجاح'
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقد'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success' => 'error',
+                'message' => $th->getMessage(),
+            ], 404);
+        }
+    }
+    //reject contract
+    public function rejectContract($id){
+        try {
+            $contract=Contract::findOrFail($id);
+            if($contract){
+                $contract->status=0;
+                $contract->save();
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'تم رفض العقد بنجاح'
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقد'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success' => 'error',
+                'message' => $th->getMessage(),
+            ], 404);
+        }
+    }
 }

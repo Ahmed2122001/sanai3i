@@ -102,32 +102,6 @@ class AdminController extends Controller
     }
 
     /**
-     * Remove the specified Customer from storage.
-     */
-    public function deleteCustomer($id): JsonResponse
-    {
-        try {
-            $customer = Customer::findOrFail($id)->delete();
-            if ($customer) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'customer deleted successfully',
-                ], 200);
-            } else {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'some problems',
-                ], 400);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'message' => $th->getMessage(),
-            ], 404);
-        }
-    }
-
-    /**
      * suspend the specified Customer.
      */
     public function suspendCustomer($id): JsonResponse
@@ -168,32 +142,6 @@ class AdminController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'customer activated successfully',
-                ], 200);
-            } else {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'some problems',
-                ], 400);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'message' => $th->getMessage(),
-            ], 404);
-        }
-    }
-
-    /**
-     * Remove the specified worker from storage.
-     */
-    public function deleteWorker($id): JsonResponse
-    {
-        try {
-            $worker = Worker::findOrFail($id)->delete();
-            if ($worker) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'worker deleted successfully',
                 ], 200);
             } else {
                 return response()->json([
@@ -261,31 +209,6 @@ class AdminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
-            ], 404);
-        }
-    }
-
-    /**
-     * show the reports.
-     */
-    public function showReports(): JsonResponse
-    {
-        try {
-            $reports = Report::all();
-            if ($reports) {
-                return response()->json([
-                    'Reports' => $reports
-                ]);
-            } else {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'some problems',
-                ], 400);
-            }
-        } catch (\Throwable $throwable) {
-            return response()->json([
-                'success' => false,
-                'message' => $throwable->getMessage(),
             ], 404);
         }
     }
