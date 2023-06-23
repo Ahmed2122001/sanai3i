@@ -177,6 +177,10 @@ Route::group(
             Route::post('/description/{id}', [WorkerController::class, 'updateDescription']);
             Route::post('acceptContract/{id}', [ContractController::class, 'acceptContract']);
             Route::post('rejectContract/{id}', [ContractController::class, 'rejectContract']);
+            //store worker's work
+            Route::post('/storePortfolio', [WorkerController::class, 'storePortfolio']);
+            //delete one image worker's work
+            Route::delete('/deletePortfolio/{id}', [WorkerController::class, 'deletePortfolio']);
         });
     }
 );
