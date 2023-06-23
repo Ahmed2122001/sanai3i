@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\worker;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\worker\WorkerReqest;
+use App\Models\Portfolio;
 use App\Models\Worker;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Http\JsonResponse;
@@ -200,27 +201,6 @@ class WorkerController extends Controller
             ], 400);
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id): JsonResponse
-    {
-        $worker = Worker::where('id', $id)->first()->delete();
-        if ($worker) {
-            return response()->json([
-                //              'success'=>true,
-                'message' => 'worker deleted',
-                'status' => '200'
-            ], 200);
-        } else {
-            return response()->json([
-                //                'success'=>false,
-                'message' => 'worker not found',
-                'status' => '401'
-            ], 400);
-        }
-    }
     public function updatePassword(Request $request, $id)
     {
         //        dd($request->all());
@@ -336,8 +316,20 @@ class WorkerController extends Controller
         try{
             // get worker by id and his category and city and region and his rates and his portfolio
             $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
+            if($worker->portfolio){
+                foreach ($worker->portfolio as $portfolio) {
+                    if (!file_exists($portfolio->work_image)) {
+                        //return response()->json($data, 200);
+                    } else {
+                        $file = file_get_contents($portfolio->work_image);
+                        $base64 = base64_encode($file);
+                        $work_images[] = $base64;
 
-            //dd($rate);
+                        //return response()->json($data, 200);
+                    }
+                }
+            }
+
             if ($worker) {
                 $category = [
                     'id' => $worker->category->id,
@@ -361,7 +353,6 @@ class WorkerController extends Controller
                     ->where('worker_id',$id)
                     ->groupBy('worker_id')
                     ->get();
-//                dd($rate);
                 $data = [
                     'id' => $worker->id,
                     'name' => $worker->name,
@@ -370,7 +361,7 @@ class WorkerController extends Controller
                     'address' => $worker->address,
                     'created_at' => $worker->created_at,
                     'description' => $worker->description,
-                    'Portfolio' => $worker->portfolio,
+                    'Portfolio' => $work_images,
                     'Category' => $category,
                     'Region' => $region,
                 ];
@@ -443,6 +434,69 @@ class WorkerController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => 'Worker not updated',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    //store work images for worker
+    public function storePortfolio(Request $request)
+    {
+        try {
+            $request->validate([
+                'work_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'worker_id' => 'required|integer',
+            ]);
+            $worker = Worker::find($request->worker_id);
+            if ($worker) {
+                $image = $request->file('work_image');
+                $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+                // Store the uploaded image in the public/images directory
+                $path = $image->move('images', $filename);
+                $portfolio = new Portfolio();
+                $portfolio->work_image = $path;
+                $portfolio->worker_id = $request->worker_id;
+                $portfolio->save();
+                if ($portfolio) {
+                    return response()->json([
+                        'message' => 'تم اضافة الصورة بنجاح',
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'message' => 'حدث خطأ ما',
+                    ], 401);
+                }
+            }else{
+                return response()->json([
+                    'message' => 'Worker not found',
+                ], 404);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Portfolio not stored',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    //delete work one image for worker
+    public function deletePortfolio($id)
+    {
+        try {
+            $portfolio = Portfolio::find($id);
+            if ($portfolio) {
+                $portfolio->delete();
+                return response()->json([
+                    'message' => 'تم حذف الصورة بنجاح',
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'حدث خطأ ما',
+                ], 401);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'work image not founded',
                 'error' => $th->getMessage(),
             ], 500);
         }
