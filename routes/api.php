@@ -98,6 +98,10 @@ Route::group(
             Route::get('workersrates', [AdminController::class, 'showWorkersRates']);
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
             Route::get('getRequestsByMonth', [ChartsController::class, 'getRequestsByMonth']);
+            Route::get('getAllReports',[ReportController::class,'index']);
+            Route::get('getReport',[ReportController::class,'show']);
+
+
         });
         Route::prefix('region')->group(function () {
             //regions
@@ -149,6 +153,7 @@ Route::group(
             Route::post('/deleteContracts/{id}', [ContractController::class, 'destroy']);
             //report worker
             Route::post('/report', [ReportController::class, 'store']);
+
 
         });
     }
