@@ -22,17 +22,19 @@ class ReportController extends Controller
             if ($report) {
                 return response()->json([
                     'success'=>true,
+                    'message'=>"تم استرجاع البلاغات بنجاح",
                     'reports'=>$report,
                 ],200);
             }else{
                 return response()->json([
                     'success'=>false,
+                    'message'=>"لا يوجد بلاغات",
                 ],400);
             }
         } catch (\Throwable $th) {
             return response()->json([
                 'success'=>false,
-                'message'=>$th->getMessage(),
+                'message'=>"حدث خطأ ما",
             ],400);
             //throw $th;
         }
@@ -62,12 +64,12 @@ class ReportController extends Controller
                 if ($report) {
                     return response()->json([
                         //'success'=>true,
-                        'message' => 'report added',
+                        'message' => 'تم ارسال البلاغ بنجاح',
                     ], 200);
                 } else {
                     return response()->json([
                         //'success'=>true,
-                        'message' => 'some problem',
+                        'message' => 'حدث خطأ ما',
                     ], 401);
                 }
             }
@@ -85,9 +87,31 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function show(Report $report)
+    public function show(Report $report_id)
     {
-        //
+
+            try {
+                $report=Report::find($report_id);
+                if ($report) {
+                    return response()->json([
+                        'success'=>true,
+                        'message'=>"تم استرجاع البلاغ بنجاح",
+                        'report'=>$report,
+                    ],200);
+                }else{
+                    return response()->json([
+                        'success'=>false,
+                        'message'=>"لا يوجد بلاغات",
+                    ],400);
+                }
+            } catch (\Throwable $th) {
+                return response()->json([
+                    'success'=>false,
+                    'message'=>"حدث خطأ ما",
+                ],400);
+                //throw $th;
+            }
+
     }
 
     /**
