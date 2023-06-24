@@ -298,7 +298,7 @@ class WorkerController extends Controller
                     } else {
                         $file = file_get_contents($path);
                         $base64 = base64_encode($file);
-                            $data['image'] = $base64;
+                        $data['image'] = $base64;
                         //return response()->json($data, 200);
                     }
                     //check if rate items was empty
