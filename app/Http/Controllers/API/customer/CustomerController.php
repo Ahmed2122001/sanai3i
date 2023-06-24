@@ -9,6 +9,7 @@ use App\Http\Resources\customer\CustomerResource;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
@@ -211,9 +212,20 @@ class CustomerController extends Controller
                     'created_at' => $customer->created_at,
                     'Region' => $region,
                 ];
+                if ($customer->image) {
+                    $path = public_path($customer->image);
+                    if (!file_exists($path)) {
+                        //return response()->json($data, 200);
+                    } else {
+                        $file = file_get_contents($path);
+                        $base64 = base64_encode($file);
+                        $data['image'] = $base64;
+                        //return response()->json($data, 200);
+                    }
                 return response()->json([
                     'customer'=>$data
                 ],200);
+                }
             }else {
                 return response()->json([
                     'message'=>'Customer not found'
@@ -222,6 +234,69 @@ class CustomerController extends Controller
         }catch (\Throwable $th) {
             return response()->json([
                 'message' => 'error',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+    public function update_porofile(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'name' => 'string|max:255',
+                'phone' => 'string|max:11|min:11',
+                'address' => 'string|between:4,100',
+                'city_id' => 'exists:region,id',
+                'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+            $customer = Customer::find($id);
+            if ($customer) {
+                if ($request->hasFile('image')) {
+                    // Get the uploaded image file
+                    $uploadedFile = $request->file('image');
+
+                    // Generate a unique filename for the uploaded image
+                    $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+                    // Store the uploaded image in the public/images directory
+                    $path = $uploadedFile->move('images', $filename);
+
+                    // Delete the old image file
+                    Storage::delete($customer->image);
+
+                    // Update the category image path
+                    $customer->image = $path;
+                }
+                if ($request->name) {
+                    $customer->name = $request->name;
+                }
+                if ($request->phone) {
+                    $customer->phone = $request->phone;
+                }
+                if ($request->address) {
+                    $customer->address = $request->address;
+                }
+                if ($request->city_id) {
+                    $customer->city_id = $request->city_id;
+                }
+            }else{
+                return response()->json([
+                    'message' => 'Worker not found',
+                ], 404);
+            }
+            $customer->save();
+            if ($customer) {
+                return response()->json([
+                    'message' => 'تم تعديل البيانات بنجاح',
+
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'حدث خطأ ما',
+                ], 401);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'customer not updated',
                 'error' => $th->getMessage(),
             ], 500);
         }
