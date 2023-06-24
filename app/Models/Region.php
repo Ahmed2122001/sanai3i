@@ -20,4 +20,8 @@ class Region extends Model
     {
         return $this->hasMany(Worker::class, 'city_id');
     }
+    public function Customer()
+    {
+        return $this->hasMany(Customer::class,'city_id');
+    }
 }

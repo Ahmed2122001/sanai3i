@@ -64,6 +64,10 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Report::class);
     }
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'city_id');
+    }
 
 
 
