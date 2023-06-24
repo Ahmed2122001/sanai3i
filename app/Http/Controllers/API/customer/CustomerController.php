@@ -222,10 +222,10 @@ class CustomerController extends Controller
                         $data['image'] = $base64;
                         //return response()->json($data, 200);
                     }
+                }
                 return response()->json([
                     'customer'=>$data
                 ],200);
-                }
             }else {
                 return response()->json([
                     'message'=>'Customer not found'
@@ -287,7 +287,6 @@ class CustomerController extends Controller
             if ($customer) {
                 return response()->json([
                     'message' => 'تم تعديل البيانات بنجاح',
-
                 ], 200);
             } else {
                 return response()->json([
