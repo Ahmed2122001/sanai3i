@@ -60,8 +60,9 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Requests::class, 'customer_id');
     }
-    public function reports(){
-        return $this->hasMany(Report::class, 'customer_id');
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
     }
 
 

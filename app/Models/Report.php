@@ -15,8 +15,13 @@ class Report extends Model
             'customer_id ',
             'worker_id ',
         ];
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
     public function worker()
     {
-        return $this->belongsTo(Worker::class, 'worker_id');
+        return $this->belongsTo(Worker::class);
     }
 }

@@ -55,22 +55,26 @@ class ReportController extends Controller
                 'worker_id' => 'required',
                 'comment' => 'required',
             ]);
-
             if ($validation->fails()) {
-                return response()->json([$validation->errors()], 422);
-            } else {
-                $report = Report::create([
-                    'customer_id' => $request->input('customer_id'),
-                    'worker_id' => $request->input('worker_id'),
-                    'comment' => $request->input('comment'),
-                ]);
-
-                return response()->json(['message'=>"تم تسجيل الطلب بنجاح"], 201);
+                return response()->json([
+                    'message' => $validation->errors(),
+                ], 400);
+            }else{
+                $report = new Report();
+                $report->customer_id = $request->customer_id;
+                $report->worker_id = $request->worker_id;
+                $report->comment = $request->comment;
+                $report->save();
+                return response()->json([
+                    'message'=>"تم تسجيل البلاغ بنجاح",
+                    'report'=>$report,
+                ],200);
             }
         } catch (\Exception $e) {
-            // Handle the exception here
-//            dd($report->toArray());
-            return response()->json(['message'=>"حدث خطأ أثناء تسجيل الطلب"], 500);
+            return response()->json([
+                'message'=>"حدث خطأ أثناء تسجيل الطلب",
+                'error'=>$e->getMessage(),
+            ], 500);
         }
     }
 
@@ -80,10 +84,10 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function show(Report $report):jsonresponse
+    public function show($id):jsonresponse
     {
         try {
-            $report = Report::find($report);
+            $report = Report::find($id);
              if ($report) {
                  return response()->json([
                      'success' => true,
