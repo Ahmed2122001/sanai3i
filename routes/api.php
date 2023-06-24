@@ -125,8 +125,10 @@ Route::group(
         Route::prefix("customer")->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
             Route::post('/refresh', [AuthController::class, 'refresh']);
-            Route::get('/user-profile', [AuthController::class, 'userProfile']);
+            //Route::get('/user-profile', [AuthController::class, 'userProfile']);
             Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+            //myprofle
+            Route::get('/profile/{id}',[CustomerController::class,'myprofile']);
             //filters
             Route::get('/category/{id}', [FilterController::class, 'filterByCategory']);
             Route::get('/region/{id}', [FilterController::class, 'filterByRegion']);

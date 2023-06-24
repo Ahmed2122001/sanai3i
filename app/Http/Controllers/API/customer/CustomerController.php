@@ -191,4 +191,39 @@ class CustomerController extends Controller
             ]);
         }
     }
+    /**
+     * Customer profile
+     */
+    public function myprofile($id){
+        try {
+            $customer=Customer::where('id', $id)->with('region')->first();
+            if ($customer){
+                $region = [
+                    'id' => $customer->region->id,
+                    'city_name' => $customer->region->city_name,
+                ];
+                $data = [
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                    'phone' => $customer->phone,
+                    'address' => $customer->address,
+                    'created_at' => $customer->created_at,
+                    'Region' => $region,
+                ];
+                return response()->json([
+                    'customer'=>$data
+                ],200);
+            }else {
+                return response()->json([
+                    'message'=>'Customer not found'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'error',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
 }
