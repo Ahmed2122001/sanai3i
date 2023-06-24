@@ -243,7 +243,7 @@ class AuthController extends Controller
                 'message' => 'تم تسجيل الدخول بنجاح',
                 'id' => $customer->id,
                 'remember_token' => $token,
-            ], 201);
+            ], 200);
         }
     }
     /**
