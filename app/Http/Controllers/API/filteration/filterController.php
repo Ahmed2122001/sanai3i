@@ -54,6 +54,8 @@ class filterController extends Controller
     //filter by data come from user which may contain category_id and city_id and price_rate and quality_rate and time_rate
     public function filter(Request $request){
         $query = worker::select( 'id', 'name', 'phone', 'address', 'city_id', 'image', 'description', 'status');
+        // check image
+
         if($request->has('category_id')){
             $query->where('category_id',$request->category_id);
         }
@@ -72,7 +74,23 @@ class filterController extends Controller
         if($request->has('time_rate')){
             $query->Where('time_rate',$request->time_rate);
         }
+        if ($query->get()->isEmpty()) {
+            return response()->json(['message' => 'no data found'], 404);
+        }
         $workers = $query->get();
+
+        foreach ($workers as $worker) {
+            if ($worker->image != null) {
+
+                $path = public_path($worker->image);
+                if (file_exists($path)) {
+                    $file = file_get_contents($path);
+                    $base64 = base64_encode($file);
+                    $worker->image = $base64;
+                }
+            }
+        }
         return response()->json($workers);
     }
 }
+
