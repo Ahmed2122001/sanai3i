@@ -53,8 +53,9 @@ class Worker extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Request::class, 'worker_id');
     }
-    public function reports(){
-        return $this->hasMany(Report::class, 'worker_id');
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
     }
     //relation with portfolio
     public function portfolio()

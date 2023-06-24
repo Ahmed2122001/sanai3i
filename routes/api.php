@@ -95,12 +95,11 @@ Route::group(
             // get one category by id
             Route::get('/category/{id}', [CategoryController::class, 'show']);
             Route::get('/reports', [ReportController::class, 'index']);  //show all reports
+            Route::get('report/{id}',[ReportController::class,'show']);
             Route::get('allusers/requestedworkers', [AdminController::class, 'showWorkersRequests']);
             Route::get('workersrates', [AdminController::class, 'showWorkersRates']);
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
             Route::get('getRequestsByMonth', [ChartsController::class, 'getRequestsByMonth']);
-            Route::get('getAllReports',[ReportController::class,'index']);
-            Route::get('getReport/{report}',[ReportController::class,'show']);
 
 
         });
