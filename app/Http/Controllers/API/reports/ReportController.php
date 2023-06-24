@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\reports;
 
 use App\Http\Controllers\Controller;
 use App\Models\Report;
+use http\Message;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -50,34 +51,26 @@ class ReportController extends Controller
     {
         try {
             $validation = Validator::make($request->all(), [
-                'comment' => ['required','string', 'max:255'],
-                'customer_id' => ['required', 'int'],
-                'worker_id' => ['required', 'int'],
+                'customer_id' => 'required',
+                'worker_id' => 'required',
+                'comment' => 'required',
             ]);
+
             if ($validation->fails()) {
-                return response()->json([
-                    //'success'=>false,
-                    'message' => $validation->errors()->all(),
-                ], 400);
+                return response()->json([$validation->errors()], 422);
             } else {
-                $report = Report::create($request->all());
-                if ($report) {
-                    return response()->json([
-                        //'success'=>true,
-                        'message' => 'تم ارسال البلاغ بنجاح',
-                    ], 200);
-                } else {
-                    return response()->json([
-                        //'success'=>true,
-                        'message' => 'حدث خطأ ما',
-                    ], 401);
-                }
+                $report = Report::create([
+                    'customer_id' => $request->input('customer_id'),
+                    'worker_id' => $request->input('worker_id'),
+                    'comment' => $request->input('comment'),
+                ]);
+
+                return response()->json(['message'=>"تم تسجيل الطلب بنجاح"], 201);
             }
-        } catch (\Throwable $th) {
-            return response()->json([
-                //'success'=>true,
-                'message' => $th->getMessage(),
-            ], 404);
+        } catch (\Exception $e) {
+            // Handle the exception here
+//            dd($report->toArray());
+            return response()->json(['message'=>"حدث خطأ أثناء تسجيل الطلب"], 500);
         }
     }
 
@@ -87,31 +80,30 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function show(Report $report_id)
+    public function show(Report $report):jsonresponse
     {
-
-            try {
-                $report=Report::find($report_id);
-                if ($report) {
-                    return response()->json([
-                        'success'=>true,
-                        'message'=>"تم استرجاع البلاغ بنجاح",
-                        'report'=>$report,
-                    ],200);
-                }else{
-                    return response()->json([
-                        'success'=>false,
-                        'message'=>"لا يوجد بلاغات",
-                    ],400);
-                }
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'success'=>false,
-                    'message'=>"حدث خطأ ما",
-                ],400);
-                //throw $th;
-            }
-
+        try {
+            $report = Report::find($report);
+             if ($report) {
+                 return response()->json([
+                     'success' => true,
+                     'message' => "تم استرجاع البلاغ بنجاح",
+                     'report' => $report,
+                 ], 200);
+             } else {
+                 return response()->json([
+                     'success' => false,
+                     'message' => "لا يوجد بلاغات",
+                 ], 400);
+             }
+        } catch (\Throwable $th) {
+            return response()->json([
+                //'success'=>false,
+                'message' => $th->getMessage(),
+                'report' => 'حدث خطأ ما',
+            ], 400);
+            //throw $th;
+        }
     }
 
     /**
