@@ -239,7 +239,11 @@ class AuthController extends Controller
         } else {
             $customer = auth::guard('api-customer')->user();
             $customer->remembertoken = $token;
-            return $this->returnData('remember_token', $token, 'تم تسجيل الدخول بنجاح');
+            return response()->json([
+                'message' => 'تم تسجيل الدخول بنجاح',
+                'id' => $customer->id,
+                'remember_token' => $token,
+            ], 201);
         }
     }
     /**
@@ -296,5 +300,5 @@ class AuthController extends Controller
             'user' => auth()->user()
         ]);
     }
-    
+
 }
