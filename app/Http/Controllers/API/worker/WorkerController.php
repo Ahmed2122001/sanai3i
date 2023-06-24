@@ -316,21 +316,24 @@ class WorkerController extends Controller
         try{
             // get worker by id and his category and city and region and his rates and his portfolio
             $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
+            if($worker->portfolio){
+                foreach ($worker->portfolio as $portfolio) {
+                    if (!file_exists($portfolio->work_image)) {
+                        //return response()->json($data, 200);
+                    } else {
+                        $file = file_get_contents($portfolio->work_image);
+                        $base64 = base64_encode($file);
+                        $work_images[] = $base64;
 
-            if ($worker) {
-                if($worker->portfolio){
-                    foreach ($worker->portfolio as $portfolio) {
-                        if (!file_exists($portfolio->work_image)) {
-                            //return response()->json($data, 200);
-                        } else {
-                            $file = file_get_contents($portfolio->work_image);
-                            $base64 = base64_encode($file);
-                            $work_images[] = $base64;
-
-                            //return response()->json($data, 200);
-                        }
+                        //return response()->json($data, 200);
                     }
                 }
+                if (!empty($work_images))
+                    $data['Portfolio'] = $work_images;
+
+            }
+            if ($worker) {
+
                 $category = [
                     'id' => $worker->category->id,
                     'name' => $worker->category->name,
@@ -361,7 +364,6 @@ class WorkerController extends Controller
                     'address' => $worker->address,
                     'created_at' => $worker->created_at,
                     'description' => $worker->description,
-                    'Portfolio' => $work_images,
                     'Category' => $category,
                     'Region' => $region,
                 ];
