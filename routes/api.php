@@ -13,6 +13,7 @@ use App\Http\Controllers\API\verifications\VerificationController;
 use App\Http\Controllers\API\worker\WorkerController;
 use App\Http\Controllers\API\reports\ReportController;
 use App\Http\Controllers\API\customer\CustomerController;
+use App\Http\Controllers\API\requests\RequestsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,7 +100,7 @@ Route::group(
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
             Route::get('getRequestsByMonth', [ChartsController::class, 'getRequestsByMonth']);
             Route::get('getAllReports',[ReportController::class,'index']);
-            Route::get('getReport',[ReportController::class,'show']);
+            Route::get('getReport/{report}',[ReportController::class,'show']);
 
 
         });
@@ -153,6 +154,7 @@ Route::group(
             Route::post('/deleteContracts/{id}', [ContractController::class, 'destroy']);
             //report worker
             Route::post('/report', [ReportController::class, 'store']);
+            Route::post('/makeRequest', [RequestsController::class, 'store']);
 
 
         });
