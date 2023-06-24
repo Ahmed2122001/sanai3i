@@ -99,73 +99,7 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreCustomerRequest $request, $id): JsonResponse
-    {
-        try {
-            $request->validated();
-            //$customers=Customer::findOrFail($id);
-            $customers = Customer::where('id', $id)->first();
-            //            $validation=Validator::make($request->all(),[
-            //                'name'=>['string','max:255'],
-            //                'email'=>'required|string|max:255|email|unique:customer,email,'.$request->id,
-            //                'password'=>['string','min:5'],
-            //                'phone'=>['int'],
-            //                'address'=>['string'],
-            //                'image'=>['string'],
-            //            ]);
-            //            if ($validation->fails()){
-            //                return response()->json([
-            //                    //'success'=>false,
-            //                    'message'=>$validation->errors()->all(),
-            //                ],400);
-            //            }else{
-            //
-            //            }
-            //$customers->update($request->all());
-            if (!empty($request->name)) {
-                $customers->name = $request->name;
-            } else {
-                $customers->name = $customers->name;
-            }
-            if (!empty($request->email)) {
-                $customers->email = $request->email;
-            } else {
-                $customers->email = $customers->email;
-            }
-            if (!empty($request->password)) {
-                $customers->password = $request->password;
-            } else {
-                $customers->password = $customers->password;
-            }
-            if (!empty($request->address)) {
-                $customers->address = $request->address;
-            } else {
-                $customers->address = $customers->address;
-            }
-            if (!empty($request->image)) {
-                $customers->image = $request->image;
-            } else {
-                $customers->image = $customers->image;
-            }
-            $result = $customers->save();
-            if ($result) {
-                return response()->json([
-                    //'success'=>true,
-                    'message' => $customers,
-                ], 200);
-            } else {
-                return response()->json([
-                    //'success'=>true,
-                    'message' => 'some problem',
-                ], 404);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                //'success'=>false,
-                'message' => $th->getMessage(),
-            ], 400);
-        }
-    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -261,8 +195,9 @@ class CustomerController extends Controller
                     $path = $uploadedFile->move('images', $filename);
 
                     // Delete the old image file
-                    Storage::delete($customer->image);
+                    //Storage::delete($customer->image);
 
+                    !is_null($customer->image) && Storage::delete($customer->image);
                     // Update the category image path
                     $customer->image = $path;
                 }
