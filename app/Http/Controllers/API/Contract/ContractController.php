@@ -37,11 +37,12 @@ class ContractController extends Controller
     {
         try {
             $validate = $request->validate([
-                'price' => 'required',
+                //'price' => 'required',
                 'start_date' => 'required',
                 'ex_end_date' => 'required',
                 'customer_id' => 'required',
                 'worker_id' => 'required',
+                'discrption' => 'required',
             ]);
             if (!$validate) {
                 return response()->json($validate->errors(), 400);
@@ -49,9 +50,12 @@ class ContractController extends Controller
             $startDate = Carbon::createFromFormat('Y-m-d', $validate['start_date']);
             $exEndDate = Carbon::createFromFormat('Y-m-d', $validate['ex_end_date']);
             $contract = new Contract;
-            $contract->price = $request->price;
+            // set the price as initial_price of worker
+            $price = Worker::findOrFail($request->worker_id)->only('initial_price');
+            $contract->price =$price['initial_price'] ;
             $contract->start_date = $startDate;
             $contract->ex_end_date = $exEndDate;
+            $contract->discrption = $request->discrption;
             $contract->customer_id = $request->customer_id;
             $contract->worker_id = $request->worker_id;
             $contract->save();
@@ -137,11 +141,19 @@ class ContractController extends Controller
         }
     }
     //accept contract
-    public function acceptContract($id){
+    public function acceptContract(Request $request,$id){
         try {
             $contract=Contract::findOrFail($id);
             if($contract){
+                $validate = $request->validate([
+                    'price' => 'required',
+                ]);
+                if (!$validate) {
+                    return response()->json($validate->errors(), 400);
+                }
                 $contract->status=1;
+                $contract->Process_status="تم تحديد السعر من قبل العامل";
+                $contract->price=$request->price;
                 $contract->save();
                 return response()->json([
                     'success'=>true,
@@ -166,6 +178,7 @@ class ContractController extends Controller
             $contract=Contract::findOrFail($id);
             if($contract){
                 $contract->status=0;
+                $contract->Process_status="ملغي";
                 $contract->save();
                 return response()->json([
                     'success'=>true,
@@ -195,6 +208,30 @@ class ContractController extends Controller
                 return response()->json([
                     'success'=>true,
                     'message'=>'تم انهاء العقد بنجاح',
+                    'contract'=>$contract
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقد'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+         return response()->json([
+             'success' => 'error',
+             'message' => $th->getMessage(),
+         ], 404);
+        }
+    }
+    public function customerAccept($id){
+        try {
+            $contract=Contract::findOrFail($id);
+            if($contract){
+                $contract->Process_status="جاري العمل عليه";
+                $contract->save();
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'تم قبول العقد بنجاح',
                     'contract'=>$contract
                 ],200);
             }else{
