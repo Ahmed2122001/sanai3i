@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Contract;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contract;
+use App\Models\Worker;
 use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -91,11 +92,15 @@ public function store(Request $request)
     // get my contracts by customer id
     public function getMyContracts($id){
         try {
-            $contracts=Contract::where('customer_id',$id)->get();
+            $contracts = Contract::where('customer_id', $id)
+                ->leftJoin('worker', 'contracts.worker_id', '=', 'worker.id')
+                ->leftJoin('category', 'worker.category_id', '=', 'category.id')
+                ->select('contracts.*', 'worker.name', 'worker.email', 'worker.address', 'worker.phone', 'category.name as category_name')
+                ->get();
             if($contracts){
                 return response()->json([
                     'success'=>true,
-                    'contracts'=>$contracts
+                    'contracts'=>$contracts,
                 ],200);
             }else {
                 return response()->json([
@@ -113,7 +118,7 @@ public function store(Request $request)
     // get my contracts by worker id
     public function getContracts($id){
         try {
-            $contracts=Contract::where('worker_id',$id)->get();
+            $contracts=Contract::where('worker_id',$id)->with('worker','customer')->get();
             if ($contracts){
                 return response()->json([
                     'success'=>true,
