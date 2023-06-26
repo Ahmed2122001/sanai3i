@@ -76,14 +76,7 @@ class AuthController extends Controller
         if (!$region) {
             return $this->returnError('404', 'هذه المدينه غير موجوده');
         }
-        // Get the uploaded image file
-        $uploadedFile = $request->file('image');
 
-        // Generate a unique filename for the uploaded image
-        $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-        // Store the uploaded image in the public/images directory
-        $path = $uploadedFile->move('images', $filename);
 
         $user = new Customer();
         $user->name = $request->input('name');
@@ -92,6 +85,17 @@ class AuthController extends Controller
         $user->phone = $request->input('phone');
         $user->address = $request->input('address');
         $user->city_id = $region->id;
+        if ($request->hasFile('image')) {
+            // Get the uploaded image file
+            $uploadedFile = $request->file('image');
+
+            // Generate a unique filename for the uploaded image
+            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+            // Store the uploaded image in the public/images directory
+            $path = $uploadedFile->move('images', $filename);
+            $user->image = $path;
+        }
         $user->image = $path;
         $user->save();
         if ($user) {
@@ -103,7 +107,8 @@ class AuthController extends Controller
             } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
-                    'message' => 'could not send verification email please try again later'
+                    'message' => 'could not send verification email please try again later',
+                    'error' => $e->getMessage()
                 ], 500);
             }
         }
@@ -129,9 +134,8 @@ class AuthController extends Controller
             'city_id ' => 'exists:region,id',
             'category_id ' => 'exists:category,id',
             'description' => 'string|between:50,500',
-            'initial_price' => 'required|numeric',
+            'initial_price' => 'required|int',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-
         ]);
 
         if ($validator->fails()) {
@@ -145,14 +149,7 @@ class AuthController extends Controller
         if (!$Category) {
             return $this->returnError('404', 'هذه الفئه غير موجوده');
         }
-        // Get the uploaded image file
-        $uploadedFile = $request->file('image');
 
-        // Generate a unique filename for the uploaded image
-        $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-        // Store the uploaded image in the public/images directory
-        $path = $uploadedFile->move('images', $filename);
         $user = new Worker();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
@@ -163,7 +160,17 @@ class AuthController extends Controller
         $user->category_id = $Category->id;
         $user->description = $request->input('description');
         $user->initial_price = $request->input('initial_price');
-        $user->image = $path;
+        if ($request->hasFile('image')) {
+            // Get the uploaded image file
+            $uploadedFile = $request->file('image');
+
+            // Generate a unique filename for the uploaded image
+            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+            // Store the uploaded image in the public/images directory
+            $path = $uploadedFile->move('images', $filename);
+            $user->image = $path;
+        }
         $user->status = 'deactive1';
         $user->save();
 
@@ -176,7 +183,8 @@ class AuthController extends Controller
             } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
-                    'message' => 'could not send verification email please try again later'
+                    'message' => 'could not send verification email please try again later',
+                    'error' => $e->getMessage()
                 ], 500);
             }
         }
