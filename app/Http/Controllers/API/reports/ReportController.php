@@ -51,6 +51,7 @@ class ReportController extends Controller
     {
         try {
             $validation = Validator::make($request->all(), [
+                'contract_id' => 'required|exists:contracts,id',
                 'customer_id' => 'required',
                 'worker_id' => 'required',
                 'comment' => 'required',
@@ -61,6 +62,7 @@ class ReportController extends Controller
                 ], 400);
             }else{
                 $report = new Report();
+                $report->contract_id = $request->contract_id;
                 $report->customer_id = $request->customer_id;
                 $report->worker_id = $request->worker_id;
                 $report->comment = $request->comment;
