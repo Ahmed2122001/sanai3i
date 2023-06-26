@@ -162,6 +162,7 @@ class AuthController extends Controller
         $user->city_id = $region->id;
         $user->category_id = $Category->id;
         $user->description = $request->input('description');
+        $user->initial_price = $request->input('initial_price');
         $user->image = $path;
         $user->status = 'deactive1';
         $user->save();
