@@ -76,14 +76,7 @@ class AuthController extends Controller
         if (!$region) {
             return $this->returnError('404', 'هذه المدينه غير موجوده');
         }
-        // Get the uploaded image file
-        $uploadedFile = $request->file('image');
 
-        // Generate a unique filename for the uploaded image
-        $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-        // Store the uploaded image in the public/images directory
-        $path = $uploadedFile->move('images', $filename);
 
         $user = new Customer();
         $user->name = $request->input('name');
@@ -92,6 +85,17 @@ class AuthController extends Controller
         $user->phone = $request->input('phone');
         $user->address = $request->input('address');
         $user->city_id = $region->id;
+        if ($request->hasFile('image')) {
+            // Get the uploaded image file
+            $uploadedFile = $request->file('image');
+
+            // Generate a unique filename for the uploaded image
+            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+
+            // Store the uploaded image in the public/images directory
+            $path = $uploadedFile->move('images', $filename);
+            $user->image = $path;
+        }
         $user->image = $path;
         $user->save();
         if ($user) {
@@ -103,7 +107,8 @@ class AuthController extends Controller
             } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
-                    'message' => 'could not send verification email please try again later'
+                    'message' => 'could not send verification email please try again later',
+                    'error' => $e->getMessage()
                 ], 500);
             }
         }
