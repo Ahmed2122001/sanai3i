@@ -66,7 +66,7 @@ class AuthController extends Controller
             'phone' => 'required|string|max:11|min:11',
             'address' => 'required|string|between:4,100',
             'city_id ' => 'exists:region,id',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            //'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -85,18 +85,20 @@ class AuthController extends Controller
         $user->phone = $request->input('phone');
         $user->address = $request->input('address');
         $user->city_id = $region->id;
-        if ($request->hasFile('image')) {
-            // Get the uploaded image file
-            $uploadedFile = $request->file('image');
-
-            // Generate a unique filename for the uploaded image
-            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-            // Store the uploaded image in the public/images directory
-            $path = $uploadedFile->move('images', $filename);
-            $user->image = $path;
-        }
-        $user->image = $path;
+//        if ($request->hasFile('image')) {
+//            // Get the uploaded image file
+//            $uploadedFile = $request->file('image');
+//
+//            // Generate a unique filename for the uploaded image
+//            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+//
+//            // Store the uploaded image in the public/images directory
+//            $path = $uploadedFile->move('images', $filename);
+//            $user->image = $path;
+//        }else{
+//            $user->image = NULL;
+//        }
+//        $user->image = $path;
         $user->save();
         if ($user) {
             try {
@@ -135,7 +137,7 @@ class AuthController extends Controller
             'category_id ' => 'exists:category,id',
             'description' => 'string|between:50,500',
             'initial_price' => 'required|int',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            //'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -160,17 +162,19 @@ class AuthController extends Controller
         $user->category_id = $Category->id;
         $user->description = $request->input('description');
         $user->initial_price = $request->input('initial_price');
-        if ($request->hasFile('image')) {
-            // Get the uploaded image file
-            $uploadedFile = $request->file('image');
-
-            // Generate a unique filename for the uploaded image
-            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-            // Store the uploaded image in the public/images directory
-            $path = $uploadedFile->move('images', $filename);
-            $user->image = $path;
-        }
+//        if ($request->hasFile('image')) {
+//            // Get the uploaded image file
+//            $uploadedFile = $request->file('image');
+//
+//            // Generate a unique filename for the uploaded image
+//            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+//
+//            // Store the uploaded image in the public/images directory
+//            $path = $uploadedFile->move('images', $filename);
+//            $user->image = $path;
+//        }else{
+//            $user->image = NULL;
+//        }
         $user->status = 'deactive1';
         $user->save();
 
