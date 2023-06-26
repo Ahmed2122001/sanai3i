@@ -153,12 +153,13 @@ Route::group(
             Route::post('/addContracts', [ContractController::class, 'store']);
             //delete contract
             Route::post('/deleteContracts/{id}', [ContractController::class, 'destroy']);
+            //finish contract
+            Route::post('/finishContracts/{id}', [ContractController::class, 'finishContract']);
             //report worker
             Route::post('/report', [ReportController::class, 'store']);
             Route::post('/makeRequest', [RequestsController::class, 'store']);
             Route::post('/update_profile/{id}', [CustomerController::class, 'update_porofile']);
-
-
+            
         });
     }
 );

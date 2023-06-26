@@ -185,4 +185,30 @@ public function store(Request $request)
             ], 404);
         }
     }
+    //finish contract
+    public function finishContract($id){
+        try {
+            // set contract process_status to تم الانتهاء
+            $contract=Contract::findOrFail($id);
+            if($contract){
+                $contract->process_status="تم الانتهاء";
+                $contract->save();
+                return response()->json([
+                    'success'=>true,
+                    'message'=>'تم انهاء العقد بنجاح',
+                    'contract'=>$contract
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقد'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+         return response()->json([
+             'success' => 'error',
+             'message' => $th->getMessage(),
+         ], 404);
+        }
+    }
 }
