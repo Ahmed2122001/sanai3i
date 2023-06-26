@@ -74,13 +74,11 @@ class ContractController extends Controller
                 return response()->json([
                    'success'=>'success',
                     'message'=>'تم حذف العقد بنجاح'
-
                 ],200);
             }else {
                 return response()->json([
                     'success' => 'failed',
                     'message' => 'لم يتم حذف العقد بنجاح حاول مره اخرى'
-
                 ], 400);
             }
         }catch (\Throwable $th) {
