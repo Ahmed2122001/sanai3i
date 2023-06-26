@@ -159,7 +159,7 @@ Route::group(
             Route::post('/report', [ReportController::class, 'store']);
             Route::post('/makeRequest', [RequestsController::class, 'store']);
             Route::post('/update_profile/{id}', [CustomerController::class, 'update_porofile']);
-            
+
         });
     }
 );

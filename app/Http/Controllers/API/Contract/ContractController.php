@@ -32,9 +32,8 @@ class ContractController extends Controller
                 ], 404);
         }
     }
-
     // store function
-public function store(Request $request)
+    public function store(Request $request)
     {
         try {
             $validate = $request->validate([
@@ -191,7 +190,7 @@ public function store(Request $request)
             // set contract process_status to تم الانتهاء
             $contract=Contract::findOrFail($id);
             if($contract){
-                $contract->process_status="تم الانتهاء";
+                $contract->Process_status="تم الانتهاء";
                 $contract->save();
                 return response()->json([
                     'success'=>true,
