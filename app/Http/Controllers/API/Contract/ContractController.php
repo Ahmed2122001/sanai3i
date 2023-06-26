@@ -67,11 +67,13 @@ class ContractController extends Controller
     //delete contract
     public function destroy($id){
         try {
-            $contract=Contract::findOrFail($id)->delete();
+            $contract=Contract::findOrFail($id);
+            $contract->Process_status="ملغي";
+            $contract->save();
             if($contract){
                 return response()->json([
                    'success'=>'success',
-                    'message'=>'تم حذف العقد بنجتح'
+                    'message'=>'تم حذف العقد بنجاح'
 
                 ],200);
             }else {
