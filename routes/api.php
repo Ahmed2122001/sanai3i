@@ -153,6 +153,10 @@ Route::group(
             Route::post('/addContracts', [ContractController::class, 'store']);
             //delete contract
             Route::delete('/deleteContracts/{id}', [ContractController::class, 'destroy']);
+            //accept contract
+            Route::post('/acceptContracts/{id}', [ContractController::class, 'customerAccept']);
+            //reject contract
+            Route::post('/rejectContracts/{id}', [ContractController::class, 'rejectContract']);
             //finish contract
             Route::post('/finishContracts/{id}', [ContractController::class, 'finishContract']);
             //report worker

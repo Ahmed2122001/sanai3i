@@ -129,6 +129,7 @@ class AuthController extends Controller
             'city_id ' => 'exists:region,id',
             'category_id ' => 'exists:category,id',
             'description' => 'string|between:50,500',
+            'initial_price' => 'required|numeric',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
         ]);
