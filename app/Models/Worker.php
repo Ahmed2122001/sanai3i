@@ -20,6 +20,7 @@ class Worker extends Authenticatable implements JWTSubject
         "email",
         "password",
         "phone",
+        "initial_price",
         "address",
         "city_id",
         "category_id",
