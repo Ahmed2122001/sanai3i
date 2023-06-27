@@ -21,10 +21,12 @@ class ContractController extends Controller
                     'success' => 'success',
                     'contracts'=>$contracts,
                 ], 200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لا يوجد عقود',
+                ], 400);
             }
-
-
-
         }catch (\Throwable $th) {
                 return response()->json([
                     'success' => 'error',
@@ -43,6 +45,7 @@ class ContractController extends Controller
                 'customer_id' => 'required',
                 'worker_id' => 'required',
                 'discrption' => 'required',
+                'payment_type' => 'required',
             ]);
             if (!$validate) {
                 return response()->json($validate->errors(), 400);
@@ -59,6 +62,7 @@ class ContractController extends Controller
             $contract->customer_id = $request->customer_id;
             $contract->worker_id = $request->worker_id;
             $contract->Process_status = "في انتظار الموافقة والسعر";
+            $contract->payment_type = $request->payment_type;
             $contract->save();
             return response()->json('تم اضافة العقد بنجاح', 201);
         } catch (\Throwable $th) {
@@ -135,6 +139,28 @@ class ContractController extends Controller
                 return response()->json([
                     'success' => 'failed',
                     'message' => 'لم يتم العثور على العقود'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success' => 'error',
+                'message' => $th->getMessage(),
+            ], 404);
+        }
+    }
+    // get contract by id
+    public function getContract($id){
+        try {
+            $contract=Contract::findOrFail($id);
+            if($contract){
+                return response()->json([
+                    'success'=>true,
+                    'contract'=>$contract
+                ],200);
+            }else{
+                return response()->json([
+                    'success' => 'failed',
+                    'message' => 'لم يتم العثور على العقد'
                 ],400);
             }
         }catch (\Throwable $th) {

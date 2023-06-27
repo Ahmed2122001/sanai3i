@@ -159,6 +159,8 @@ Route::group(
             Route::post('/rejectContracts/{id}', [ContractController::class, 'rejectContract']);
             //finish contract
             Route::post('/finishContracts/{id}', [ContractController::class, 'finishContract']);
+            //get contract by id
+            Route::get('/getContract/{id}', [ContractController::class, 'getContract']);
             //report worker
             Route::post('/report', [ReportController::class, 'store']);
             Route::post('/makeRequest', [RequestsController::class, 'store']);
