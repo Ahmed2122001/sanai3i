@@ -227,16 +227,16 @@ class ContractController extends Controller
          ], 404);
         }
     }
-    public function customerAccept($id){
+    public function customerAccept(Request $request){
         try {
-            $contract=Contract::findOrFail($id);
+            $contract=Contract::findOrFail($request->contract_id);
             if($contract){
                 $contract->Process_status="جاري العمل عليه";
                 $contract->save();
                 return response()->json([
                     'success'=>true,
                     'message'=>'تم قبول العقد بنجاح',
-                    'contract'=>$contract
+                    //'contract'=>$contract
                 ],200);
             }else{
                 return response()->json([
