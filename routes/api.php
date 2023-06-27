@@ -184,7 +184,10 @@ Route::group(
             Route::post('/update_profile/{id}', [WorkerController::class, 'update_porofile']);
             Route::get('/worker-profile/{id}', [WorkerController::class, 'showMyProfile']);
             Route::post('/description/{id}', [WorkerController::class, 'updateDescription']);
-            Route::post('acceptContract/{id}', [ContractController::class, 'acceptContract']);
+
+            // show all worker's contracts
+            Route::get('/showContracts/{id}', [ContractController::class, 'getContracts']);
+            Route::post('acceptContract', [ContractController::class, 'acceptContract']);
             Route::post('rejectContract/{id}', [ContractController::class, 'rejectContract']);
             //store worker's work
             Route::post('/storePortfolio', [WorkerController::class, 'storePortfolio']);

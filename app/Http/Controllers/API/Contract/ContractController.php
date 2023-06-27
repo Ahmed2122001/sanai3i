@@ -58,6 +58,7 @@ class ContractController extends Controller
             $contract->discrption = $request->discrption;
             $contract->customer_id = $request->customer_id;
             $contract->worker_id = $request->worker_id;
+            $contract->Process_status = "في انتظار الموافقة والسعر";
             $contract->save();
             return response()->json('تم اضافة العقد بنجاح', 201);
         } catch (\Throwable $th) {
@@ -98,7 +99,7 @@ class ContractController extends Controller
             $contracts = Contract::where('customer_id', $id)
                 ->leftJoin('worker', 'contracts.worker_id', '=', 'worker.id')
                 ->leftJoin('category', 'worker.category_id', '=', 'category.id')
-                ->select('contracts.*', 'worker.name', 'worker.email', 'worker.address', 'worker.phone', 'category.name as category_name')
+                ->select('contracts.*', 'worker.name', 'worker.address', 'worker.phone', 'category.name as category_name')
                 ->get();
             if($contracts){
                 return response()->json([
@@ -121,7 +122,10 @@ class ContractController extends Controller
     // get my contracts by worker id
     public function getContracts($id){
         try {
-            $contracts=Contract::where('worker_id',$id)->with('worker','customer')->get();
+            $contracts=Contract::where('worker_id',$id)
+                ->leftJoin('customer','contracts.customer_id','=','customer.id')
+                ->select('contracts.*','customer.name','customer.address','customer.phone')
+                ->get();
             if ($contracts){
                 return response()->json([
                     'success'=>true,
@@ -141,9 +145,9 @@ class ContractController extends Controller
         }
     }
     //accept contract
-    public function acceptContract(Request $request,$id){
+    public function acceptContract(Request $request){
         try {
-            $contract=Contract::findOrFail($id);
+            $contract=Contract::findOrFail($request->contract_id);
             if($contract){
                 $validate = $request->validate([
                     'price' => 'required',
@@ -152,7 +156,7 @@ class ContractController extends Controller
                     return response()->json($validate->errors(), 400);
                 }
                 $contract->status=1;
-                $contract->Process_status="تم تحديد السعر من قبل العامل";
+                $contract->Process_status="في انتظار موافقة العميل";
                 $contract->price=$request->price;
                 $contract->save();
                 return response()->json([
