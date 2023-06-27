@@ -154,7 +154,7 @@ Route::group(
             //delete contract
             Route::delete('/deleteContracts/{id}', [ContractController::class, 'destroy']);
             //accept contract
-            Route::post('/acceptContracts/{id}', [ContractController::class, 'customerAccept']);
+            Route::post('/acceptContract', [ContractController::class, 'customerAccept']);
             //reject contract
             Route::post('/rejectContracts/{id}', [ContractController::class, 'rejectContract']);
             //finish contract
