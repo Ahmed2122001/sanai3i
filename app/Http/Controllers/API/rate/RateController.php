@@ -35,8 +35,10 @@ class RateController extends Controller
             $rate->save();
             $contract=new Contract();
             $contract->updateStatustoFinished($request->contract_id);
-//            Contract::class->updateStatustoFinished($request->contract_id);
-            return response()->json('تم تقييم العامل بنجاح',201);
+            return response()->json([
+                'success'=>true,
+                'message'=>'تم التقييم بنجاح'
+            ],201);
         }catch (\Throwable $th){
             return response()->json([
                 'success' => false,
