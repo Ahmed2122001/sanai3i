@@ -23,7 +23,7 @@ class Contract extends Model
     // update status of contract to finished
     public function updateStatustoFinished($id)
     {
-        $contract = Contract::find($id);
+        $contract = Contract::findOrFail($id);
         $contract->Process_status = 'مكتمل';
         $contract->save();
     }

@@ -14,9 +14,9 @@ class RateController extends Controller
             $validate=$request->validate([
                 'customer_id'=>'required',
                 'worker_id'=>'required',
-                'time_rate'=>'required|integer|between:1,5',
-                'price_rate'=>'required|integer|between:1,5',
-                'quality_rate'=>'required|integer|between:1,5',
+                'time_rate'=>'required|between:1,5',
+                'price_rate'=>'required|between:1,5',
+                'quality_rate'=>'required|between:1,5',
                 'contract_id'=>'required',
 
             ],[
@@ -33,7 +33,9 @@ class RateController extends Controller
             $rate->price_rate=$request->price_rate;
             $rate->quality_rate=$request->quality_rate;
             $rate->save();
-            Contract::class->updateStatustoFinished($request->contract_id);
+            $contract=new Contract();
+            $contract->updateStatustoFinished($request->contract_id);
+//            Contract::class->updateStatustoFinished($request->contract_id);
             return response()->json('تم تقييم العامل بنجاح',201);
         }catch (\Throwable $th){
             return response()->json([
