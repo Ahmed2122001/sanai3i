@@ -20,6 +20,13 @@ class Contract extends Model
         "payment_type",
         "worker_id"
     ];
+    // update status of contract to finished
+    public function updateStatustoFinished($id)
+    {
+        $contract = Contract::find($id);
+        $contract->Process_status = 'مكتمل';
+        $contract->save();
+    }
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');

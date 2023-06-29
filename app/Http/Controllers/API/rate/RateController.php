@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\rate;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contract;
 use App\Models\Rate;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,7 @@ class RateController extends Controller
                 'time_rate'=>'required|integer|between:1,5',
                 'price_rate'=>'required|integer|between:1,5',
                 'quality_rate'=>'required|integer|between:1,5',
+                'contract_id'=>'required',
 
             ],[
                 'rating.between' => 'The rating must be between 1 and 5.',
@@ -30,6 +32,7 @@ class RateController extends Controller
             $rate->price_rate=$request->price_rate;
             $rate->quality_rate=$request->quality_rate;
             $rate->save();
+            Contract::class->updateStatustoFinished($request->contract_id);
             return response()->json('تم تقييم العامل بنجاح',201);
         }catch (\Throwable $th){
             return response()->json([

@@ -30,7 +30,9 @@ class StripePaymentController extends Controller
                 'source' => $res->id,
                 'description' => $request->description,
             ]);
-            return response()->json([$response->status], 201);
+            return response()->json([
+                'message' => $response->status,
+            ], 201);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }
