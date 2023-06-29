@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\customer\Throwable;
 use App\Http\Requests\customer\StoreCustomerRequest;
 use App\Http\Resources\customer\CustomerResource;
+use App\Models\Contract;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -267,7 +268,7 @@ class CustomerController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => 'customer not updated',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
