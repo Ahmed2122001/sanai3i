@@ -28,6 +28,7 @@ class RateController extends Controller
             }
             $rate=new Rate;
             $rate->worker_id=$request->worker_id;
+            $rate->customer_id=$request->customer_id;
             $rate->time_rate=$request->time_rate;
             $rate->price_rate=$request->price_rate;
             $rate->quality_rate=$request->quality_rate;

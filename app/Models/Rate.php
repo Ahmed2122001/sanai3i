@@ -14,7 +14,7 @@ class Rate extends Model
             'quality_rate',
             'price_rate',
             'time_rate',
-            'customer_id ',
+            'customer_id',
             'worker_id ',
         ];
     //relation with worker
