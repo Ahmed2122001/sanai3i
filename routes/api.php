@@ -195,6 +195,8 @@ Route::group(
             Route::post('/storePortfolio', [WorkerController::class, 'storePortfolio']);
             //delete one image worker's work
             Route::delete('/deletePortfolio/{id}', [WorkerController::class, 'deletePortfolio']);
+            // rate customer
+            Route::post('/rate', [CustomerController::class, 'rateCustomer']);
         });
     }
 );

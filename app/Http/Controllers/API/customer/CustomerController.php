@@ -235,4 +235,42 @@ class CustomerController extends Controller
             ], 500);
         }
     }
+    public function rateCustomer(Request $request){
+        try {
+            $request->validate([
+                'worker_id' => 'required|exists:worker,id|exists:contracts,worker_id,customer_id,' . $request->input('customer_id'),
+                'customer_id' => 'required|exists:customer,id|exists:contracts,customer_id,worker_id,' . $request->input('worker_id'),
+                'rate' => 'required|between:1,5',
+                'contract_id' => 'required|exists:contracts,id',
+            ]);
+            $contract = Contract::findOrFail($request->contract_id);
+            if($contract->worker_id != $request->worker_id && $contract->customer_id != $request->customer_id){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'العميل والعامل لم يتفقوا على هذا العقد',
+                ], 401);
+            }
+            $customer = Customer::findOrFail($request->customer_id);
+            if ($customer) {
+                $customer->rate = ($request->rate+$customer->rate)/2;
+                $customer->save();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم تقييم العميل بنجاح',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'حدث خطأ ما',
+                ], 401);
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'customer not updated',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+
+    }
 }
