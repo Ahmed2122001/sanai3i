@@ -34,7 +34,8 @@ class RateController extends Controller
             $rate->quality_rate=$request->quality_rate;
             $rate->save();
             $contract=new Contract();
-            $contract->updateStatustoFinished($request->contract_id);
+            // after customer rating the contract status will be completed (مكتمل)
+            $contract->updateStatus($request->contract_id,'مكتمل');
             return response()->json([
                 'success'=>true,
                 'message'=>'تم التقييم بنجاح'

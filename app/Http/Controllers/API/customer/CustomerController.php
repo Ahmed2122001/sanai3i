@@ -144,6 +144,7 @@ class CustomerController extends Controller
                     'email' => $customer->email,
                     'phone' => $customer->phone,
                     'address' => $customer->address,
+                    'rate' => $customer->rate,
                     'created_at' => $customer->created_at,
                     'Region' => $region,
                 ];
@@ -255,6 +256,9 @@ class CustomerController extends Controller
             if ($customer) {
                 $customer->rate = ($request->rate+$customer->rate)/2;
                 $customer->save();
+                $contract=new Contract();
+                // after worker rating the contract status will be completed (تم الانتهاء)
+                $contract->updateStatus($request->contract_id,'تم الانتهاء');
                 return response()->json([
                     'success' => true,
                     'message' => 'تم تقييم العميل بنجاح',
