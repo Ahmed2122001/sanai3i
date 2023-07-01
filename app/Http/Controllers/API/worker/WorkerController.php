@@ -240,22 +240,7 @@ class WorkerController extends Controller
         try{
             // get worker by id and his category and city and region and his rates and his portfolio
             $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
-            if($worker->portfolio){
-                foreach ($worker->portfolio as $portfolio) {
-                    if (!file_exists($portfolio->work_image)) {
-                        //return response()->json($data, 200);
-                    } else {
-                        $file = file_get_contents($portfolio->work_image);
-                        $base64 = base64_encode($file);
-                        $work_images[] = $base64;
 
-                        //return response()->json($data, 200);
-                    }
-                }
-                if (!empty($work_images))
-                    $data['Portfolio'] = $work_images;
-
-            }
             if ($worker) {
 
                 $category = [
@@ -291,6 +276,27 @@ class WorkerController extends Controller
                     'Category' => $category,
                     'Region' => $region,
                 ];
+                if (!$rate->isEmpty()) {
+                    $data['quality_rate'] = $rate[0]->quality_rate;
+                    $data['time_rate'] = $rate[0]->avg_time_rate;
+                    $data['price_rate'] = $rate[0]->avg_price_rate;
+                    $data['rate'] = $rate[0]->avg_rate;
+                }
+                if($worker->portfolio){
+                    foreach ($worker->portfolio as $portfolio) {
+                        if (!file_exists($portfolio->work_image)) {
+                            //return response()->json($data, 200);
+                        } else {
+                            $file = file_get_contents($portfolio->work_image);
+                            $base64 = base64_encode($file);
+                            $work_images[] = $base64;
+
+                            //return response()->json($data, 200);
+                        }
+                    }
+                    if (!empty($work_images))
+                        $data['Portfolio'] = $work_images;
+                }
                 if ($worker->image) {
                     $path = public_path($worker->image);
                     if (!file_exists($path)) {
@@ -301,20 +307,8 @@ class WorkerController extends Controller
                         $data['image'] = $base64;
                         //return response()->json($data, 200);
                     }
-                    //check if rate items was empty
-                    if (!$rate->isEmpty()) {
-                        $data['quality_rate'] = $rate[0]->quality_rate;
-                        $data['time_rate'] = $rate[0]->avg_time_rate;
-                        $data['price_rate'] = $rate[0]->avg_price_rate;
-                        $data['rate'] = $rate[0]->avg_rate;
-                        return response()->json($data, 200);
-                    }else{
-                        return response()->json($data, 200);
-                    }
-                } else {
-                    return response()->json($data, 200);
                 }
-
+                return response()->json($data, 200);
             } else {
                 return response()->json([
                     'message' => 'worker not found',
