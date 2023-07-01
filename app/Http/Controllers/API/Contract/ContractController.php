@@ -44,7 +44,7 @@ class ContractController extends Controller
                 'ex_end_date' => 'required',
                 'customer_id' => 'required',
                 'worker_id' => 'required',
-                'discrption' => 'required',
+                //'discrption' => 'required',
                 'payment_type' => 'required',
             ]);
             if (!$validate) {
