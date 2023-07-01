@@ -48,9 +48,30 @@ class Customer extends Authenticatable implements JWTSubject
     {
         return [];
     }
-    public function messages()
+    // Define the relationship with messages sent by the customer
+    public function sentMessages()
     {
-        return $this->morphMany(Message::class, 'recipient');
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    // Define the relationship with messages received by the customer
+//    public function receivedMessages()
+//    {
+//        return $this->morphMany(Message::class, 'receiver');
+//    }
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id')->where('receiver_type', 'customer');
+    }
+
+    public function getMostRecentMessage()
+    {
+        return $this->messages()->latest()->first();
+    }
+
+    public function getMessageCount()
+    {
+        return $this->messages()->count();
     }
     //relation with contract
     public function contract()
