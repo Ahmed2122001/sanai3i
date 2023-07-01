@@ -39,12 +39,10 @@ class ContractController extends Controller
     {
         try {
             $validate = $request->validate([
-                //'price' => 'required',
                 'start_date' => 'required',
                 'ex_end_date' => 'required',
                 'customer_id' => 'required',
                 'worker_id' => 'required',
-                //'discrption' => 'required',
                 'payment_type' => 'required',
             ]);
             if (!$validate) {
@@ -58,7 +56,6 @@ class ContractController extends Controller
             $contract->price =$price['initial_price'] ;
             $contract->start_date = $startDate;
             $contract->ex_end_date = $exEndDate;
-            $contract->discrption = $request->discrption;
             $contract->customer_id = $request->customer_id;
             $contract->worker_id = $request->worker_id;
             $contract->Process_status = "في انتظار الموافقة والسعر";

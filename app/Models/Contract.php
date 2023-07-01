@@ -15,7 +15,6 @@ class Contract extends Model
         "ex_end_date",
         "customer_id",
         "status",
-        //"discrption",
         "Process_status",
         "payment_type",
         "worker_id"
