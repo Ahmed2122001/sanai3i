@@ -41,23 +41,27 @@ class ChatController extends Controller
 
     public function getMessages($customerId, $workerId)
     {
-        $customer = Customer::findOrFail($customerId);
-        $worker = Worker::findOrFail($workerId);
+        try {
+            $customer = Customer::findOrFail($customerId);
+            $worker = Worker::findOrFail($workerId);
 
-        $messages = Message::where(function ($query) use ($customer, $worker) {
-            $query->where([
-                ['sender_type', 'customer'],
-                ['sender_id', $customer->id],
-                ['receiver_type', 'worker'],
-                ['receiver_id', $worker->id],
-            ])->orWhere([
-                ['sender_type', 'worker'],
-                ['sender_id', $worker->id],
-                ['receiver_type', 'customer'],
-                ['receiver_id', $customer->id],
-            ]);
-        })->orderBy('created_at', 'asc')->get();
+            $messages = Message::where(function ($query) use ($customer, $worker) {
+                $query->where([
+                    ['sender_type', 'customer'],
+                    ['sender_id', $customer->id],
+                    ['receiver_type', 'worker'],
+                    ['receiver_id', $worker->id],
+                ])->orWhere([
+                    ['sender_type', 'worker'],
+                    ['sender_id', $worker->id],
+                    ['receiver_type', 'customer'],
+                    ['receiver_id', $customer->id],
+                ]);
+            })->orderBy('created_at', 'asc')->get();
 
-        return response()->json(['messages' => $messages]);
+            return response()->json(['messages' => $messages]);
+        }catch (\Exception $exception){
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 }
