@@ -30,9 +30,26 @@ class Worker extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
-    public function messages()
+    //relation with message
+    // Define the relationship with messages sent by the worker
+    public function sentMessages()
     {
-        return $this->morphMany(Message::class, 'recipient');
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id')->where('receiver_type', 'worker');
+    }
+
+    public function getMostRecentMessage()
+    {
+        return $this->messages()->latest()->first();
+    }
+
+    public function getMessageCount()
+    {
+        return $this->messages()->count();
     }
     //relation with region
     public function region()

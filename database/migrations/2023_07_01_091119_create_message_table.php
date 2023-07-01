@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('report',function (Blueprint $table) {
-            $table->foreignId('contract_id')->constrained('contracts');
+        Schema::create('message', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('sender');
+            $table->morphs('receiver');
+            $table->text('message');
+            $table->timestamps();
         });
     }
 
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('message');
     }
 };

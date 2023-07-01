@@ -15,6 +15,7 @@ use App\Http\Controllers\API\reports\ReportController;
 use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\requests\RequestsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\chat\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -165,7 +166,10 @@ Route::group(
             Route::post('/report', [ReportController::class, 'store']);
             Route::post('/makeRequest', [RequestsController::class, 'store']);
             Route::post('/update_profile/{id}', [CustomerController::class, 'update_porofile']);
-
+            // send message
+            Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
+            //get all messages
+            Route::get('messages/{customerId}/{workerId}', [ChatController::class, 'getMessages']);
         });
     }
 );
@@ -197,6 +201,11 @@ Route::group(
             Route::delete('/deletePortfolio/{id}', [WorkerController::class, 'deletePortfolio']);
             // rate customer
             Route::post('/rate', [CustomerController::class, 'rateCustomer']);
+
+            // send message
+            Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
+            //get all messages
+            Route::get('messages/{customerId}/{workerId}', [ChatController::class, 'getMessages']);
         });
     }
 );
