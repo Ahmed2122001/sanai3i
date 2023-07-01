@@ -61,7 +61,9 @@ class ContractController extends Controller
             $contract->Process_status = "في انتظار الموافقة والسعر";
             $contract->payment_type = $request->payment_type;
             $contract->save();
-            return response()->json('تم اضافة العقد بنجاح', 201);
+            return response()->json([
+                'message'=> 'تم اضافة العقد بنجاح',
+                ], 201);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
