@@ -54,7 +54,7 @@ class filterController extends Controller
     //filter by data come from user which may contain category_id and city_id and price_rate and quality_rate and time_rate
     public function filter(Request $request){
         try{
-            $query = worker::select('id', 'name', 'phone', 'address', 'city_id', 'image', 'description', 'status');
+            $query = worker::select('worker.id', 'name', 'phone', 'address', 'city_id', 'image', 'description', 'status');
             // check image
 
             if ($request->has('category_id')) {
