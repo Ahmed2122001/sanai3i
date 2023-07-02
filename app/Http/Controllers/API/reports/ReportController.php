@@ -19,10 +19,24 @@ class ReportController extends Controller
     public function index():JsonResponse
     {
         try {
-            $report=Report::orderBy('id','asc')->get();
+            $report = Report::orderBy('id', 'asc')
+                ->leftJoin('customer', 'report.customer_id', '=', 'customer.id')
+                ->leftJoin('worker', 'report.worker_id', '=', 'worker.id')
+                ->select(
+                    'report.id',
+                    'report.comment',
+                    'report.created_at',
+                    'report.updated_at',
+                    'report.customer_id',
+                    'report.worker_id',
+                    'report.contract_id',
+                    'customer.name as customer_name',
+                    'worker.name as worker_name',
+                )
+                ->get();
+
             if ($report) {
                 return response()->json([
-                    'success'=>true,
                     'message'=>"تم استرجاع البلاغات بنجاح",
                     'reports'=>$report,
                 ],200);
@@ -34,8 +48,8 @@ class ReportController extends Controller
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'success'=>false,
                 'message'=>"حدث خطأ ما",
+                'error'=>$th->getMessage(),
             ],400);
             //throw $th;
         }
@@ -52,8 +66,8 @@ class ReportController extends Controller
         try {
             $validation = Validator::make($request->all(), [
                 'contract_id' => 'required|exists:contracts,id',
-                'customer_id' => 'required',
-                'worker_id' => 'required',
+                'customer_id' => 'required|exists:customer,id',
+                'worker_id' => 'required|exists:worker,id',
                 'comment' => 'required',
             ]);
             if ($validation->fails()) {
