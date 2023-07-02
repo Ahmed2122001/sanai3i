@@ -219,8 +219,8 @@ class AdminController extends Controller
     public function showAllAccounts()
     {
         try {
-            $customers = Customer::all()->where('status', 'active');
-            $workers = Worker::all()->where('status', 'active');
+            $customers = Customer::all();
+            $workers = Worker::all();
             if ($customers && $workers) {
                 return response()->json([
                     'Customers' => $customers,

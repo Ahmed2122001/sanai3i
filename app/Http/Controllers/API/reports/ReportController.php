@@ -148,6 +148,6 @@ class ReportController extends Controller
      */
     public function destroy(Report $report)
     {
-        //
+
     }
 }
