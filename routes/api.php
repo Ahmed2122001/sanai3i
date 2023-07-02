@@ -171,6 +171,8 @@ Route::group(
             Route::post('/sendMessage', [ChatController::class, 'sendMessage']);
             //get all messages
             Route::get('messages/{customerId}/{workerId}', [ChatController::class, 'getMessages']);
+            //get best workers
+            Route::get('/getBestWorkers',[WorkerController::class,'getBestWorkers']);
         });
     }
 );
