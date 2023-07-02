@@ -101,7 +101,8 @@ Route::group(
             Route::get('workersrates', [AdminController::class, 'showWorkersRates']);
             Route::get('getUsersByMonth', [ChartsController::class, 'getUsersByMonth']);
             Route::get('getRequestsByMonth', [ChartsController::class, 'getRequestsByMonth']);
-
+            // show specific contract by id
+            Route::get('/contract/{id}', [ContractController::class, 'getContract']);
 
         });
         Route::prefix('region')->group(function () {
