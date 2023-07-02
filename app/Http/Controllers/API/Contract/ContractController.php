@@ -152,10 +152,15 @@ class ContractController extends Controller
     // get contract by id
     public function getContract($id){
         try {
-            $contract=Contract::findOrFail($id);
+            $contract=Contract::findOrFail($id)
+                ->leftJoin('customer','contracts.customer_id' ,'=','customer.id')
+                ->leftJoin('worker','contracts.worker_id','=','worker.id')
+                ->leftJoin('category','worker.category_id','=','category.id')
+                ->select('contracts.*','customer.name as customer_name','customer.address as customer_address','customer.phone as customer_phone','worker.name as worker_name','worker.address as worker_address','worker.phone as worker_phone','category.name as category_name')
+                ->first();
             if($contract){
                 return response()->json([
-                    'success'=>true,
+                    //'message'=>'تم ايجاد العقد بنجاح',
                     'contract'=>$contract
                 ],200);
             }else{
