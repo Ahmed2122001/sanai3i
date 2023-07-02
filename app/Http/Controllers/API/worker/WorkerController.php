@@ -422,5 +422,57 @@ class WorkerController extends Controller
         }
     }
 
+    //get all workers that there rate is greater than 4
+    public function getBestWorkers()
+    {
+        try {
+            $workers = DB::table('worker')
+                ->join('category', 'worker.category_id', '=', 'category.id')
+                ->join('rate', 'worker.id', '=', 'rate.worker_id')
+                ->select(
+                    'worker.id',
+                    'worker.name',
+                    'worker.email',
+                    'worker.phone',
+                    'worker.image',
+                    DB::raw('(SELECT name FROM category WHERE id = worker.category_id) as category_name'),
+                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
+                    DB::raw('ROUND(AVG(time_rate), 1) as avg_time_rate'),
+                    DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate'),
+                    DB::raw('ROUND((AVG(quality_rate) + AVG(time_rate) + AVG(price_rate)) / 3) as avg_rate')
+                )
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.image', 'worker.category_id')
+                ->havingRaw('avg_rate >= 4')
+                ->orderBy('worker.category_id')
+                ->orderBy('avg_rate', 'desc')
+                ->limit(1)
+                ->get();
+
+
+            foreach ($workers as $worker) {
+                if ($worker->image != null) {
+                    $path = public_path($worker->image);
+                    if (file_exists($path)) {
+                        $file = file_get_contents($path);
+                        $base64 = base64_encode($file);
+                        $worker->image = $base64;
+                    }
+                }
+            }
+            return response()->json([
+                'success' => true,
+                'best_workers' => $workers,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ ما',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+
 
 }
