@@ -32,9 +32,11 @@ class ReportController extends Controller
                     'report.contract_id',
                     'customer.name as customer_name',
                     'worker.name as worker_name',
+                    'customer.status as customer_status',
+                    'worker.status as worker_status',
                 )
                 ->get();
-
+//            dd($report);
             if ($report) {
                 return response()->json([
                     'message'=>"تم استرجاع البلاغات بنجاح",
