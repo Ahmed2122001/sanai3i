@@ -43,6 +43,7 @@ class ContractController extends Controller
                 'ex_end_date' => 'required',
                 'customer_id' => 'required',
                 'worker_id' => 'required',
+                'description' => 'required',
                 'payment_type' => 'required',
             ]);
             if (!$validate) {
@@ -58,6 +59,7 @@ class ContractController extends Controller
             $contract->ex_end_date = $exEndDate;
             $contract->customer_id = $request->customer_id;
             $contract->worker_id = $request->worker_id;
+            $contract->description = $request->description;
             $contract->Process_status = "في انتظار الموافقة والسعر";
             $contract->payment_type = $request->payment_type;
             $contract->save();
