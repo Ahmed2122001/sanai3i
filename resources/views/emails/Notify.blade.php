@@ -9,7 +9,7 @@
 </head>
 <body>
 <div>
-    <h1> Worker email notification</h1>
+    <h2>Attention انتبه</h2>
     <p>أهلا  {{ $mailBody->name }}</p>
     <p>{{ $mailBody->message }}</p>
 </div>
