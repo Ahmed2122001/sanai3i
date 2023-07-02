@@ -11,7 +11,7 @@ class filterController extends Controller
     //filter by category
     public function filterByCategory($id)
     {
-        $worker = worker::select('name', 'phone', 'address', 'city_id', 'image', 'description', 'status')
+        $worker = worker::select('worker.id','name', 'phone', 'address', 'city_id', 'image', 'description', 'status')
             ->where('category_id', $id)
             ->get();
         return response()->json($worker);
@@ -29,7 +29,7 @@ class filterController extends Controller
     {
         $category_id = $request->category_id;
         $city_id = $request->city_id;
-        $worker = worker::select('name', 'phone', 'address', 'city_id', 'image', 'description', 'status')
+        $worker = worker::select('worker.id','name', 'phone', 'address', 'city_id', 'image', 'description', 'status')
             ->where('category_id', $category_id)
             ->where('city_id', $city_id)
             ->get();
@@ -42,7 +42,7 @@ class filterController extends Controller
         $price_rate = $request->price_rate;
         $quality_rate = $request->quality_rate;
         $time_rate = $request->time_rate;
-        $worker = worker::select('name', 'phone', 'address', 'city_id', 'image', 'description', 'status')
+        $worker = worker::select('worker.id','name', 'phone', 'address', 'city_id', 'image', 'description', 'status')
             ->join('rate', 'worker.id', '=', 'rate.worker_id')
             ->where('price_rate', $price_rate)
             ->where('quality_rate', $quality_rate)
