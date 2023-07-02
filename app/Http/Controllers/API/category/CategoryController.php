@@ -14,7 +14,7 @@ class CategoryController extends Controller
     {
         try {
             $categories = Category::get();
-            return response()->json(['categories' => $categories, 'تم استرجاع البيانات بنجاح']);;
+            return response()->json(['categories' => $categories, 'تم استرجاع البيانات بنجاح']);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'لا يوجد بيانات',
@@ -51,21 +51,20 @@ class CategoryController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255|unique:category',
                 'description' => 'required|string|max:255',
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 400);
             }
 
-            // Get the uploaded image file
-            $uploadedFile = $request->file('image');
-
-            // Generate a unique filename for the uploaded image
-            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-            // Store the uploaded image in the public/images directory
-            $path=$uploadedFile->move('images', $filename);
-            //dd($path);
+//            // Get the uploaded image file
+//            $uploadedFile = $request->file('image');
+//
+//            // Generate a unique filename for the uploaded image
+//            $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+//
+//            // Store the uploaded image in the public/images directory
+//            $path=$uploadedFile->move('images', $filename);
+//            //dd($path);
 
 //            $path = $uploadedFile->storeAs('public/images', $filename);
 
@@ -73,7 +72,7 @@ class CategoryController extends Controller
             $category =Category::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'image' => $path,
+                //'image' => $path,
             ]);
             if ($category) {
                 return response()->json([
@@ -102,7 +101,7 @@ class CategoryController extends Controller
             $request->validate([
                 'name' => 'string|max:255|unique:category,name,' . $id,
                 'description' => 'required|string|max:255',
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                //'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
             // Find the category to update
@@ -115,23 +114,23 @@ class CategoryController extends Controller
                 if ($request->has('description')) {
                     $category->description = $request->description;
                 }
-                // Update the category image, if a new one was uploaded
-                if ($request->hasFile('image')) {
-                    // Get the uploaded image file
-                    $uploadedFile = $request->file('image');
-
-                    // Generate a unique filename for the uploaded image
-                    $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
-
-                    // Store the uploaded image in the public/images directory
-                    $path = $uploadedFile->storeAs('public/images', $filename);
-
-                    // Delete the old image file
-                    Storage::delete($category->image);
-
-                    // Update the category image path
-                    $category->image = $path;
-                }
+//                // Update the category image, if a new one was uploaded
+//                if ($request->hasFile('image')) {
+//                    // Get the uploaded image file
+//                    $uploadedFile = $request->file('image');
+//
+//                    // Generate a unique filename for the uploaded image
+//                    $filename = uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+//
+//                    // Store the uploaded image in the public/images directory
+//                    $path = $uploadedFile->storeAs('public/images', $filename);
+//
+//                    // Delete the old image file
+//                    Storage::delete($category->image);
+//
+//                    // Update the category image path
+//                    $category->image = $path;
+//                }
                 // Save the updated category
                 $category->save();
                 if ($category) {
