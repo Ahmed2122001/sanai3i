@@ -434,6 +434,7 @@ class WorkerController extends Controller
                     'worker.name',
                     'worker.email',
                     'worker.phone',
+                    'worker.address',
                     'worker.image',
                     DB::raw('(SELECT name FROM category WHERE id = worker.category_id) as category_name'),
                     DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
@@ -441,11 +442,10 @@ class WorkerController extends Controller
                     DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate'),
                     DB::raw('ROUND((AVG(quality_rate) + AVG(time_rate) + AVG(price_rate)) / 3) as avg_rate')
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.image', 'worker.category_id')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image', 'worker.category_id')
                 ->havingRaw('avg_rate >= 4')
                 ->orderBy('worker.category_id')
                 ->orderBy('avg_rate', 'desc')
-                ->limit(1)
                 ->get();
 
 
