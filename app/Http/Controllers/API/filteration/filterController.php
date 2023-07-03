@@ -7,7 +7,7 @@ use App\Models\Customer;
 use App\Models\worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Collection;
 class filterController extends Controller
 {
     //filter by category
@@ -197,10 +197,10 @@ class filterController extends Controller
             return response()->json([
                 'success' => true,
                 'category'=>$nearest_worker->category_name,
-                'nearest'=>$nearest_worker,
-                'quality'=>$bestQuality,
-                'price'=>$bestPrice,
-                'time'=>$bestTime
+                'الاقرب'=>$nearest_worker,
+                'الاعلي جودة'=>$bestQuality,
+                'الافضل سعر'=>$bestPrice,
+                'الافضل وقت'=>$bestTime
             ],200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -211,5 +211,100 @@ class filterController extends Controller
         }
 
     }
+
+
+//    public function recommendations($customer_id, $category_id)
+//    {
+//        try {
+//            $customer = Customer::where('id', $customer_id)->with('region')->first();
+//            $workers = new Collection();
+//
+//            if ($customer->region) {
+//                $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
+//                    ->join('region', 'worker.city_id', '=', 'region.id')
+//                    ->where('category_id', $category_id)
+//                    ->where('city_id', $customer->region->id)
+//                    ->select(
+//                        'worker.id',
+//                        'worker.name',
+//                        'worker.email',
+//                        'worker.phone',
+//                        'worker.address',
+//                        'category.name as category_name',
+//                        'region.city_name as region_name',
+//                        'worker.image'
+//                    )
+//                    ->first();
+//
+//                if ($nearest_worker->image != null) {
+//                    $nearest_worker->image = $this->converter($nearest_worker->image);
+//                }
+//
+//                $workers->push($nearest_worker);
+//            }
+//
+//            $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+//                ->join('category', 'worker.category_id', '=', 'category.id')
+//                ->where('category_id', $category_id)
+//                ->select(
+//                    'worker.id',
+//                    'worker.name',
+//                    'worker.email',
+//                    'worker.phone',
+//                    'worker.address',
+//                    'worker.image',
+//                    'category.name as category_name',
+//                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate')
+//                )
+//                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
+//                ->orderBy('quality_rate', 'desc')
+//                ->first();
+//
+//            if ($bestQuality->image != null) {
+//                $bestQuality->image = $this->converter($bestQuality->image);
+//            }
+//
+//            $workers->push($bestQuality);
+//
+//            $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+//                ->join('category', 'worker.category_id', '=', 'category.id')
+//                ->where('category_id', $category_id)
+//                ->select(
+//                    'worker.id',
+//                    'worker.name',
+//                    'worker.email',
+//                    'worker.phone',
+//                    'worker.address',
+//                    'worker.image',
+//                    'category.name as category_name',
+//                    DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate')
+//                )
+//                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
+//                ->orderBy('avg_price_rate', 'desc')
+//                ->first();
+//
+//            if ($bestPrice->image != null) {
+//                $bestPrice->image = $this->converter($bestPrice->image);
+//            }
+//
+//            $workers->push($bestPrice);
+//
+//            $uniqueWorkers = $workers->unique('id');
+//
+//            return response()->json([
+//                'success' => true,
+//                'category' => $nearest_worker->category_name,
+//                'العمال المقترحون' => $uniqueWorkers
+//            ], 200);
+//        } catch (\Throwable $th) {
+//            return response()->json([
+//                'success' => false,
+//                'message' => 'حدث خطأ ما',
+//                'error' => $th->getMessage(),
+//            ], 500);
+//        }
+//    }
+
+
 }
 
