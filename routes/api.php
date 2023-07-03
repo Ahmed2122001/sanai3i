@@ -176,6 +176,8 @@ Route::group(
             Route::get('messages/{customerId}/{workerId}', [ChatController::class, 'getMessages']);
             //get best workers
             Route::get('/getBestWorkers',[WorkerController::class,'getBestWorkers']);
+            //recommendations
+            Route::get('/recommendations/{customerId}/{categoryId}',[filterController::class,'recommendations']);
         });
     }
 );
