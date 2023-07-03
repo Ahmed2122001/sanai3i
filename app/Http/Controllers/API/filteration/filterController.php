@@ -136,6 +136,8 @@ class filterController extends Controller
             }
             if ($nearest_worker->image!=null){
                 $nearest_worker->image=$this->converter($nearest_worker->image);
+            }else{
+                $nearest_worker->image="null";
             }
             $bestQuality=Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
@@ -174,6 +176,8 @@ class filterController extends Controller
                 ->first();
             if ($bestPrice->image!=null){
                 $bestPrice->image=$this->converter($bestPrice->image);
+            }else{
+                $bestPrice->image="null";
             }
             $bestTime=Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
@@ -193,6 +197,8 @@ class filterController extends Controller
                 ->first();
             if ($bestTime->image!=null){
                 $bestTime->image=$this->converter($bestTime->image);
+            }else{
+                $bestTime->image="null";
             }
             return response()->json([
                 'success' => true,
