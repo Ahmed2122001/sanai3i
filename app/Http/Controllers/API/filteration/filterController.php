@@ -130,11 +130,8 @@ class filterController extends Controller
                     ->select(
                         'worker.id',
                         'worker.name',
-                        'worker.email',
                         'worker.phone',
                         'worker.address',
-                        'category.name as category_name',
-                        'region.city_name as region_name',
                         'worker.image',
                     )
                     ->first();
@@ -144,28 +141,23 @@ class filterController extends Controller
                 }
             }
 
-
             $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
                 ->where('category_id', $category_id)
                 ->select(
                     'worker.id',
                     'worker.name',
-                    'worker.email',
                     'worker.phone',
                     'worker.address',
-                    'worker.image',
-                    'category.name as category_name',
-                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
+                    'worker.image'
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
-                ->orderBy('quality_rate', 'desc')
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
+                ->orderByRaw('AVG(quality_rate) DESC')
                 ->first();
 
             if ($bestQuality && $bestQuality->image != null) {
                 $bestQuality->image = $this->converter($bestQuality->image);
             }
-
 
             $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
@@ -173,22 +165,17 @@ class filterController extends Controller
                 ->select(
                     'worker.id',
                     'worker.name',
-                    'worker.email',
                     'worker.phone',
                     'worker.address',
-                    'worker.image',
-                    'category.name as category_name',
-                    DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate'),
+                    'worker.image'
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
-                ->orderBy('avg_price_rate', 'desc')
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
+                ->orderByRaw('AVG(price_rate) DESC')
                 ->first();
 
             if ($bestPrice && $bestPrice->image != null) {
                 $bestPrice->image = $this->converter($bestPrice->image);
             }
-
-
 
             $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
@@ -196,25 +183,22 @@ class filterController extends Controller
                 ->select(
                     'worker.id',
                     'worker.name',
-                    'worker.email',
                     'worker.phone',
                     'worker.address',
-                    'worker.image',
-                    'category.name as category_name',
-                    DB::raw('ROUND(AVG(time_rate), 1) as avg_time_rate'),
+                    'worker.image'
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
-                ->orderBy('avg_time_rate', 'desc')
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
+                ->orderByRaw('AVG(time_rate) DESC')
                 ->first();
 
             if ($bestTime && $bestTime->image != null) {
                 $bestTime->image = $this->converter($bestTime->image);
             }
-            
+
             if ($nearest_worker || $bestQuality || $bestPrice || $bestTime){
                 return response()->json([
                     'success' => true,
-                    'workers' =>[
+                    'workers' => [
                         'الاقرب' => $nearest_worker,
                         'الاعلي جودة' => $bestQuality,
                         'الافضل سعر' => $bestPrice,
@@ -224,7 +208,7 @@ class filterController extends Controller
             }else{
                 return response()->json([
                     'success' => true,
-                    'workers' =>[]
+                    'workers' => []
                 ], 200);
             }
         } catch (\Throwable $th) {
@@ -235,6 +219,7 @@ class filterController extends Controller
             ], 500);
         }
     }
+
 
 
 
