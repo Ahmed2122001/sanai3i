@@ -113,9 +113,14 @@ class filterController extends Controller
         return $image;
     }
     //return the nearest worker and best in quality, time and price
-    public function recommendations($customer_id,$category_id){
-        try{
+    public function recommendations($customer_id, $category_id)
+    {
+        try {
             $customer = Customer::where('id', $customer_id)->with('region')->first();
+            $nearest_worker = null;
+            $bestQuality = null;
+            $bestPrice = null;
+            $bestTime = null;
 
             if ($customer->region) {
                 $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
@@ -133,13 +138,14 @@ class filterController extends Controller
                         'worker.image',
                     )
                     ->first();
+
+                if ($nearest_worker && $nearest_worker->image != null) {
+                    $nearest_worker->image = $this->converter($nearest_worker->image);
+                }
             }
-            if ($nearest_worker->image!=null){
-                $nearest_worker->image=$this->converter($nearest_worker->image);
-            }else{
-                $nearest_worker->image="null";
-            }
-            $bestQuality=Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+
+
+            $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
                 ->where('category_id', $category_id)
                 ->select(
@@ -152,13 +158,16 @@ class filterController extends Controller
                     'category.name as category_name',
                     DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id','category.name')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
                 ->orderBy('quality_rate', 'desc')
                 ->first();
-            if ($bestQuality->image!=null){
-                $bestQuality->image=$this->converter($bestQuality->image);
+
+            if ($bestQuality && $bestQuality->image != null) {
+                $bestQuality->image = $this->converter($bestQuality->image);
             }
-            $bestPrice=Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+
+
+            $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
                 ->where('category_id', $category_id)
                 ->select(
@@ -171,15 +180,17 @@ class filterController extends Controller
                     'category.name as category_name',
                     DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate'),
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id','category.name')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
                 ->orderBy('avg_price_rate', 'desc')
                 ->first();
-            if ($bestPrice->image!=null){
-                $bestPrice->image=$this->converter($bestPrice->image);
-            }else{
-                $bestPrice->image="null";
+
+            if ($bestPrice && $bestPrice->image != null) {
+                $bestPrice->image = $this->converter($bestPrice->image);
             }
-            $bestTime=Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+
+
+
+            $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
                 ->where('category_id', $category_id)
                 ->select(
@@ -192,22 +203,30 @@ class filterController extends Controller
                     'category.name as category_name',
                     DB::raw('ROUND(AVG(time_rate), 1) as avg_time_rate'),
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id','category.name')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
                 ->orderBy('avg_time_rate', 'desc')
                 ->first();
-            if ($bestTime->image!=null){
-                $bestTime->image=$this->converter($bestTime->image);
-            }else{
-                $bestTime->image="null";
+
+            if ($bestTime && $bestTime->image != null) {
+                $bestTime->image = $this->converter($bestTime->image);
             }
-            return response()->json([
-                'success' => true,
-                'category'=>$nearest_worker->category_name,
-                'الاقرب'=>$nearest_worker,
-                'الاعلي جودة'=>$bestQuality,
-                'الافضل سعر'=>$bestPrice,
-                'الافضل وقت'=>$bestTime
-            ],200);
+            
+            if ($nearest_worker || $bestQuality || $bestPrice || $bestTime){
+                return response()->json([
+                    'success' => true,
+                    'workers' =>[
+                        'الاقرب' => $nearest_worker,
+                        'الاعلي جودة' => $bestQuality,
+                        'الافضل سعر' => $bestPrice,
+                        'الافضل وقت' => $bestTime
+                    ]
+                ], 200);
+            }else{
+                return response()->json([
+                    'success' => true,
+                    'workers' =>[]
+                ], 200);
+            }
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
@@ -215,8 +234,8 @@ class filterController extends Controller
                 'error' => $th->getMessage(),
             ], 500);
         }
-
     }
+
 
 
 //    public function recommendations($customer_id, $category_id)
