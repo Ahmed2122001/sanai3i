@@ -116,20 +116,24 @@ class filterController extends Controller
     public function recommendations($customer_id,$category_id){
         try{
             $customer = Customer::where('id', $customer_id)->with('region')->first();
-            $nearest_worker = Worker::
-                join('category', 'worker.category_id', '=', 'category.id')
-                ->where('category_id', $category_id)
-                ->where('city_id', $customer->region->id)
-                ->select(
-                    'worker.id',
-                    'worker.name',
-                    'worker.email',
-                    'worker.phone',
-                    'worker.address',
-                    'worker.image',
-                    DB::raw('(SELECT category.name FROM category WHERE id = worker.category_id) as category_name'),
-                )
-                ->first();
+
+            if ($customer->region) {
+                $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
+                    ->join('region', 'worker.city_id', '=', 'region.id')
+                    ->where('category_id', $category_id)
+                    ->where('city_id', $customer->region->id)
+                    ->select(
+                        'worker.id',
+                        'worker.name',
+                        'worker.email',
+                        'worker.phone',
+                        'worker.address',
+                        'category.name as category_name',
+                        'region.city_name as region_name',
+                        'worker.image',
+                    )
+                    ->first();
+            }
             if ($nearest_worker->image!=null){
                 $nearest_worker->image=$this->converter($nearest_worker->image);
             }
@@ -143,10 +147,10 @@ class filterController extends Controller
                     'worker.phone',
                     'worker.address',
                     'worker.image',
-                    DB::raw('(SELECT name FROM category WHERE id = worker.category_id) as category_name'),
+                    'category.name as category_name',
                     DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id','category.name')
                 ->orderBy('quality_rate', 'desc')
                 ->first();
             if ($bestQuality->image!=null){
@@ -162,10 +166,10 @@ class filterController extends Controller
                     'worker.phone',
                     'worker.address',
                     'worker.image',
-                    DB::raw('(SELECT name FROM category WHERE id = worker.category_id) as category_name'),
+                    'category.name as category_name',
                     DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate'),
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id','category.name')
                 ->orderBy('avg_price_rate', 'desc')
                 ->first();
             if ($bestPrice->image!=null){
@@ -181,10 +185,10 @@ class filterController extends Controller
                     'worker.phone',
                     'worker.address',
                     'worker.image',
-                    DB::raw('(SELECT name FROM category WHERE id = worker.category_id) as category_name'),
+                    'category.name as category_name',
                     DB::raw('ROUND(AVG(time_rate), 1) as avg_time_rate'),
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id')
+                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone','worker.address','worker.image','worker.category_id','category.name')
                 ->orderBy('avg_time_rate', 'desc')
                 ->first();
             if ($bestTime->image!=null){
@@ -192,7 +196,7 @@ class filterController extends Controller
             }
             return response()->json([
                 'success' => true,
-                'category'=>$nearest_worker->category->name,
+                'category'=>$nearest_worker->category_name,
                 'nearest'=>$nearest_worker,
                 'quality'=>$bestQuality,
                 'price'=>$bestPrice,
