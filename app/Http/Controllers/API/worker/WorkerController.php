@@ -195,7 +195,7 @@ class WorkerController extends Controller
                     $path = $uploadedFile->move('images', $filename);
 
                     // Delete the old image file
-                    Storage::delete($worker->image);
+                    !is_null($worker->image) && Storage::delete($worker->image);
 
                     // Update the category image path
                     $worker->image = $path;
@@ -258,10 +258,6 @@ class WorkerController extends Controller
                         DB::raw('ROUND(AVG(time_rate),1) as avg_time_rate'),
                         DB::raw('ROUND(AVG(price_rate),1) as avg_price_rate'),
                         DB::raw('ROUND((AVG(quality_rate) + AVG(time_rate) + AVG(price_rate)) / 3) as avg_rate'))
-//                        DB::raw('AVG(quality_rate) as quality_rate'),
-//                        DB::raw('AVG(time_rate) as avg_time_rate'),
-//                        DB::raw('AVG(price_rate) as avg_price_rate'),
-//                        DB::raw('(AVG(quality_rate) + AVG(time_rate) + AVG(price_rate)) / 3 as avg_rate'))
                     ->where('worker_id',$id)
                     ->groupBy('worker_id')
                     ->get();
@@ -290,8 +286,6 @@ class WorkerController extends Controller
                             $file = file_get_contents($portfolio->work_image);
                             $base64 = base64_encode($file);
                             $work_images[] = $base64;
-
-                            //return response()->json($data, 200);
                         }
                     }
                     if (!empty($work_images))
