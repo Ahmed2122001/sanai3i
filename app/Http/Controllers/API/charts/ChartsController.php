@@ -38,24 +38,22 @@ class ChartsController extends Controller
     }
     public function getWorkerByCategory()
     {
+        $categories = Category::all();
+        $categoryData = [];
 
-            $counts = [];
-            $categories_id = [];
+        foreach ($categories as $category) {
+            $count = Worker::where('category_id', $category->id)->count();
+            $categoryData[] = [
+                'category' => $category->name,
+                'count' => $count,
+            ];
+        }
 
-            $categories = Worker::select('category_id')->distinct()->get();
-            $cat=Category::select('id')->distinct()->get();
-            $c=[];
-            foreach ($categories as $category) {
-                $count = Worker::where('category_id', $category->category_id)->count();
-                $categories_id[] = $category->category_id;
-                $counts[] = $count;
-            }
-            foreach ($cat as $category) {
-               $c[]=$category->id;
-            }
-            return response()->json(["categories" => $c,"IdCounted"=>$categories_id ,"counts" => $counts], 200);
-
+        return response()->json(["categories" => $categoryData], 200);
     }
+
+
+
     public function getWorkerByRegion()
     {
 
