@@ -56,23 +56,20 @@ class ChartsController extends Controller
 
     public function getWorkerByRegion()
     {
+   $regions = Region::all();
+       $categoryData = [];
+       foreach ($regions as $region) {
+          $count = Worker::where('city_id', $region->id)->count();
+           $categoryData[] = [
+               'city name' => $region->city_name,
+                'count' => $count,
+          ];
+        }
 
-                $counts = [];
-                $regions = Worker::select('city_id')->distinct()->get();
-                $regions_id = [];
-                $AllRegions = Region::select('id')->distinct()->get();
-                $AllR=[];
-                foreach ($regions as $region) {
-                    $count = Worker::where('city_id', $region->city_id)->count();
-                    $counts[] = $count;
-                    $regions_id[] = $region->city_id;
-                }
-                foreach ($AllRegions as $region) {
-                    $AllR[]=$region->id;
-                }
-                return response()->json(["All Regions"=>$AllR,"regions" => $regions_id, "counts" => $counts], 200);
+       return response()->json(["regions" => $categoryData], 200);
 
     }
+
     public function getCustomerByRegion()
     {
             $counts = [];
