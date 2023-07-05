@@ -8,10 +8,15 @@ use App\Http\Requests\customer\StoreCustomerRequest;
 use App\Http\Resources\customer\CustomerResource;
 use App\Models\Contract;
 use App\Models\Customer;
+use App\Models\MailBody;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgetPassword;
+use Illuminate\Support\Str;
 
 class CustomerController extends Controller
 {
@@ -277,5 +282,36 @@ class CustomerController extends Controller
             ], 500);
         }
 
+    }
+    /*
+     * forget password
+     */
+    public function forgetPassword(Request $request){
+        try {
+            $email=$request->email;
+            $customer=Customer::where('email',$email)->first();
+            if ($customer){
+                // generate new random password
+                $password = Str::random(8);
+                $customer->password=Hash::make($password);
+                $customer->save();
+                $mailBody = new MailBody();
+                $mailBody->name = $customer->name;
+                $mailBody->message =  $password;
+                Mail::to($email)->send(new ForgetPassword($mailBody));
+                return response()->json([
+                    'message'=>'تم ارسال كلمة السر الى البريد الالكترونى',
+                ],200);
+            }else{
+                return response()->json([
+                    'message'=>'البريد الالكترونى غير موجود'
+                ],400);
+            }
+        }catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'error',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
     }
 }

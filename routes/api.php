@@ -220,6 +220,7 @@ Route::group(
 Route::prefix('sanai3i')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/all-region', [RegionController::class, 'showAllRegions']);
+    Route::post('/forgetPassword', [CustomerController::class, 'forgetPassword']);
 });
 
 //for verification email
