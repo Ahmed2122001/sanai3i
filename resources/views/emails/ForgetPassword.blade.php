@@ -9,7 +9,7 @@
 </head>
 <body>
 <div>
-    <h1>Password</h1>
+    <h3>Password</h3>
     <p>أهلا  {{ $mailBody->name }}</p>
     <p>كلمة المرور الخاصة بك هي </p>
     <p> {{ $mailBody->message }}</p>
