@@ -112,12 +112,12 @@ class AuthController extends Controller
             try {
                 Mail::to($user->email)->send(new CustomerVerification($user));
                 return response()->json([
-                    'message' => 'Registered successfully please check your email to verify your account',
+                    'message' => 'تم التسجيل بنجاح افحص البريد الالكتروني',
                 ], 201);
             } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
-                    'message' => 'could not send verification email please try again later',
+                    'message' => 'حدث خطأ',
                     'error' => $e->getMessage()
                 ], 500);
             }
@@ -190,12 +190,12 @@ class AuthController extends Controller
             try {
                 Mail::to($user->email)->send(new WorkerVerification($user));
                 return response()->json([
-                    'message' => 'Registered successfully please check your email to verify your account',
+                    'message' => 'تم التسجيل بنجاح افحص البريد الالكتروني',
                 ], 201);
             } catch (\Exception $e) {
                 $user->delete();
                 return response()->json([
-                    'message' => 'could not send verification email please try again later',
+                    'message' => 'حدث خطأ',
                     'error' => $e->getMessage()
                 ], 500);
             }
@@ -290,7 +290,7 @@ class AuthController extends Controller
                 ], 200);
 //                ]); $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
             } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
-                return $this->returnError('E001', 'something went wrong');
+                return $this->returnError('E001', 'حدث خطأ ما');
             }
         }
     }

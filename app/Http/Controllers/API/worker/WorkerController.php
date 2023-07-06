@@ -76,7 +76,7 @@ class WorkerController extends Controller
                     'name' => $request->name,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
-                    //                    'password'=>$request->password,
+                    //'password'=>$request->password,
                     'phone' => $request->phone,
                     'address' => $request->address,
                     'image' => $request->image,
@@ -86,12 +86,12 @@ class WorkerController extends Controller
                 if ($worker) {
                     return response()->json([
                         //'success'=>true,
-                        'message' => "your request added and admin will check it",
+                        'message' => "تم اضافة العامل بنجاح سيقوم المشرف بالتحقق عليه",
                     ], 200);
                 } else {
                     return response()->json([
                         //'success'=>true,
-                        'message' => 'some problem',
+                        'message' => 'لم يتم اضافة العامل',
                     ], 401);
                 }
             }
@@ -230,7 +230,7 @@ class WorkerController extends Controller
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Worker not updated',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -305,13 +305,13 @@ class WorkerController extends Controller
                 return response()->json($data, 200);
             } else {
                 return response()->json([
-                    'message' => 'worker not found',
+                    'message' => 'العامل غير موجود',
                     'status' => '401'
                 ], 400);
             }
         }catch (\Throwable $th) {
             return response()->json([
-                'message' => 'worker not found',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -347,7 +347,7 @@ class WorkerController extends Controller
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Worker not updated',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -382,12 +382,12 @@ class WorkerController extends Controller
                 }
             }else{
                 return response()->json([
-                    'message' => 'Worker not found',
+                    'message' => 'العامل غير موجود',
                 ], 404);
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Portfolio not stored',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -410,7 +410,7 @@ class WorkerController extends Controller
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'work image not founded',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
