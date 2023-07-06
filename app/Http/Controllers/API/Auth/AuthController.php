@@ -40,7 +40,11 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'status' => 422,
+                'message' => 'البيانات المدخله غير صحيحه',
+                'errors' => $validator->errors(),
+            ], 422);
         }
         $credentials = $request->only('email', 'password');
         $token = auth::guard('api-admin')->attempt($credentials);
@@ -70,7 +74,11 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json([
+                'status' => 422,
+                'message' => 'البيانات المدخله غير صحيحه',
+                'errors' => $validator->errors(),
+            ], 422);
         }
         $region = Region::find($request->input('city_id'));
         if (!$region) {
@@ -201,7 +209,10 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'message' => 'بيانات الدخول غير صحيحه يرجى ادخال البريد الاكتروني او كلمة سر صحيحه',
+                'error' => $validator->errors()
+            ], 422);
         }
         $credentials = $request->only('email', 'password');
         $worker = Worker::where('email', $request->email)->first();
@@ -236,7 +247,10 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'message' => 'بيانات الدخول غير صحيحه يرجى ادخال البريد الاكتروني او كلمة سر صحيحه',
+                'error' => $validator->errors()
+            ], 422);
         }
         $credentials = $request->only('email', 'password');
         $customer = Customer::where('email', $request->email)->first();
@@ -271,7 +285,10 @@ class AuthController extends Controller
         if ($token) {
             try {
                 JWTAuth::setToken($token)->invalidate();
-                return $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
+                return response()->json([
+                    'message' => 'تم تسجيل الخروج بنجاح',
+                ], 200);
+//                ]); $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
             } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
                 return $this->returnError('E001', 'something went wrong');
             }

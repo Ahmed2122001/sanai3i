@@ -295,16 +295,25 @@ class CustomerController extends Controller
                 $worker=Worker::where('email',$email)->first();
                 if ($worker){
                     // generate new random password
+                    $oldPassword=$worker->password;
                     $password = Str::random(8);
                     $worker->password=Hash::make($password);
                     $worker->save();
                     $mailBody = new MailBody();
                     $mailBody->name = $worker->name;
                     $mailBody->message =  $password;
-                    Mail::to($email)->send(new ForgetPassword($mailBody));
-                    return response()->json([
-                        'message'=>'تم ارسال كلمة السر الى البريد الالكترونى',
-                    ],200);
+                    try{
+                        Mail::to($email)->send(new ForgetPassword($mailBody));
+                        return response()->json([
+                            'message'=>'تم ارسال كلمة السر الى البريد الالكترونى',
+                        ],200);
+                    }catch (\Throwable $th) {
+                        $worker->password = $oldPassword;
+                        $worker->save();
+                        return response()->json([
+                            'message' => 'لم يتم ارسال كلمة السر الى البريد الالكترونى',
+                        ], 500);
+                    }
                 }else{
                     return response()->json([
                         'message'=>'البريد الالكترونى غير موجود'
@@ -314,16 +323,25 @@ class CustomerController extends Controller
                 $customer=Customer::where('email',$email)->first();
                 if ($customer){
                     // generate new random password
+                    $oldPassword=$customer->password;
                     $password = Str::random(8);
                     $customer->password=Hash::make($password);
                     $customer->save();
                     $mailBody = new MailBody();
                     $mailBody->name = $customer->name;
                     $mailBody->message =  $password;
-                    Mail::to($email)->send(new ForgetPassword($mailBody));
-                    return response()->json([
-                        'message'=>'تم ارسال كلمة السر الى البريد الالكترونى',
-                    ],200);
+                    try{
+                        Mail::to($email)->send(new ForgetPassword($mailBody));
+                        return response()->json([
+                            'message'=>'تم ارسال كلمة السر الى البريد الالكترونى',
+                        ],200);
+                    }catch (\Throwable $th) {
+                        $customer->password = $oldPassword;
+                        $customer->save();
+                        return response()->json([
+                            'message' => 'لم يتم ارسال كلمة السر الى البريد الالكترونى',
+                        ], 500);
+                    }
                 }else{
                     return response()->json([
                         'message'=>'البريد الالكترونى غير موجود'
