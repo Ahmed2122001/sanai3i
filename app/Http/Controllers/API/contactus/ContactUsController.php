@@ -29,6 +29,6 @@ class ContactUsController extends Controller
         });
 
         // Return a JSON response
-        return response()->json(['message' => 'Your message has been sent successfully.']);
+        return response()->json(['message' => 'تم إرسال الرسالة بنجاح']);
     }
 }
