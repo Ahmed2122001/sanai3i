@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API\filteration;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Rate;
 use App\Models\Worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 class filterController extends Controller
 {
     //filter by category
@@ -33,7 +35,7 @@ class filterController extends Controller
             ], 200);
         }catch (\Throwable $th) {
             return response()->json([
-                'message' => 'error',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -61,7 +63,7 @@ class filterController extends Controller
             ], 200);
         }catch (\Throwable $th) {
             return response()->json([
-                'message' => 'error',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -90,7 +92,7 @@ class filterController extends Controller
             return response()->json($workers);
         }catch (\Throwable $th) {
             return response()->json([
-                'message' => 'error',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -125,7 +127,7 @@ class filterController extends Controller
             ],200);
         }catch (\Throwable $th) {
             return response()->json([
-                'message' => 'error',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -307,10 +309,12 @@ class filterController extends Controller
             $customer = Customer::where('id', $customer_id)->with('region')->first();
             $workers = new Collection();
             $nearest_worker = null;
+            $quality_rate=0;
+            $time_rate=0;
+            $price_rate=0;
             if ($customer->region) {
                 $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
                     ->join('region', 'worker.city_id', '=', 'region.id')
-                    ->join('rate', 'worker.id', '=', 'rate.worker_id')
                     ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
                     ->where('category_id', $category_id)
                     ->where('city_id', $customer->region->id)
@@ -321,14 +325,21 @@ class filterController extends Controller
                         'worker.address',
                         //'region.city_name as region_name',
                         'region.id as region_id',
-                        DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
-                        DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
-                        DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
                         'worker.image'
                     )
-                    ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id','quality_rate','price_rate','time_rate')
+                    ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id')
                     ->first();
+                // check if worker has rate or not
+                if ($nearest_worker) {
+                    $quality_rate = Rate::where('worker_id', $nearest_worker->id)->avg('quality_rate');
+                    $price_rate = Rate::where('worker_id', $nearest_worker->id)->avg('price_rate');
+                    $time_rate = Rate::where('worker_id', $nearest_worker->id)->avg('time_rate');
 
+                    // Set the rates to 0 if they are null
+                    $nearest_worker->quality_rate = $quality_rate ?? 0;
+                    $nearest_worker->price_rate = $price_rate ?? 0;
+                    $nearest_worker->time_rate = $time_rate ?? 0;
+                }
                 if ($nearest_worker && $nearest_worker->image != null) {
                     $nearest_worker->image = $this->converter($nearest_worker->image);
                 }
@@ -357,7 +368,12 @@ class filterController extends Controller
                 ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id','category.name')
                 ->orderBy('quality_rate', 'desc')
                 ->first();
-
+            // check if worker in same region of customer
+            if ($bestQuality && $bestQuality->region_id == $customer->region->id) {
+                $bestQuality->place = true;
+            }else{
+                $bestQuality->place = false;
+            }
             if ($bestQuality && $bestQuality->image != null) {
                 $bestQuality->image = $this->converter($bestQuality->image);
             }
@@ -388,6 +404,12 @@ class filterController extends Controller
                 ->orderBy('price_rate', 'desc')
                 ->first();
 
+            // check if worker in same region of customer
+            if ($bestPrice && $bestPrice->region_id == $customer->region->id) {
+                $bestPrice->place = true;
+            }else{
+                $bestPrice->place = false;
+            }
             if ($bestPrice && $bestPrice->image != null) {
                 $bestPrice->image = $this->converter($bestPrice->image);
             }
@@ -418,6 +440,12 @@ class filterController extends Controller
                 ->orderBy('time_rate', 'desc')
                 ->first();
 
+            // check if worker in same region of customer
+            if ($bestTime && $bestTime->region_id == $customer->region->id) {
+                $bestTime->place = true;
+            }else{
+                $bestTime->place = false;
+            }
             if ($bestTime && $bestTime->image != null) {
                 $bestTime->image = $this->converter($bestTime->image);
             }

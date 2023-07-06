@@ -40,7 +40,6 @@ class AdminController extends Controller
                 'success' => false,
                 'message' => $th->getMessage(),
             ], 400);
-            //throw $th;
         }
     }
 
@@ -69,12 +68,12 @@ class AdminController extends Controller
                 if ($admin) {
                     return response()->json([
                         'success' => true,
-                        'message' => 'admin added successfully',
+                        'message' => 'تم اضافة المشرف بنجاح',
                     ], 200);
                 } else {
                     return response()->json([
                         'success' => false,
-                        'message' => 'some problems',
+                        'message' => 'حدث خطأ ما',
                     ], 400);
                 }
             }
@@ -113,12 +112,12 @@ class AdminController extends Controller
                 $customer->save();
                 return response()->json([
                     'success' => true,
-                    'message' => 'customer suspended successfully',
+                    'message' => 'تم ايقاف العميل',
                 ], 200);
             } else {
                 return response()->json([
                     'success' => true,
-                    'message' => 'some problems',
+                    'message' => 'لم يتم العثور علي العميل',
                 ], 400);
             }
         } catch (\Throwable $th) {
@@ -141,12 +140,12 @@ class AdminController extends Controller
                 $customer->save();
                 return response()->json([
                     'success' => true,
-                    'message' => 'customer activated successfully',
+                    'message' => 'تم تفعيل حساب العميل',
                 ], 200);
             } else {
                 return response()->json([
                     'success' => true,
-                    'message' => 'some problems',
+                    'message' => 'لم يتم العثور علي العميل',
                 ], 400);
             }
         } catch (\Throwable $th) {
@@ -169,12 +168,12 @@ class AdminController extends Controller
                 $worker->save();
                 return response()->json([
                     'success' => true,
-                    'message' => 'worker suspended successfully',
+                    'message' => 'تم ايقاف العامل',
                 ], 200);
             } else {
                 return response()->json([
                     'success' => true,
-                    'message' => 'some problems',
+                    'message' => 'لم يتم العثور علي العامل',
                 ], 400);
             }
         } catch (\Throwable $th) {
@@ -197,12 +196,12 @@ class AdminController extends Controller
                 $worker->save();
                 return response()->json([
                     'success' => true,
-                    'message' => 'worker activated successfully',
+                    'message' => 'تم تفعيل حساب العامل',
                 ], 200);
             } else {
                 return response()->json([
                     'success' => true,
-                    'message' => 'some problems',
+                    'message' => 'لم يتم العثور علي العامل',
                 ], 400);
             }
         } catch (\Throwable $th) {
@@ -229,7 +228,7 @@ class AdminController extends Controller
             } else {
                 return response()->json([
                     //'success'=>true,
-                    'message' => 'some problems',
+                    'message' => 'حدث خطأ ما',
                 ], 400);
             }
         } catch (\Throwable $throwable) {
@@ -253,7 +252,7 @@ class AdminController extends Controller
             } else {
                 return response()->json([
                     //'success'=>true,
-                    'message' => 'some problems',
+                    'message' => 'حدث خطأ ما',
                 ], 400);
             }
         } catch (\Throwable $throwable) {
@@ -295,7 +294,7 @@ class AdminController extends Controller
             } else {
                 return response()->json([
                     //'success'=>true,
-                    'message' => 'some problems',
+                    'message' => 'حدث خطأ ما',
                 ], 400);
             }
         } catch (\Throwable $throwable) {
@@ -319,7 +318,7 @@ class AdminController extends Controller
             }
             return response()->json([
                 'success'=>true,
-                'message'=>'notified successfully',
+                'message'=>'تم ارسال الاشعارات بنجاح',
             ],200);
         } catch (\Throwable $throwable) {
             return response()->json([

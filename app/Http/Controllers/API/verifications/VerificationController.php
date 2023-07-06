@@ -12,7 +12,7 @@ class VerificationController extends Controller
     public function verifyCustomer($user_id, Request $request){
         if (!$request->hasValidSignature()) {
             return response()->json([
-                'message' => 'Invalid/Expired url provided.'
+                'message' => 'رابط غير صالح / منتهي الصلاحية.'
             ], 401);
         }
         $user = Customer::findOrFail($user_id);
@@ -20,13 +20,13 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }else{
             return response()->json([
-                'message' => 'Email already verified'
+                'message' => 'تم التحقق من البريد الالكتروني بالفعل'
             ], 422);
         }
 
 //        $token = auth()->login($user);
         return response()->json([
-            'message' => "Email $user->email successfully verified",
+            'message' => " تم التحقق من البريد الالكتروني بنجاح",
 //            'token' => $token,
         ], 200);
 
@@ -34,7 +34,7 @@ class VerificationController extends Controller
     public function verifyًWorker($user_id, Request $request){
         if (!$request->hasValidSignature()) {
             return response()->json([
-                'message' => 'Invalid/Expired url provided.'
+                'message' => 'رابط غير صالح / منتهي الصلاحية.'
             ], 401);
         }
         $user = Worker::findOrFail($user_id);
@@ -42,13 +42,13 @@ class VerificationController extends Controller
             $user->markEmailAsVerified();
         }else{
             return response()->json([
-                'message' => 'Email already verified'
+                'message' => 'تم التحقق من البريد الالكتروني بالفعل'
             ], 422);
         }
 
 //        $token = auth()->login($user);
         return response()->json([
-            'message' => "Email $user->email successfully verified",
+            'message' => " تم التحقق من البريد الالكتروني بنجاح",
 //            'token' => $token,
         ], 200);
 

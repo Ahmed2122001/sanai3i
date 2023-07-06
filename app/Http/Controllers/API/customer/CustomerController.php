@@ -58,12 +58,12 @@ class CustomerController extends Controller
             if ($customer) {
                 return response()->json([
                     //'success'=>true,
-                    'message' => "Customer added",
+                    'message' => "تم اضافة العميل بنجاح",
                 ], 200);
             } else {
                 return response()->json([
                     //'success'=>true,
-                    'message' => 'some problem',
+                    'message' => 'حدث خطأ ما',
                 ], 401);
             }
             //            }
@@ -118,12 +118,12 @@ class CustomerController extends Controller
             if ($customer) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'customer deleted successfully',
+                    'message' => 'تم حذف العميل بنجاح',
                 ]);
             } else {
                 return response()->json([
                     'success' => true,
-                    'message' => 'some problems',
+                    'message' => 'لم يتم حذف العميل',
                 ]);
             }
         } catch (\Throwable $th) {
@@ -170,12 +170,12 @@ class CustomerController extends Controller
                 ],200);
             }else {
                 return response()->json([
-                    'message'=>'Customer not found'
+                    'message'=>'لا يوجد عميل بهذا الاسم'
                 ],400);
             }
         }catch (\Throwable $th) {
             return response()->json([
-                'message' => 'error',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }
@@ -223,7 +223,7 @@ class CustomerController extends Controller
                 }
             }else{
                 return response()->json([
-                    'message' => 'Worker not found',
+                    'message' => 'العميل غير موجود',
                 ], 404);
             }
             $customer->save();
@@ -238,7 +238,7 @@ class CustomerController extends Controller
             }
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'customer not updated',
+                'message' => 'حدث خطأ ما',
                 'error' => $th->getMessage(),
             ], 500);
         }

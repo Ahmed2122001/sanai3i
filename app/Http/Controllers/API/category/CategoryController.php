@@ -135,22 +135,22 @@ class CategoryController extends Controller
                 $category->save();
                 if ($category) {
                     return response()->json([
-                        'message' => 'Category updated successfully',
+                        'message' => 'تم تعديل القسم بنجاح',
                         'category' => $category
                     ]);
                 } else {
                     return response()->json([
-                        'message' => 'Category not updated',
+                        'message' => 'القسم غير موجود',
                     ], 500);
                 }
             } else {
                 return response()->json([
-                    'message' => 'Category not found',
+                    'message' => 'القسم غير موجود',
                 ], 404);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Category not updated',
+                'message' => 'حدث خطأ ما',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -163,21 +163,21 @@ class CategoryController extends Controller
                 $del=$category->delete();
                 if ($del) {
                     return response()->json([
-                        'message' => 'Category deleted',
+                        'message' => 'تم حذف القسم بنجاح',
                     ], 200);
                 } else {
                     return response()->json([
-                        'message' => 'Category not deleted',
+                        'message' => 'لا يمكن حذف القسم',
                     ], 500);
                 }
             }else{
                 return response()->json([
-                    'message' => 'Category not found',
+                    'message' => 'القسم غير موجود',
                 ], 404);
             }
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Category not deleted',
+                'message' => 'حدث خطأ ما',
                 'error' => $e->getMessage(),
             ], 500);
         }
