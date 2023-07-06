@@ -288,7 +288,6 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'تم تسجيل الخروج بنجاح',
                 ], 200);
-//                ]); $this->returnSuccessMessage('تم تسجيل الخروج بنجاح');
             } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
                 return $this->returnError('E001', 'حدث خطأ ما');
             }
