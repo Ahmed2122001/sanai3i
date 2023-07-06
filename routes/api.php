@@ -16,6 +16,7 @@ use App\Http\Controllers\API\customer\CustomerController;
 use App\Http\Controllers\API\requests\RequestsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\chat\ChatController;
+use App\Http\Controllers\API\contactus\ContactUsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,7 @@ Route::group(
     function ($router) {
         Route::post('/login', [AuthController::class, 'loginAsWorker']);
         Route::post('/worker/register', [AuthController::class, 'workerRegister']);
+        Route::post('/contactus',[ContactUsController::class,'ContactUs']);
     }
 );
 Route::group(
