@@ -316,15 +316,15 @@ class filterController extends Controller
             $quality_rate=0;
             $time_rate=0;
             $price_rate=0;
-            $selectedWorkerIds = $workers->pluck('id')->toArray();
+//            $selectedWorkerIds = $workers->pluck('id')->toArray();
             if ($customer->region) {
                 $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
                     ->join('region', 'worker.city_id', '=', 'region.id')
-                    ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
-                        $query->select('id')
-                            ->from('worker')
-                            ->whereIn('id', $selectedWorkerIds);
-                    })
+//                    ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+//                        $query->select('id')
+//                            ->from('worker')
+//                            ->whereIn('id', $selectedWorkerIds);
+//                    })
                     ->where('category_id', $category_id)
                     ->where('status', 'active')
                     ->where('city_id', $customer->region->id)
@@ -360,11 +360,12 @@ class filterController extends Controller
             }
             $bestQuality = Worker::join('category', 'worker.category_id', '=', 'category.id')
                 ->join('rate', 'worker.id', '=', 'rate.worker_id')
-                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
-                    $query->select('id')
-                        ->from('worker')
-                        ->whereIn('id', $selectedWorkerIds);
-                })
+                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+//                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+//                    $query->select('id')
+//                        ->from('worker')
+//                        ->whereIn('id', $selectedWorkerIds);
+//                })
                 ->where('category_id', $category_id)
                 ->where('status', 'active')
                 ->select(
@@ -403,11 +404,12 @@ class filterController extends Controller
             }
             $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
-                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
-                    $query->select('id')
-                        ->from('worker')
-                        ->whereIn('id', $selectedWorkerIds);
-                })
+                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+//                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+//                    $query->select('id')
+//                        ->from('worker')
+//                        ->whereIn('id', $selectedWorkerIds);
+//                })
                 ->where('category_id', $category_id)
                 ->where('status', 'active')
                 ->select(
@@ -451,11 +453,12 @@ class filterController extends Controller
 
             $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
-                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
-                    $query->select('id')
-                        ->from('worker')
-                        ->whereIn('id', $selectedWorkerIds);
-                })
+                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+//                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+//                    $query->select('id')
+//                        ->from('worker')
+//                        ->whereIn('id', $selectedWorkerIds);
+//                })
                 ->where('category_id', $category_id)
                 ->where('status', 'active')
                 ->select(
