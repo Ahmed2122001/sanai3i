@@ -309,6 +309,10 @@ class filterController extends Controller
             $customer = Customer::where('id', $customer_id)->with('region')->first();
             $workers = new Collection();
             $nearest_worker = null;
+            $bestQuality = null;
+            $bestPrice = null;
+            $bestTime = null;
+
             $quality_rate=0;
             $time_rate=0;
             $price_rate=0;
@@ -331,6 +335,7 @@ class filterController extends Controller
                     ->first();
                 // check if worker has rate or not
                 if ($nearest_worker) {
+                    $nearest_worker->place=true;
                     $quality_rate = Rate::where('worker_id', $nearest_worker->id)->avg('quality_rate');
                     $price_rate = Rate::where('worker_id', $nearest_worker->id)->avg('price_rate');
                     $time_rate = Rate::where('worker_id', $nearest_worker->id)->avg('time_rate');
@@ -343,7 +348,6 @@ class filterController extends Controller
                 if ($nearest_worker && $nearest_worker->image != null) {
                     $nearest_worker->image = $this->converter($nearest_worker->image);
                 }
-                $nearest_worker->place=true;
                 $workers->push($nearest_worker);
             }
 
@@ -368,16 +372,18 @@ class filterController extends Controller
                 ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id','category.name')
                 ->orderBy('quality_rate', 'desc')
                 ->first();
-            // check if worker in same region of customer
-            if ($bestQuality && $bestQuality->region_id == $customer->region->id) {
-                $bestQuality->place = true;
-            }else{
-                $bestQuality->place = false;
+
+            // check if worker in same region of customer or not
+            if ($bestQuality) {
+                if ($bestQuality->region_id == $customer->region->id){
+                    $bestQuality->place = true;
+                }else{
+                    $bestQuality->place = false;
+                }
             }
             if ($bestQuality && $bestQuality->image != null) {
                 $bestQuality->image = $this->converter($bestQuality->image);
             }
-
             if ($bestQuality) {
                 $workers->push($bestQuality);
             }
@@ -405,10 +411,12 @@ class filterController extends Controller
                 ->first();
 
             // check if worker in same region of customer
-            if ($bestPrice && $bestPrice->region_id == $customer->region->id) {
-                $bestPrice->place = true;
-            }else{
-                $bestPrice->place = false;
+            if ($bestPrice) {
+                if ($bestPrice->region_id == $customer->region->id){
+                    $bestPrice->place = true;
+                }else{
+                    $bestPrice->place = false;
+                }
             }
             if ($bestPrice && $bestPrice->image != null) {
                 $bestPrice->image = $this->converter($bestPrice->image);
@@ -441,10 +449,12 @@ class filterController extends Controller
                 ->first();
 
             // check if worker in same region of customer
-            if ($bestTime && $bestTime->region_id == $customer->region->id) {
-                $bestTime->place = true;
-            }else{
-                $bestTime->place = false;
+            if ($bestTime) {
+                if ($bestTime->region_id == $customer->region->id){
+                    $bestTime->place = true;
+                }else{
+                    $bestTime->place = false;
+                }
             }
             if ($bestTime && $bestTime->image != null) {
                 $bestTime->image = $this->converter($bestTime->image);
@@ -452,14 +462,20 @@ class filterController extends Controller
             if ($bestTime) {
                 $workers->push($bestTime);
             }
-
-
-            return response()->json([
-                'success' => true,
-                'message' => 'تم العثور على العمال المناسبين',
-                'workers' => $workers,
-            ], 200);
-
+            //dd($workers);
+            if ($workers[0] != null) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم العثور على عمال',
+                    'workers' => $workers,
+                ], 200);
+            }else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا يوجد عمال',
+                    'workers' => [],
+                ], 200);
+            }
         }catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
