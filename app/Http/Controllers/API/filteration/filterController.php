@@ -343,7 +343,7 @@ class filterController extends Controller
                 if ($nearest_worker && $nearest_worker->image != null) {
                     $nearest_worker->image = $this->converter($nearest_worker->image);
                 }
-
+                $nearest_worker->place=true;
                 $workers->push($nearest_worker);
             }
 
