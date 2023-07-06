@@ -191,121 +191,14 @@ class filterController extends Controller
         return $image;
     }
     //return the nearest worker and best in quality, time and price
-    public function recommendations($customer_id, $category_id)
-    {
-        try {
-            $customer = Customer::where('id', $customer_id)->with('region')->first();
-            $nearest_worker = null;
-            $bestQuality = null;
-            $bestPrice = null;
-            $bestTime = null;
-
-            if ($customer->region) {
-                $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
-                    ->join('region', 'worker.city_id', '=', 'region.id')
-                    ->where('category_id', $category_id)
-                    ->where('city_id', $customer->region->id)
-                    ->select(
-                        'worker.id',
-                        'worker.name',
-                        'worker.phone',
-                        'worker.address',
-                        'worker.image',
-                    )
-                    ->first();
-
-                if ($nearest_worker && $nearest_worker->image != null) {
-                    $nearest_worker->image = $this->converter($nearest_worker->image);
-                }
-            }
-
-            $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
-                ->join('category', 'worker.category_id', '=', 'category.id')
-                ->where('category_id', $category_id)
-                ->select(
-                    'worker.id',
-                    'worker.name',
-                    'worker.phone',
-                    'worker.address',
-                    'worker.image'
-                )
-                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
-                ->orderByRaw('AVG(quality_rate) DESC')
-                ->first();
-
-            if ($bestQuality && $bestQuality->image != null) {
-                $bestQuality->image = $this->converter($bestQuality->image);
-            }
-
-            $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
-                ->join('category', 'worker.category_id', '=', 'category.id')
-                ->where('category_id', $category_id)
-                ->select(
-                    'worker.id',
-                    'worker.name',
-                    'worker.phone',
-                    'worker.address',
-                    'worker.image'
-                )
-                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
-                ->orderByRaw('AVG(price_rate) DESC')
-                ->first();
-
-            if ($bestPrice && $bestPrice->image != null) {
-                $bestPrice->image = $this->converter($bestPrice->image);
-            }
-
-            $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
-                ->join('category', 'worker.category_id', '=', 'category.id')
-                ->where('category_id', $category_id)
-                ->select(
-                    'worker.id',
-                    'worker.name',
-                    'worker.phone',
-                    'worker.address',
-                    'worker.image'
-                )
-                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
-                ->orderByRaw('AVG(time_rate) DESC')
-                ->first();
-
-            if ($bestTime && $bestTime->image != null) {
-                $bestTime->image = $this->converter($bestTime->image);
-            }
-
-            if ($nearest_worker || $bestQuality || $bestPrice || $bestTime){
-                return response()->json([
-                    'success' => true,
-                    'workers' => [
-                        'الاقرب' => $nearest_worker,
-                        'الاعلي جودة' => $bestQuality,
-                        'الافضل سعر' => $bestPrice,
-                        'الافضل وقت' => $bestTime
-                    ]
-                ], 200);
-            }else{
-                return response()->json([
-                    'success' => true,
-                    'workers' => []
-                ], 200);
-            }
-        } catch (\Throwable $th) {
-            return response()->json([
-                'success' => false,
-                'message' => 'حدث خطأ ما',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
-    }
-
-
-
-
 //    public function recommendations($customer_id, $category_id)
 //    {
 //        try {
 //            $customer = Customer::where('id', $customer_id)->with('region')->first();
-//            $workers = new Collection();
+//            $nearest_worker = null;
+//            $bestQuality = null;
+//            $bestPrice = null;
+//            $bestTime = null;
 //
 //            if ($customer->region) {
 //                $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
@@ -315,20 +208,15 @@ class filterController extends Controller
 //                    ->select(
 //                        'worker.id',
 //                        'worker.name',
-//                        'worker.email',
 //                        'worker.phone',
 //                        'worker.address',
-//                        'category.name as category_name',
-//                        'region.city_name as region_name',
-//                        'worker.image'
+//                        'worker.image',
 //                    )
 //                    ->first();
 //
-//                if ($nearest_worker->image != null) {
+//                if ($nearest_worker && $nearest_worker->image != null) {
 //                    $nearest_worker->image = $this->converter($nearest_worker->image);
 //                }
-//
-//                $workers->push($nearest_worker);
 //            }
 //
 //            $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
@@ -337,22 +225,17 @@ class filterController extends Controller
 //                ->select(
 //                    'worker.id',
 //                    'worker.name',
-//                    'worker.email',
 //                    'worker.phone',
 //                    'worker.address',
-//                    'worker.image',
-//                    'category.name as category_name',
-//                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate')
+//                    'worker.image'
 //                )
-//                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
-//                ->orderBy('quality_rate', 'desc')
+//                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
+//                ->orderByRaw('AVG(quality_rate) DESC')
 //                ->first();
 //
-//            if ($bestQuality->image != null) {
+//            if ($bestQuality && $bestQuality->image != null) {
 //                $bestQuality->image = $this->converter($bestQuality->image);
 //            }
-//
-//            $workers->push($bestQuality);
 //
 //            $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
 //                ->join('category', 'worker.category_id', '=', 'category.id')
@@ -360,30 +243,52 @@ class filterController extends Controller
 //                ->select(
 //                    'worker.id',
 //                    'worker.name',
-//                    'worker.email',
 //                    'worker.phone',
 //                    'worker.address',
-//                    'worker.image',
-//                    'category.name as category_name',
-//                    DB::raw('ROUND(AVG(price_rate), 1) as avg_price_rate')
+//                    'worker.image'
 //                )
-//                ->groupBy('worker.id', 'worker.name', 'worker.email', 'worker.phone', 'worker.address', 'worker.image', 'worker.category_id', 'category.name')
-//                ->orderBy('avg_price_rate', 'desc')
+//                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
+//                ->orderByRaw('AVG(price_rate) DESC')
 //                ->first();
 //
-//            if ($bestPrice->image != null) {
+//            if ($bestPrice && $bestPrice->image != null) {
 //                $bestPrice->image = $this->converter($bestPrice->image);
 //            }
 //
-//            $workers->push($bestPrice);
+//            $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+//                ->join('category', 'worker.category_id', '=', 'category.id')
+//                ->where('category_id', $category_id)
+//                ->select(
+//                    'worker.id',
+//                    'worker.name',
+//                    'worker.phone',
+//                    'worker.address',
+//                    'worker.image'
+//                )
+//                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image')
+//                ->orderByRaw('AVG(time_rate) DESC')
+//                ->first();
 //
-//            $uniqueWorkers = $workers->unique('id');
+//            if ($bestTime && $bestTime->image != null) {
+//                $bestTime->image = $this->converter($bestTime->image);
+//            }
 //
-//            return response()->json([
-//                'success' => true,
-//                'category' => $nearest_worker->category_name,
-//                'العمال المقترحون' => $uniqueWorkers
-//            ], 200);
+//            if ($nearest_worker || $bestQuality || $bestPrice || $bestTime){
+//                return response()->json([
+//                    'success' => true,
+//                    'workers' => [
+//                        'الاقرب' => $nearest_worker,
+//                        'الاعلي جودة' => $bestQuality,
+//                        'الافضل سعر' => $bestPrice,
+//                        'الافضل وقت' => $bestTime
+//                    ]
+//                ], 200);
+//            }else{
+//                return response()->json([
+//                    'success' => true,
+//                    'workers' => []
+//                ], 200);
+//            }
 //        } catch (\Throwable $th) {
 //            return response()->json([
 //                'success' => false,
@@ -394,5 +299,145 @@ class filterController extends Controller
 //    }
 
 
-}
 
+
+    public function recommendations($customer_id, $category_id)
+    {
+        try {
+            $customer = Customer::where('id', $customer_id)->with('region')->first();
+            $workers = new Collection();
+            $nearest_worker = null;
+            if ($customer->region) {
+                $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
+                    ->join('region', 'worker.city_id', '=', 'region.id')
+                    ->join('rate', 'worker.id', '=', 'rate.worker_id')
+                    ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                    ->where('category_id', $category_id)
+                    ->where('city_id', $customer->region->id)
+                    ->select(
+                        'worker.id',
+                        'worker.name',
+                        'worker.phone',
+                        'worker.address',
+                        //'region.city_name as region_name',
+                        'region.id as region_id',
+                        DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
+                        DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
+                        DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
+                        'worker.image'
+                    )
+                    ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id','quality_rate','price_rate','time_rate')
+                    ->first();
+
+                if ($nearest_worker && $nearest_worker->image != null) {
+                    $nearest_worker->image = $this->converter($nearest_worker->image);
+                }
+
+                $workers->push($nearest_worker);
+            }
+
+            $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+                ->join('category', 'worker.category_id', '=', 'category.id')
+                ->join('region', 'worker.city_id', '=', 'region.id')
+                ->where('category_id', $category_id)
+                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                ->select(
+                    'worker.id',
+                    'worker.name',
+                    'worker.phone',
+                    'worker.address',
+                    'category.name as category_name',
+                    //'region.city_name as region_name',
+                    'region.id as region_id',
+                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
+                    DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
+                    DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
+                    'worker.image'
+                )
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id','category.name')
+                ->orderBy('quality_rate', 'desc')
+                ->first();
+
+            if ($bestQuality && $bestQuality->image != null) {
+                $bestQuality->image = $this->converter($bestQuality->image);
+            }
+
+            if ($bestQuality) {
+                $workers->push($bestQuality);
+            }
+
+            $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+                ->join('category', 'worker.category_id', '=', 'category.id')
+                ->join('region', 'worker.city_id', '=', 'region.id')
+                ->where('category_id', $category_id)
+                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                ->select(
+                    'worker.id',
+                    'worker.name',
+                    'worker.phone',
+                    'worker.address',
+                    'category.name as category_name',
+                    //'region.city_name as region_name',
+                    'region.id as region_id',
+                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
+                    DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
+                    DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
+                    'worker.image'
+                )
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'region.id', 'category.name')
+                ->orderBy('price_rate', 'desc')
+                ->first();
+
+            if ($bestPrice && $bestPrice->image != null) {
+                $bestPrice->image = $this->converter($bestPrice->image);
+            }
+
+            if ($bestPrice) {
+                $workers->push($bestPrice);
+            }
+
+            $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
+                ->join('category', 'worker.category_id', '=', 'category.id')
+                ->join('region', 'worker.city_id', '=', 'region.id')
+                ->where('category_id', $category_id)
+                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                ->select(
+                    'worker.id',
+                    'worker.name',
+                    'worker.phone',
+                    'worker.address',
+                    'category.name as category_name',
+                    //'region.city_name as region_name',
+                    'region.id as region_id',
+                    DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
+                    DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
+                    DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
+                    'worker.image'
+                )
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'region.id', 'category.name')
+                ->orderBy('time_rate', 'desc')
+                ->first();
+
+            if ($bestTime && $bestTime->image != null) {
+                $bestTime->image = $this->converter($bestTime->image);
+            }
+            if ($bestTime) {
+                $workers->push($bestTime);
+            }
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم العثور على العمال المناسبين',
+                'workers' => $workers,
+            ], 200);
+
+        }catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ ما',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+}
