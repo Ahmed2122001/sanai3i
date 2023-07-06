@@ -269,6 +269,7 @@ class WorkerController extends Controller
                     'address' => $worker->address,
                     'created_at' => $worker->created_at,
                     'description' => $worker->description,
+                    'initial_price'=>$worker->initial_price,
                     'Category' => $category,
                     'Region' => $region,
                 ];
