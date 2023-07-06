@@ -316,11 +316,17 @@ class filterController extends Controller
             $quality_rate=0;
             $time_rate=0;
             $price_rate=0;
+            $selectedWorkerIds = $workers->pluck('id')->toArray();
             if ($customer->region) {
                 $nearest_worker = Worker::join('category', 'worker.category_id', '=', 'category.id')
                     ->join('region', 'worker.city_id', '=', 'region.id')
-                    ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                    ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+                        $query->select('id')
+                            ->from('worker')
+                            ->whereIn('id', $selectedWorkerIds);
+                    })
                     ->where('category_id', $category_id)
+                    ->where('status', 'active')
                     ->where('city_id', $customer->region->id)
                     ->select(
                         'worker.id',
@@ -348,36 +354,44 @@ class filterController extends Controller
                 if ($nearest_worker && $nearest_worker->image != null) {
                     $nearest_worker->image = $this->converter($nearest_worker->image);
                 }
-                $workers->push($nearest_worker);
-            }
+                if ($nearest_worker)
+                    $workers->push($nearest_worker);
 
-            $bestQuality = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
-                ->join('category', 'worker.category_id', '=', 'category.id')
-                ->join('region', 'worker.city_id', '=', 'region.id')
+            }
+            $bestQuality = Worker::join('category', 'worker.category_id', '=', 'category.id')
+                ->join('rate', 'worker.id', '=', 'rate.worker_id')
+                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+                    $query->select('id')
+                        ->from('worker')
+                        ->whereIn('id', $selectedWorkerIds);
+                })
                 ->where('category_id', $category_id)
-                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                ->where('status', 'active')
                 ->select(
                     'worker.id',
                     'worker.name',
                     'worker.phone',
                     'worker.address',
                     'category.name as category_name',
-                    //'region.city_name as region_name',
-                    'region.id as region_id',
                     DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
                     DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
                     DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
                     'worker.image'
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image','region.id','category.name')
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'category.name')
                 ->orderBy('quality_rate', 'desc')
                 ->first();
 
             // check if worker in same region of customer or not
             if ($bestQuality) {
-                if ($bestQuality->region_id == $customer->region->id){
+                $region = Worker::join('region', 'worker.city_id', '=', 'region.id')
+                    ->where('worker.id', $bestQuality->id)
+                    ->select('region.id as region_id')
+                    ->first();
+
+                if ($region && $region->region_id == $customer->region->id) {
                     $bestQuality->place = true;
-                }else{
+                } else {
                     $bestQuality->place = false;
                 }
             }
@@ -387,12 +401,15 @@ class filterController extends Controller
             if ($bestQuality) {
                 $workers->push($bestQuality);
             }
-
             $bestPrice = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
-                ->join('region', 'worker.city_id', '=', 'region.id')
+                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+                    $query->select('id')
+                        ->from('worker')
+                        ->whereIn('id', $selectedWorkerIds);
+                })
                 ->where('category_id', $category_id)
-                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                ->where('status', 'active')
                 ->select(
                     'worker.id',
                     'worker.name',
@@ -400,21 +417,27 @@ class filterController extends Controller
                     'worker.address',
                     'category.name as category_name',
                     //'region.city_name as region_name',
-                    'region.id as region_id',
                     DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
                     DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
                     DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
                     'worker.image'
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'region.id', 'category.name')
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'category.name')
                 ->orderBy('price_rate', 'desc')
                 ->first();
 
+            // get worker region
+
             // check if worker in same region of customer
             if ($bestPrice) {
-                if ($bestPrice->region_id == $customer->region->id){
+                $region = Worker::join('region', 'worker.city_id', '=', 'region.id')
+                    ->where('worker.id', $bestPrice->id)
+                    ->select('region.id as region_id')
+                    ->first();
+
+                if ($region && $region->region_id == $customer->region->id) {
                     $bestPrice->place = true;
-                }else{
+                } else {
                     $bestPrice->place = false;
                 }
             }
@@ -428,34 +451,42 @@ class filterController extends Controller
 
             $bestTime = Worker::join('rate', 'worker.id', '=', 'rate.worker_id')
                 ->join('category', 'worker.category_id', '=', 'category.id')
-                ->join('region', 'worker.city_id', '=', 'region.id')
+                ->whereNotIn('worker.id', function ($query) use ($selectedWorkerIds) {
+                    $query->select('id')
+                        ->from('worker')
+                        ->whereIn('id', $selectedWorkerIds);
+                })
                 ->where('category_id', $category_id)
-                ->whereNotIn('worker.id', $workers->pluck('id')->toArray()) // Exclude workers already selected in previous filterations
+                ->where('status', 'active')
                 ->select(
                     'worker.id',
                     'worker.name',
                     'worker.phone',
                     'worker.address',
                     'category.name as category_name',
-                    //'region.city_name as region_name',
-                    'region.id as region_id',
                     DB::raw('ROUND(AVG(quality_rate), 1) as quality_rate'),
                     DB::raw('ROUND(AVG(price_rate), 1) as price_rate'),
                     DB::raw('ROUND(AVG(time_rate), 1) as time_rate'),
                     'worker.image'
                 )
-                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'region.id', 'category.name')
+                ->groupBy('worker.id', 'worker.name', 'worker.phone', 'worker.address', 'worker.image', 'category.name')
                 ->orderBy('time_rate', 'desc')
                 ->first();
 
             // check if worker in same region of customer
             if ($bestTime) {
-                if ($bestTime->region_id == $customer->region->id){
+                $region = Worker::join('region', 'worker.city_id', '=', 'region.id')
+                    ->where('worker.id', $bestTime->id)
+                    ->select('region.id as region_id')
+                    ->first();
+
+                if ($region && $region->region_id == $customer->region->id) {
                     $bestTime->place = true;
-                }else{
+                } else {
                     $bestTime->place = false;
                 }
             }
+
             if ($bestTime && $bestTime->image != null) {
                 $bestTime->image = $this->converter($bestTime->image);
             }
