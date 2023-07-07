@@ -130,6 +130,7 @@ class ContractController extends Controller
             $contracts=Contract::where('worker_id',$id)
                 ->leftJoin('customer','contracts.customer_id','=','customer.id')
                 ->select('contracts.*','customer.name','customer.address','customer.phone')
+
                 ->get();
             if ($contracts){
                 return response()->json([
@@ -187,7 +188,6 @@ class ContractController extends Controller
                 if (!$validate) {
                     return response()->json($validate->errors(), 400);
                 }
-                $contract->status=1;
                 $contract->Process_status="في انتظار موافقة العميل";
                 $contract->price=$request->price;
                 $contract->save();
@@ -213,7 +213,6 @@ class ContractController extends Controller
         try {
             $contract=Contract::findOrFail($id);
             if($contract){
-                $contract->status=0;
                 $contract->Process_status="ملغي";
                 $contract->save();
                 return response()->json([
