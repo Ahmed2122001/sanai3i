@@ -180,6 +180,8 @@ Route::group(
             Route::get('/getBestWorkers',[WorkerController::class,'getBestWorkers']);
             //recommendations
             Route::get('/recommendations/{customerId}/{categoryId}',[filterController::class,'recommendations']);
+            Route::post('/password/{id}', [CustomerController::class, 'updatePassword']);
+
         });
     }
 );

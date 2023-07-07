@@ -358,4 +358,30 @@ class CustomerController extends Controller
             ], 500);
         }
     }
+
+    public function updatePassword(Request $request, $id)
+    {
+        //        dd($request->all());
+        // Validate the input using Laravel's built-in validation rules
+        //        dd($request->all());
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:8|confirmed'
+        ]);
+
+        // Find the customer with the specified ID in the database
+        $customer = Customer::findOrFail($id);
+        //        dd($worker);
+        // Verify that the old password matches the one in the database
+        if (!Hash::check($request->input('old_password'), $customer->password)) {
+            return response()->json(['error' => 'Invalid old password'], 401);
+        }
+
+        // Update the customer's password with the new one
+        $customer->password = Hash::make($request->input('new_password'));
+        $customer->save();
+
+        // Return a success response
+        return response()->json(['message' => 'Password updated successfully']);
+    }
 }
