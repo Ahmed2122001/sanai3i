@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\worker;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\worker\WorkerReqest;
+use App\Models\Contract;
 use App\Models\Portfolio;
 use App\Models\Worker;
 use Dflydev\DotAccessData\Data;
@@ -242,7 +243,6 @@ class WorkerController extends Controller
             $worker = Worker::where('id', $id)->with('category', 'region', 'rate', 'portfolio')->first();
 
             if ($worker) {
-
                 $category = [
                     'id' => $worker->category->id,
                     'name' => $worker->category->name,
@@ -273,6 +273,17 @@ class WorkerController extends Controller
                     'Category' => $category,
                     'Region' => $region,
                 ];
+                // if worker has completed contracts count them
+                $contract = Contract::where('worker_id', $id)->where('Process_status', 'تم الانتهاء')->get();
+                if (!$contract->isEmpty()) {
+                    $data['CompletedContracts'] = count($contract);
+                }
+                // count all contracts for worker
+                $contract = Contract::where('worker_id', $id)->get();
+                if (!$contract->isEmpty()) {
+                    $data['CustomerNumbers'] = count($contract);
+                }
+                // if worker has rates
                 if (!$rate->isEmpty()) {
                     $data['quality_rate'] = $rate[0]->quality_rate;
                     $data['time_rate'] = $rate[0]->avg_time_rate;

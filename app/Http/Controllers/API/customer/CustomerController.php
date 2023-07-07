@@ -154,6 +154,11 @@ class CustomerController extends Controller
                     'created_at' => $customer->created_at,
                     'Region' => $region,
                 ];
+                // if customer has completed contracts count them where Process_status = تم الانتهاء or Process_status = مكتمل
+                $completed_contracts = Contract::where('customer_id', $id)->where('process_status', 'تم الانتهاء')->orWhere('process_status', 'مكتمل')->count();
+                if ($completed_contracts) {
+                    $data['CompletedContracts'] = $completed_contracts;
+                }
                 if ($customer->image) {
                     $path = public_path($customer->image);
                     if (!file_exists($path)) {
@@ -162,7 +167,6 @@ class CustomerController extends Controller
                         $file = file_get_contents($path);
                         $base64 = base64_encode($file);
                         $data['image'] = $base64;
-                        //return response()->json($data, 200);
                     }
                 }
                 return response()->json([
