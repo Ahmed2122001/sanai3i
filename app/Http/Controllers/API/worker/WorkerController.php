@@ -220,21 +220,21 @@ class WorkerController extends Controller
                 if ($request->initial_price){
                     $worker->initial_price=$request->initial_price;
                 }
+                $worker->save();
+                if ($worker) {
+                    return response()->json([
+                        'message' => 'تم تعديل البيانات بنجاح',
+                        'worker' => $worker,
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'message' => 'حدث خطأ ما',
+                    ], 401);
+                }
             }else{
                 return response()->json([
                     'message' => 'Worker not found',
                 ], 404);
-            }
-            $worker->save();
-            if ($worker) {
-                return response()->json([
-                    'message' => 'تم تعديل البيانات بنجاح',
-                    'worker' => $worker,
-                    ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'حدث خطأ ما',
-                ], 401);
             }
         } catch (\Throwable $th) {
             return response()->json([
