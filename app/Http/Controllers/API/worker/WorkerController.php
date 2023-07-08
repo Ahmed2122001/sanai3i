@@ -216,6 +216,9 @@ class WorkerController extends Controller
                 if ($request->category_id) {
                     $worker->category_id = $request->category_id;
                 }
+                if ($request->initial_price){
+                    $worker->initial_price=$request->initial_price;
+                }
             }else{
                 return response()->json([
                     'message' => 'Worker not found',
