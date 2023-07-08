@@ -153,7 +153,8 @@ class ContractController extends Controller
     // get contract by id
     public function getContract($id){
         try {
-            $contract=Contract::findOrFail($id)
+//            dd($id);
+            $contract=Contract::where('contracts.id',$id)
                 ->leftJoin('customer','contracts.customer_id' ,'=','customer.id')
                 ->leftJoin('worker','contracts.worker_id','=','worker.id')
                 ->leftJoin('category','worker.category_id','=','category.id')
