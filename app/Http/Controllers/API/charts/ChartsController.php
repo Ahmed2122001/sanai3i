@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\charts;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contract;
 use Illuminate\Http\Request;
 use App\Models\Worker;
 use App\Models\Customer;
@@ -16,7 +17,6 @@ class ChartsController extends Controller
     {
         $counts_worker = [];
         $counts_customer = [];
-
 
         for ($month = 1; $month <= 12; $month++) {
             $workers = Worker::whereMonth('created_at', $month)->count();
@@ -79,6 +79,22 @@ class ChartsController extends Controller
             $RegionData[] = [
                 'city name' => $region->city_name,
                 'customer count' => $count,
+            ];
+        }
+
+        return response()->json(["regions" => $RegionData], 200);
+    }
+
+    // get number of contracts in each region by customer id that created the contract
+    public function getContractsByRegion()
+    {
+        $regions = Region::all();
+        $RegionData = [];
+        foreach ($regions as $region) {
+            $count = Contract::where('customer_id', $region->id)->count();
+            $RegionData[] = [
+                'city name' => $region->city_name,
+                'contract count' => $count,
             ];
         }
 

@@ -106,6 +106,7 @@ Route::group(
             Route::get('getWorkerByCategory', [ChartsController::class, 'getWorkerByCategory']);
             Route::get('getWorkerByRegion', [ChartsController::class, 'getWorkerByRegion']);
             Route::get('getCustomerByRegion', [ChartsController::class, 'getCustomerByRegion']);
+            Route::get('getContractsByRegion', [ChartsController::class, 'getContractsByRegion']);
             // show specific contract by id
             Route::get('/contract/{id}', [ContractController::class, 'getContract']);
 

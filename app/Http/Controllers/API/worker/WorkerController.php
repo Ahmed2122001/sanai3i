@@ -213,6 +213,9 @@ class WorkerController extends Controller
                 if ($request->city_id) {
                     $worker->city_id = $request->city_id;
                 }
+                if ($request->category_id) {
+                    $worker->category_id = $request->category_id;
+                }
             }else{
                 return response()->json([
                     'message' => 'Worker not found',
