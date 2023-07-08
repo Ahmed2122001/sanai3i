@@ -85,19 +85,29 @@ class ChartsController extends Controller
         return response()->json(["regions" => $RegionData], 200);
     }
 
-    // get number of contracts in each region by customer id that created the contract
+    // get number of contracts in each region by customer id which has city id in customer table and id in region table
     public function getContractsByRegion()
     {
         $regions = Region::all();
+        $contracts = Contract::all();
+        $city_id = [];
+        foreach ($contracts as $contract) {
+            $customer_id = $contract->customer_id;
+            $customer = Customer::find($customer_id);
+            foreach ($regions as $region) {
+                if ($customer->city_id == $region->id) {
+                    $city_id[] = $region->id;
+                }
+            }
+        }
         $RegionData = [];
         foreach ($regions as $region) {
-            $count = Contract::where('customer_id', $region->id)->count();
+            $count = count(array_keys($city_id, $region->id));
             $RegionData[] = [
                 'city name' => $region->city_name,
                 'contract count' => $count,
             ];
         }
-
         return response()->json(["regions" => $RegionData], 200);
     }
 
