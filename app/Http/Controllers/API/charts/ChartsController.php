@@ -88,27 +88,31 @@ class ChartsController extends Controller
     // get number of contracts in each region by customer id which has city id in customer table and id in region table
     public function getContractsByRegion()
     {
-        $regions = Region::all();
-        $contracts = Contract::all();
-        $city_id = [];
-        foreach ($contracts as $contract) {
-            $customer_id = $contract->customer_id;
-            $customer = Customer::find($customer_id);
-            foreach ($regions as $region) {
-                if ($customer->city_id == $region->id) {
-                    $city_id[] = $region->id;
+        try{
+            $regions = Region::all();
+            $contracts = Contract::all();
+            $city_id = [];
+            foreach ($contracts as $contract) {
+                $customer_id = $contract->customer_id;
+                $customer = Customer::find($customer_id);
+                foreach ($regions as $region) {
+                    if ($customer->city_id == $region->id) {
+                        $city_id[] = $region->id;
+                    }
                 }
             }
+            $RegionData = [];
+            foreach ($regions as $region) {
+                $count = count(array_keys($city_id, $region->id));
+                $RegionData[] = [
+                    'city name' => $region->city_name,
+                    'contract count' => $count,
+                ];
+            }
+            return response()->json(["regions" => $RegionData], 200);
+        }catch (\Exception $e){
+            return response()->json(["error" => $e->getMessage()], 500);
         }
-        $RegionData = [];
-        foreach ($regions as $region) {
-            $count = count(array_keys($city_id, $region->id));
-            $RegionData[] = [
-                'city name' => $region->city_name,
-                'contract count' => $count,
-            ];
-        }
-        return response()->json(["regions" => $RegionData], 200);
     }
 
 }
